@@ -1,1 +1,2 @@
 include: [wiki]
+permalink: /:categories/:title:output_ext
