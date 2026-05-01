@@ -1,0 +1,23 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"] # Or whatever your default branch is named
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # This is the "Magic" instruction that fixes the arrow icon issue
+          submodules: recursive 
+
+      - name: Setup Pages
+        uses: actions/deploy-pages@v4
