@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} | Perridak Software</title>
+    <style>
+        body {
+            background-color: #E0E4E2; /* Light Fossil/Mist */
+            color: #555555;           /* Deep Charcoal Text */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        h1, h2, h3 { color: #162D26; } /* Keeping Eucalyptus for Headings */
+        a {
+            color: #6A8F6B;           /* Muted Sage Link */
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover { text-decoration: underline; }
+        code {
+            background: #D1D5D3;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .logo {
+            max-width: 100px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 40px;
+        }
+        pre {
+            background: #162D26;
+            color: #E0E4E2;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav><a href="/"><img src="/assets/PerridakLogoHighlightedNoBackground.png" alt="Perridak Logo" class="logo"></a> | <a href="/wiki/">Wiki</a></nav>
+    </header>
+    <hr style="border: 0; border-top: 1px solid #C0C4C2; margin: 20px 0;">
+    
+    <main>
+        {{ content }}
+    </main>
+
+    <footer style="margin-top: 50px; font-size: 0.8rem; color: #888;">
+        &copy; {{ "now" | date: "%Y" }} Perridak Software
+    </footer>
+</body>
+</html>

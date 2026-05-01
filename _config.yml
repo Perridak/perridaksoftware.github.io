@@ -9,4 +9,6 @@ defaults:
   - scope:
       path: "wiki"
     values:
+      layout: "default"
       permalink: /wiki/:basename
+      
