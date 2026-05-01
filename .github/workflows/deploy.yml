@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["main"] # Or whatever your default branch is named
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -16,8 +16,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # This is the "Magic" instruction that fixes the arrow icon issue
-          submodules: recursive 
+          submodules: recursive # Fixes the "arrow icon" by pulling wiki content
 
-      - name: Setup Pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Uploads the entire repository, including the populated /wiki folder
+
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
