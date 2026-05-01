@@ -1,2 +1,12 @@
+# Forces Jekyll to include the submodule folder
 include: [wiki]
-permalink: /:categories/:title:output_ext
+
+# Prevents Jekyll from ignoring files it thinks are "hidden" in submodules
+exclude: []
+
+# This tells Jekyll exactly how to handle folder URLs
+defaults:
+  - scope:
+      path: "wiki"
+    values:
+      permalink: /wiki/:basename
