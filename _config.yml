@@ -12,3 +12,8 @@ defaults:
       layout: "default"
       permalink: /wiki/:basename
       
+brand:
+  bg_color: "#E0E4E2"
+  text_color: "#555555"
+  link_color: "#6A8F6B"
+  heading_color: "#162D26"
