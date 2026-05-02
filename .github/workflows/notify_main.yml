@@ -1,0 +1,14 @@
+name: Notify Main Website
+on: [push]
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          # Use a secret for the token (see Step 3 below)
+          token: ${{ secrets.ORG_SYNC_TOKEN }}
+          repository: Perridak/perridak.software # Org/RepoName
+          event-type: wiki_updated
