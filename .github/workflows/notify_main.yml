@@ -10,5 +10,5 @@ jobs:
         with:
           # Use a secret for the token (see Step 3 below)
           token: ${{ secrets.ORG_SYNC_TOKEN }}
-          repository: Perridak/perridak.software # Org/RepoName
+          repository: Perridak/perridaksoftware.github.io # Org/RepoName
           event-type: wiki_updated
