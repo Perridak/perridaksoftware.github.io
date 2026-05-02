@@ -1,36 +1,33 @@
 name: Sync Internal Wiki Submodule
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'wiki/**' # Triggers only when the wiki folder content changes
+  repository_dispatch:
+    types: [wiki_updated] # This MUST match the event-type in the wiki's notify_main.yml
 
 jobs:
   update-submodule:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Essential for Organization-owned repos
+      contents: write # Crucial for Org-level write access
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: true # Pulls existing submodule state
-          fetch-depth: 0   # Ensures full history for merging
+          submodules: true
+          fetch-depth: 0
 
       - name: Update Submodule Pointer
         run: |
           git config user.name "Perridak Bot"
           git config user.email "bot@perridak.software"
           
-          # Update the submodule to the latest commit of its tracked branch
+          # Force the repo to pull the latest commit from the wiki
           git submodule update --remote --init wiki
           
-          # Check for changes to avoid redundant commits
+          # Only commit if the 'pointer' actually moved
           if [ -n "$(git status --porcelain)" ]; then
             git add wiki
-            git commit -m "chore: auto-sync wiki content [skip ci]" 
+            git commit -m "chore: auto-sync wiki content [skip ci]"
             git push
           else
-            echo "No changes in submodule pointer detected."
+            echo "No changes detected in submodule pointer."
           fi
