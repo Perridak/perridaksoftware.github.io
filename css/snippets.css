@@ -1,0 +1,19 @@
+.eml::before {
+  content: attr(data-u) "\40" attr(data-d);
+  unicode-bidi: isolate;
+}
+.eml {
+  display: inline-block;
+  text-decoration: underline;
+  color: var(--moss);          /* or var(--sky) on dark backgrounds */
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.eml:hover { color: var(--moss-mid); }
+
+span.eml {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+  cursor: text;
+}
