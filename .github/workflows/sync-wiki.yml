@@ -1,0 +1,62 @@
+name: Sync Wiki to Docs
+
+on:
+  gollum:
+  workflow_dispatch:
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Clone wiki repository
+        run: |
+          git clone https://github.com/${{ github.repository }}.wiki.git wiki-temp
+
+      - name: Copy wiki files to /wiki
+        run: |
+          mkdir -p wiki
+          cp -r wiki-temp/*.md wiki/ || true
+          rm -rf wiki-temp
+
+      - name: Auto-inject Jekyll front matter
+        run: |
+          for file in wiki/*.md; do
+            if [ -f "$file" ]; then
+              # Check if file already has front matter (starts with ---)
+              if ! head -1 "$file" | grep -q "^---"; then
+                # Extract filename without extension for title and permalink
+                filename=$(basename "$file" .md)
+                title=$(echo "$filename" | sed 's/-/ /g')
+                
+                # Handle Home.md special case
+                if [ "$filename" = "Home" ]; then
+                  permalink="/wiki/"
+                else
+                  permalink="/wiki/$(echo "$filename" | tr '[:upper:]' '[:lower:]')/"
+                fi
+                
+                # Create front matter
+                frontmatter="---
+layout: wiki
+title: $title
+permalink: $permalink
+---
+
+"
+                
+                # Prepend front matter to file
+                echo -n "$frontmatter" | cat - "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+              fi
+            fi
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "Wiki Sync Bot"
+          git add wiki/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: sync wiki" && git push)
