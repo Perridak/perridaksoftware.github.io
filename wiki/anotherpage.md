@@ -5,3 +5,5 @@ permalink: /wiki/anotherpage/
 ---
 
 Peekaboo!!!
+
+[DeleteMe](DeleteMe)
