@@ -11,6 +11,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Clone wiki repository
         run: |
@@ -52,6 +53,13 @@ jobs:
               fi
             fi
           done
+
+      - name: Debug - List wiki files
+        run: |
+          echo "=== Contents of wiki/ directory ==="
+          ls -la wiki/ || echo "wiki/ directory not found"
+          echo "=== First file sample ==="
+          head -20 wiki/*.md 2>/dev/null | head -30 || echo "No files to display"
 
       - name: Commit and push changes
         run: |
