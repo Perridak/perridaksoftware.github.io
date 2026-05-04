@@ -2,6 +2,8 @@ name: Sync Wiki to Docs
 
 on:
   gollum:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
   workflow_dispatch:
 
 jobs:
@@ -19,6 +21,7 @@ jobs:
 
       - name: Copy wiki files to /wiki
         run: |
+          rm -rf wiki
           mkdir -p wiki
           cp -r wiki-temp/*.md wiki/ || true
           rm -rf wiki-temp
