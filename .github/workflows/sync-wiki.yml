@@ -39,17 +39,16 @@ jobs:
                   permalink="/wiki/$(echo "$filename" | tr '[:upper:]' '[:lower:]')/"
                 fi
                 
-                # Create front matter
-                frontmatter="---
-layout: wiki
-title: $title
-permalink: $permalink
----
-
-"
-                
-                # Prepend front matter to file
-                echo -n "$frontmatter" | cat - "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+                # Create temp file with front matter
+                {
+                  echo "---"
+                  echo "layout: wiki"
+                  echo "title: $title"
+                  echo "permalink: $permalink"
+                  echo "---"
+                  echo ""
+                  cat "$file"
+                } > "$file.tmp" && mv "$file.tmp" "$file"
               fi
             fi
           done
