@@ -4,4 +4,4 @@ title: _Footer
 permalink: /wiki/_footer/
 ---
 
-[Back](blog)
+[Back](Owner's Blog)
