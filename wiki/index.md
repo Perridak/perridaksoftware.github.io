@@ -7,4 +7,4 @@ Go home... shoo!!!
 
 Really... fix this!!
 
-[Next](anotherpage)
+[Next](anotherpage) | [Owner's Blog](Owner's-Blog)
