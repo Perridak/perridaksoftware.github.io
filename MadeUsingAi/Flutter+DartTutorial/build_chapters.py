@@ -346,8 +346,17 @@ def process_inline_markdown(text, highlighter):
     
     text = re.sub(r'`([^`]+)`', highlight_inline_code, text)
     
-    # Links
-    text = re.sub(r'\[(.+?)\]\((.+?)\)', r'<a href="\2" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">\1</a>', text)
+    # Links - with automatic target="_blank" for external URLs
+    def process_links(match):
+        link_text = match.group(1)
+        link_url = match.group(2)
+        # Add target="_blank" for external URLs (http/https), not for internal links
+        if link_url.startswith('http://') or link_url.startswith('https://'):
+            return f'<a href="{link_url}" target="_blank" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">{link_text}</a>'
+        else:
+            return f'<a href="{link_url}" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">{link_text}</a>'
+    
+    text = re.sub(r'\[(.+?)\]\((.+?)\)', process_links, text)
     
     return text
 

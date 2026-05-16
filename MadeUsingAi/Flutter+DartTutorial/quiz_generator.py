@@ -29,6 +29,8 @@ import re
 
 def parse_questions(input_file):
     """Parse questions from text file and return list of question dicts."""
+    import random
+    
     with open(input_file, 'r', encoding='utf-8') as f:
         content = f.read().strip()
     
@@ -68,10 +70,20 @@ def parse_questions(input_file):
             print(f"Warning: Block {block_num} has no valid answer key")
             continue
         
+        # Create list of (option_text, original_index) tuples
+        indexed_options = [(opt, idx) for idx, opt in enumerate(options)]
+        
+        # Shuffle the options
+        random.shuffle(indexed_options)
+        
+        # Extract shuffled options and find new correct answer position
+        shuffled_options = [opt[0] for opt in indexed_options]
+        new_correct_index = next(idx for idx, (opt, orig_idx) in enumerate(indexed_options) if orig_idx == answer_key)
+        
         questions.append({
             'question': question,
-            'options': options,
-            'correctIndex': answer_key
+            'options': shuffled_options,
+            'correctIndex': new_correct_index
         })
     
     return questions
@@ -380,8 +392,31 @@ def generate_html_file(questions):
     }}
     
     function selectOption(element, index) {{
-        document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+        // Remove previously selected option styling
+        document.querySelectorAll('.option').forEach(opt => {{
+            opt.classList.remove('selected', 'correct', 'incorrect');
+        }});
+        
+        // Mark the selected option
         element.classList.add('selected');
+        
+        // Get the correct answer for this question
+        const correctAnswer = currentQuestions[currentIndex].correctIndex;
+        const userAnswer = index;
+        
+        // Provide immediate feedback
+        if (userAnswer === correctAnswer) {{
+            element.classList.add('correct');
+        }} else {{
+            element.classList.add('incorrect');
+            // Also highlight the correct answer in green
+            document.querySelectorAll('.option').forEach((opt, idx) => {{
+                if (idx === correctAnswer) {{
+                    opt.classList.add('correct');
+                }}
+            }});
+        }}
+        
         document.getElementById('nextBtn').disabled = false;
     }}
     
