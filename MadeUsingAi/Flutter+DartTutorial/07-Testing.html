@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>07-Testing</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Testing</h1>
+<p>Testing is how you verify that your code works before users discover it doesn't. This chapter teaches testing with a Test-Driven Development (TDD) focus—writing tests before implementation to clarify what you're building and ensure it works from the start.</p>
+<p>TDD isn't the only approach. Behavior-Driven Development (BDD) uses similar principles but emphasizes natural-language scenarios that communicate with non-technical stakeholders. Both complement each other. This chapter teaches TDD fundamentals and introduces BDD as a complementary technique.</p>
+<h2>Understanding Test Types</h2>
+<p>Flutter has three levels of testing, each serving a different purpose.</p>
+<p><strong>Unit tests</strong> verify that a single function, method, or class works correctly. They're fast, run without a device, and test pure Dart code in isolation. Example: testing that a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Counter</code> class increments correctly.</p>
+<p><strong>Widget tests</strong> (called component tests in general Dart) verify that widgets and UI components behave correctly. They render widgets in a virtual environment without a real device, simulating user interactions. Example: testing that a button tap increments a counter on screen.</p>
+<p><strong>Integration tests</strong> verify that your entire app works end-to-end. They run on real or simulated devices and test complete workflows. Example: testing that a user can log in, navigate to their notes, and create a new note.</p>
+<p>The test pyramid guides test distribution: write many unit tests (fast, cheap to run), fewer widget tests (medium speed and cost), and few integration tests (slow, expensive). Aim for roughly 70% unit, 20% widget, 10% integration.</p>
+<p>This chapter focuses on unit testing, the foundation. Widget and integration testing use the same principles but require the Flutter test framework.</p>
+<h2>The Test Package and Framework</h2>
+<p>Dart's <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">test</code> package provides the core framework for writing tests. Flutter projects include <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter_test</code>, which extends <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">test</code> with utilities for widget testing.</p>
+<h3>Setting Up</h3>
+<p>For pure Dart tests (no widgets), add the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">test</code> package to dev dependencies:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>dev_dependencies<span style="color: #ffff44">:</span>
+  test<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">1.25.0</span></code></pre>
+<p>For Flutter projects, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter_test</code> comes automatically with the SDK.</p>
+<h3>File Organization</h3>
+<p>By convention, test files live in a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">test<span style="color: #ffff44">/</span></code> directory at your project root, mirroring your source structure:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>lib<span style="color: #ffff44">/</span>
+├── models<span style="color: #ffff44">/</span>
+│   └── note.dart
+├── providers<span style="color: #ffff44">/</span>
+│   └── notes_provider.dart
+test<span style="color: #ffff44">/</span>
+├── models<span style="color: #ffff44">/</span>
+│   └── note_test.dart
+├── providers<span style="color: #ffff44">/</span>
+│   └── notes_provider_test.dart</code></pre>
+<p>Test files always end with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">_test.dart</code>. This naming convention is how the test runner discovers and runs them.</p>
+<h2>Writing Your First Test</h2>
+<p>The basic structure of a test is simple:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:test/test.dart&#39;</span>;
+
+<span style="color: #87ceeb">void</span> main() {
+  test(<span style="color: #44ff44">&#39;description of what should happen&#39;</span>, () {
+    <span style="color: #888888">// Arrange: set up test data</span>
+    <span style="color: #87ceeb">final</span> result <span style="color: #ffff44">=</span> <span style="color: #bb86fc">2</span> <span style="color: #ffff44">+</span> <span style="color: #bb86fc">3</span>;
+    
+    <span style="color: #888888">// Assert: verify the result</span>
+    expect(result, <span style="color: #bb86fc">5</span>);
+  });
+}</code></pre>
+<p>Every test has three parts:</p>
+<ol><li><strong>Arrange:</strong> Set up the code under test. Create objects, initialize state, mock dependencies.</li><li><strong>Act:</strong> Execute the code you're testing.</li><li><strong>Assert:</strong> Verify the result matches expectations using <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">expect()</code>.</li></ol>
+<p>Running tests is straightforward:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code># Run all tests <span style="color: #87ceeb">in</span> the test<span style="color: #ffff44">/</span> directory
+flutter test
+
+# Or <span style="color: #87ceeb">for</span> pure Dart projects
+dart test</code></pre>
+<h2>Test Naming: Why It Matters</h2>
+<p>Test names influence how you think about testing. The naming convention you choose subtly shapes what you test and how thoroughly.</p>
+<h3>Imperative Style: testFeatureDoesX</h3>
+<p>Imperative names describe what the code does:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>test(<span style="color: #44ff44">&#39;counterIncrements&#39;</span>, () { ... });
+test(<span style="color: #44ff44">&#39;noteListDisplaysAllNotes&#39;</span>, () { ... });
+test(<span style="color: #44ff44">&#39;userCanEditNoteTitle&#39;</span>, () { ... });</code></pre>
+<p>This style is procedural—it describes actions. Imperative names make sense when you're thinking about implementation details.</p>
+<h3>Declarative/BDD Style: FeatureShouldDoXWhen</h3>
+<p>Declarative (BDD-style) names describe requirements and conditions:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>test(<span style="color: #44ff44">&#39;counter should increment when button is pressed&#39;</span>, () { ... });
+test(<span style="color: #44ff44">&#39;note list should display all notes when app starts&#39;</span>, () { ... });
+test(<span style="color: #44ff44">&#39;user should be able to edit note title after tapping edit&#39;</span>, () { ... });</code></pre>
+<p>This style is requirements-focused. It uses "should" to state expected behavior and "when" to specify conditions. These names read like specifications that non-technical stakeholders can understand.</p>
+<h3>Why the Difference Matters</h3>
+<p>Imperative names focus on implementation: "What does the code do?" Declarative names focus on requirements: "What should the system do?" This seemingly minor difference has real consequences:</p>
+<ul><li><strong>Imperative tests</strong> risk testing implementation details rather than actual behavior. You might verify that a method is called, not that the user sees what they expect.</li><li><strong>Declarative tests</strong> naturally lead to testing behavior that matters. If you're writing "should display all notes when app starts," you're forced to verify that notes actually appear, not just that a method is called.</li></ul>
+<p>Research in BDD shows that requirement-focused naming improves test coverage and maintainability. Tests become living documentation—someone unfamiliar with the code can read the test name and understand what the system should do.</p>
+<p><strong>Recommendation:</strong> Use declarative naming with "should" and "when." It naturally guides you toward testing requirements rather than implementation.</p>
+<h2>Testing Patterns: Arrange-Act-Assert and Given-When-Then</h2>
+<p>The Arrange-Act-Assert (AAA) pattern is the fundamental structure:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>test(<span style="color: #44ff44">&#39;NotesProvider should add note when createNote is called&#39;</span>, () {
+  <span style="color: #888888">// Arrange</span>
+  <span style="color: #87ceeb">final</span> provider <span style="color: #ffff44">=</span> NotesProvider();
+  <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Test&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Content&#39;</span>, folder<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;General&#39;</span>, tags<span style="color: #ffff44">:</span> []);
+  
+  <span style="color: #888888">// Act</span>
+  provider.createNote(note);
+  
+  <span style="color: #888888">// Assert</span>
+  expect(provider.notes.length, <span style="color: #bb86fc">1</span>);
+  expect(provider.notes.first.title, <span style="color: #44ff44">&#39;Test&#39;</span>);
+});</code></pre>
+<p>BDD extends this with Given-When-Then language that maps directly to AAA:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>test(<span style="color: #44ff44">&#39;NotesProvider should contain note WHEN note is created&#39;</span>, () {
+  <span style="color: #888888">// Given: provider exists</span>
+  <span style="color: #87ceeb">final</span> provider <span style="color: #ffff44">=</span> NotesProvider();
+  <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Test&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Content&#39;</span>, folder<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;General&#39;</span>, tags<span style="color: #ffff44">:</span> []);
+  
+  <span style="color: #888888">// When: note is created</span>
+  provider.createNote(note);
+  
+  <span style="color: #888888">// Then: provider contains the note</span>
+  expect(provider.notes.length, <span style="color: #bb86fc">1</span>);
+});</code></pre>
+<p>Both patterns say the same thing. Use AAA for consistency with Dart conventions. Use Given-When-Then when communicating with non-technical stakeholders or when your test's logic is complex and benefits from explicit labeling.</p>
+<h2>Mocking: Testing in Isolation</h2>
+<p>When your code depends on external services (APIs, databases, file systems), you can't test them directly—you need them to be available, predictable, and fast. Mocking solves this by creating fake versions of dependencies.</p>
+<p>The <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">mockito</code> package is the standard mocking library for Dart:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>dev_dependencies<span style="color: #ffff44">:</span>
+  mockito<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">5.4.0</span>
+  build_runner<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">2.4.0</span></code></pre>
+<h3>Creating and Using Mocks</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:mockito/mockito.dart&#39;</span>;
+<span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:test/test.dart&#39;</span>;
+
+<span style="color: #888888">// Create a mock class</span>
+<span style="color: #87ceeb">class</span> MockApiClient <span style="color: #87ceeb">extends</span> Mock <span style="color: #87ceeb">implements</span> ApiClient {}
+
+<span style="color: #87ceeb">void</span> main() {
+  test(<span style="color: #44ff44">&#39;NotesProvider should fetch notes from API&#39;</span>, () <span style="color: #87ceeb">async</span> {
+    <span style="color: #888888">// Arrange: set up the mock</span>
+    <span style="color: #87ceeb">final</span> mockClient <span style="color: #ffff44">=</span> MockApiClient();
+    when(mockClient.fetchNotes()).thenAnswer((_) <span style="color: #87ceeb">async</span> <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> [
+      Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note 1&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Content&#39;</span>, folder<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;General&#39;</span>, tags<span style="color: #ffff44">:</span> []),
+    ]);
+    
+    <span style="color: #87ceeb">final</span> provider <span style="color: #ffff44">=</span> NotesProvider(client<span style="color: #ffff44">:</span> mockClient);
+    
+    <span style="color: #888888">// Act: fetch notes</span>
+    <span style="color: #87ceeb">await</span> provider.fetchNotes();
+    
+    <span style="color: #888888">// Assert: verify the notes were fetched</span>
+    expect(provider.notes.length, <span style="color: #bb86fc">1</span>);
+    verify(mockClient.fetchNotes()).called(<span style="color: #bb86fc">1</span>);
+  });
+}</code></pre>
+<p>Key methods:</p>
+<ul><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">when(mock.method()).thenAnswer(...)</code> — Define what the mock returns</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">verify(mock.method()).called(n)</code> — Verify a method was called <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">n</code> times</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">any()</code> — Match any argument</li></ul>
+<p>Mocking isolates your code from external dependencies, making tests fast and reliable.</p>
+<h2>Test Organization with Groups</h2>
+<p>As your test suite grows, organize tests into logical groups:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  group(<span style="color: #44ff44">&#39;NotesProvider&#39;</span>, () {
+    group(<span style="color: #44ff44">&#39;addNote&#39;</span>, () {
+      test(<span style="color: #44ff44">&#39;should add note to list when called&#39;</span>, () { ... });
+      test(<span style="color: #44ff44">&#39;should call notifyListeners when note is added&#39;</span>, () { ... });
+      test(<span style="color: #44ff44">&#39;should throw exception if note title is empty&#39;</span>, () { ... });
+    });
+    
+    group(<span style="color: #44ff44">&#39;deleteNote&#39;</span>, () {
+      test(<span style="color: #44ff44">&#39;should remove note from list&#39;</span>, () { ... });
+      test(<span style="color: #44ff44">&#39;should not error if note does not exist&#39;</span>, () { ... });
+    });
+  });
+}</code></pre>
+<p>Groups make test output readable and help organize related tests together. You can run tests by group: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter test <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>name<span style="color: #ffff44">=</span><span style="color: #44ff44">&quot;addNote&quot;</span></code>.</p>
+<h2>Writing Testable Code</h2>
+<p>Not all code is equally testable. Some patterns make testing harder:</p>
+<p><strong>Tight coupling:</strong> Code that creates its own dependencies (e.g., <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ApiClient client <span style="color: #ffff44">=</span> ApiClient()</code>) is hard to mock.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Hard to test - creates its own client</span>
+<span style="color: #87ceeb">class</span> NotesProvider {
+  <span style="color: #87ceeb">final</span> client <span style="color: #ffff44">=</span> ApiClient();
+  
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> fetchNotes() <span style="color: #87ceeb">async</span> {
+    <span style="color: #888888">// Must use real ApiClient</span>
+  }
+}
+
+<span style="color: #888888">// Easy to test - accepts client as dependency</span>
+<span style="color: #87ceeb">class</span> NotesProvider {
+  <span style="color: #87ceeb">final</span> ApiClient client;
+  
+  NotesProvider(<span style="color: #87ceeb">this</span>.client);
+  
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> fetchNotes() <span style="color: #87ceeb">async</span> {
+    <span style="color: #888888">// Can inject mock ApiClient</span>
+  }
+}</code></pre>
+<p><strong>Side effects in constructors:</strong> Code that performs I/O or state changes in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44"><</span>strong<span style="color: #ffff44">></span>init<span style="color: #ffff44"><</span><span style="color: #ffff44">/</span>strong<span style="color: #ffff44">></span></code> or constructors is hard to test.</p>
+<p><strong>Mixed concerns:</strong> A method that calculates, fetches, and displays is hard to test. Separate concerns into smaller methods.</p>
+<p>Good testable code has clear inputs and outputs, dependencies injected, and a single responsibility per function or class. This is exactly what good architecture provides.</p>
+<h2>Test-Driven Development in Practice</h2>
+<p>TDD has a rhythm: Red → Green → Refactor.</p>
+<ol><li><strong>Red:</strong> Write a test for code that doesn't exist yet. The test fails.</li><li><strong>Green:</strong> Write the minimal code to make the test pass.</li><li><strong>Refactor:</strong> Improve the code without changing behavior. Tests still pass.</li></ol>
+<p>This might seem backwards—how do you test code before it exists? But it's powerful:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Red: write the test first</span>
+test(<span style="color: #44ff44">&#39;Counter should increment from 0 to 1&#39;</span>, () {
+  <span style="color: #87ceeb">final</span> counter <span style="color: #ffff44">=</span> Counter();
+  counter.increment();
+  expect(counter.value, <span style="color: #bb86fc">1</span>);
+});
+
+<span style="color: #888888">// This test fails because Counter doesn&#39;t exist or doesn&#39;t work</span>
+<span style="color: #888888">// Green: write minimal code to pass</span>
+<span style="color: #87ceeb">class</span> Counter {
+  <span style="color: #ff4444">int</span> value <span style="color: #ffff44">=</span> <span style="color: #bb86fc">0</span>;
+  <span style="color: #87ceeb">void</span> increment() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> value<span style="color: #ffff44">+</span><span style="color: #ffff44">+</span>;
+}
+
+<span style="color: #888888">// Now the test passes</span>
+<span style="color: #888888">// Refactor: improve without breaking tests</span>
+<span style="color: #87ceeb">class</span> Counter {
+  <span style="color: #ff4444">int</span> _value <span style="color: #ffff44">=</span> <span style="color: #bb86fc">0</span>;
+  <span style="color: #ff4444">int</span> <span style="color: #87ceeb">get</span> value <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _value;
+  <span style="color: #87ceeb">void</span> increment() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _value<span style="color: #ffff44">+</span><span style="color: #ffff44">+</span>;
+}</code></pre>
+<p>TDD naturally guides you toward clean, testable code because you're thinking about how to test it from the start. It also prevents over-engineering—you only write code needed to pass tests.</p>
+<h2>Beyond Unit Tests: BDD for Behavior</h2>
+<p>When unit tests alone aren't enough to verify behavior, BDD approaches bridge the gap. Instead of testing implementation, BDD tests scenarios in natural language:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Feature<span style="color: #ffff44">:</span> Create Notes
+  Scenario<span style="color: #ffff44">:</span> User creates a <span style="color: #87ceeb">new</span> note
+    Given I am <span style="color: #87ceeb">on</span> the notes list screen
+    When I tap the create button
+    And I enter a title <span style="color: #44ff44">&quot;My Note&quot;</span>
+    And I enter content <span style="color: #44ff44">&quot;This is a test&quot;</span>
+    And I tap save
+    Then I should see <span style="color: #44ff44">&quot;My Note&quot;</span> <span style="color: #87ceeb">in</span> the list</code></pre>
+<p>Tools like <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter_gherkin</code> parse these scenarios and generate widget tests. BDD forces you to think about user behavior rather than code mechanics.</p>
+<p>BDD is powerful for complex workflows and communication with non-technical stakeholders. For most unit testing, declarative test naming (with "should" and "when") brings many BDD benefits without the extra tooling.</p>
+<h2>Best Practices</h2>
+<ol><li><strong>Test one thing per test.</strong> A test with multiple assertions is testing multiple behaviors. If it fails, you don't know which behavior broke.</li></ol>
+<ol><li><strong>Keep tests independent.</strong> Tests shouldn't depend on each other. You should be able to run any test in any order.</li></ol>
+<ol><li><strong>Use descriptive names.</strong> Your test names are documentation. Someone reading them should understand what the code should do.</li></ol>
+<ol><li><strong>Avoid testing implementation details.</strong> Test behavior. If you're verifying that a specific method was called, you're testing implementation, not behavior.</li></ol>
+<ol><li><strong>Mock external dependencies.</strong> Your tests should run fast and not depend on external services. Mock APIs, databases, and file systems.</li></ol>
+<ol><li><strong>Maintain your tests.</strong> Tests are code. Refactor them when you refactor production code. Update tests when behavior changes.</li></ol>
+<hr>
+<h2>Hands-On Application</h2>
+<p>Testing is best learned by doing. As you build the Markdown Notes app in the project sections, apply these principles:</p>
+<ul><li>Write a test for each piece of logic (providers, models, utilities)</li><li>Use mocking for any external dependencies</li><li>Use declarative test names with "should" and "when"</li><li>Organize tests into logical groups</li><li>Aim for high coverage of critical logic</li></ul>
+<p>Start with unit tests of your providers. Then add widget tests of your screens. Finally, add a few integration tests of complete workflows.</p>
+<p>Testing is a skill. You'll get faster at it with practice, and the confidence that comes from a well-tested codebase is worth the investment.</p>
+</body>
+<script src="common.js"></script>
+</html>

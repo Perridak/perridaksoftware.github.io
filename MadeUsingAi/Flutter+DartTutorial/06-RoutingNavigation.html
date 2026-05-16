@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>06-RoutingNavigation</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Routing and Navigation</h1>
+<p>Routing is how your app moves between screens. Navigation is the art of doing it well—making transitions smooth, preserving state, and enabling users to move through your app intuitively.</p>
+<p>This chapter teaches routing patterns and navigation architecture. We'll start with the fundamentals: how Flutter's Navigator works, how to pass data between screens, and how to structure navigation cleanly. Then we'll integrate what you learned about CRUD operations in the previous chapter, showing how routing patterns enable multi-screen CRUD workflows.</p>
+<h2>The Problem: Managing Screen Transitions</h2>
+<p>In Part B and Part C of the Markdown Notes project, you likely navigated between screens using simple <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Navigator.push()</code>:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Navigator.push(
+  context,
+  MaterialPageRoute(builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NoteDetailScreen(note<span style="color: #ffff44">:</span> note)),
+);</code></pre>
+<p>This works for small apps, but creates problems as complexity grows:</p>
+<ul><li><strong>Hard-coded routes:</strong> Each screen knows exactly what other screens exist and how to construct them. If you add a new parameter to a screen, you update every place that navigates to it.</li><li><strong>No deep linking:</strong> You can't open a specific screen via a URL (important for web and testing).</li><li><strong>Unclear navigation flow:</strong> Reading the code, it's hard to see what screens exist and how they relate.</li><li><strong>State loss:</strong> When you pop a screen, you lose information about what data should refresh.</li><li><strong>Tight coupling:</strong> Screens are tightly coupled to the screens they navigate to.</li></ul>
+<p>Good routing architecture solves these problems. It centralizes navigation logic and makes the app's structure clear.</p>
+<h2>Understanding the Navigator</h2>
+<p>Before learning advanced patterns, you need to understand how Flutter's Navigator works fundamentally.</p>
+<h3>The Navigation Stack</h3>
+<p>The Navigator manages a stack of routes (screens). Think of it like a stack of index cards:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Top of stack (visible)<span style="color: #ffff44">:</span>    Screen C (NoteDetailScreen)
+                           Screen B (NoteListScreen)
+Bottom of stack<span style="color: #ffff44">:</span>           Screen A (HomeScreen)</code></pre>
+<p>When you call <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Navigator.push()</code>, you add a card to the top. The new screen appears. When you call <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Navigator.pop()</code>, you remove the top card, revealing what's underneath.</p>
+<h3>Routes: Named vs. Anonymous</h3>
+<p>There are two ways to navigate:</p>
+<p><strong>Anonymous routes</strong> (what you've likely been doing):</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Navigator.push(
+  context,
+  MaterialPageRoute(builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NoteDetailScreen(note<span style="color: #ffff44">:</span> note)),
+);</code></pre>
+<p>You directly construct the screen widget. The Navigator doesn't know the screen's name—it just knows how to build it.</p>
+<p><strong>Named routes</strong> (the better approach for larger apps):</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Navigator.pushNamed(context, <span style="color: #44ff44">&#39;/note-detail&#39;</span>, arguments<span style="color: #ffff44">:</span> note);</code></pre>
+<p>You reference a route by name. The Navigator looks up how to build that route in a centralized route table. The screen doesn't know who called it—it just knows it was called with certain arguments.</p>
+<p>Named routes have advantages:</p>
+<ul><li>Navigation is declarative (you name where you're going, not how to build it)</li><li>Routes are defined in one place</li><li>Deep linking is possible</li><li>The app's structure is visible in the route table</li></ul>
+<h3>How Named Routes Work</h3>
+<p>In your <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MaterialApp</code>, define a route table:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>MaterialApp(
+  routes<span style="color: #ffff44">:</span> {
+    <span style="color: #44ff44">&#39;/&#39;</span><span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> HomeScreen(),
+    <span style="color: #44ff44">&#39;/notes-list&#39;</span><span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NoteListScreen(),
+    <span style="color: #44ff44">&#39;/note-detail&#39;</span><span style="color: #ffff44">:</span> (context) {
+      <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> ModalRoute.of(context)<span style="color: #ffff44">!</span>.settings.arguments <span style="color: #87ceeb">as</span> Note;
+      <span style="color: #87ceeb">return</span> NoteDetailScreen(note<span style="color: #ffff44">:</span> note);
+    },
+    <span style="color: #44ff44">&#39;/create-note&#39;</span><span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> CreateNoteScreen(),
+  },
+  home<span style="color: #ffff44">:</span> HomeScreen(),
+);</code></pre>
+<p>Now navigate by name:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Navigator.pushNamed(
+  context,
+  <span style="color: #44ff44">&#39;/note-detail&#39;</span>,
+  arguments<span style="color: #ffff44">:</span> note,
+);</code></pre>
+<p>The Navigator looks up '/note-detail' in the route table, builds the screen, and passes the note as arguments.</p>
+<h3>The Difference: Push vs. Replace vs. Pop</h3>
+<p><strong>Navigator.push()</strong> adds a new screen to the stack. The previous screen is still there (underneath).</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Navigator.push(context, MaterialPageRoute(builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> DetailsScreen()));
+<span style="color: #888888">// Stack: [Home, Details] - Home is underneath</span></code></pre>
+<p><strong>Navigator.pop()</strong> removes the top screen, revealing the one underneath.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Navigator.pop(context);
+<span style="color: #888888">// Stack: [Home] - Details is removed</span></code></pre>
+<p><strong>Navigator.pushReplacementNamed()</strong> replaces the top screen instead of adding a new one.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Navigator.pushReplacementNamed(context, <span style="color: #44ff44">&#39;/new-screen&#39;</span>);
+<span style="color: #888888">// Stack: [Home, NewScreen] - OldScreen is replaced</span></code></pre>
+<p>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">pushReplacement</code> when the previous screen shouldn't exist anymore. For example, after login succeeds, replace the login screen with the home screen—you don't want users to pop back to the login screen.</p>
+<h2>Passing Data Between Screens</h2>
+<p>Routing becomes complex when you need to pass data. There are several approaches, each appropriate for different situations.</p>
+<h3>Method 1: Constructor Parameters (Simple Cases)</h3>
+<p>For simple data and shallow navigation, pass parameters directly:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NoteDetailScreen(note<span style="color: #ffff44">:</span> selectedNote),
+  ),
+);</code></pre>
+<p>The detail screen receives the note in its constructor and can use it.</p>
+<p><strong>Advantages:</strong> Simple, direct, no ceremony.</p>
+<p><strong>Disadvantages:</strong> Hard-codes the navigation; doesn't scale to deep navigation trees.</p>
+<h3>Method 2: Route Arguments (Named Routes)</h3>
+<p>For named routes, pass data via arguments:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// In the route table</span>
+<span style="color: #44ff44">&#39;/note-detail&#39;</span><span style="color: #ffff44">:</span> (context) {
+  <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> ModalRoute.of(context)<span style="color: #ffff44">!</span>.settings.arguments <span style="color: #87ceeb">as</span> Note;
+  <span style="color: #87ceeb">return</span> NoteDetailScreen(note<span style="color: #ffff44">:</span> note);
+},
+
+<span style="color: #888888">// When navigating</span>
+Navigator.pushNamed(
+  context,
+  <span style="color: #44ff44">&#39;/note-detail&#39;</span>,
+  arguments<span style="color: #ffff44">:</span> note,
+);</code></pre>
+<p>The screen retrieves its arguments from <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ModalRoute.of(context)<span style="color: #ffff44">?</span>.settings.arguments</code>.</p>
+<p><strong>Advantages:</strong> Named routes are cleaner; decouples navigation from screen construction.</p>
+<p><strong>Disadvantages:</strong> Requires casting arguments; doesn't prevent navigation errors if arguments are wrong type.</p>
+<h3>Method 3: State Management (Complex Cases)</h3>
+<p>For complex data that multiple screens need, use your state manager (Provider) instead of passing through routes:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Don&#39;t pass the note—screens read it from Provider</span>
+Navigator.pushNamed(context, <span style="color: #44ff44">&#39;/note-detail&#39;</span>);
+
+<span style="color: #888888">// In NoteDetailScreen, read from Provider</span>
+<span style="color: #87ceeb">class</span> NoteDetailScreen <span style="color: #87ceeb">extends</span> StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> context.watch<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>().findNoteByTitle(
+      ModalRoute.of(context)<span style="color: #ffff44">!</span>.settings.arguments <span style="color: #87ceeb">as</span> <span style="color: #ff4444">String</span>, <span style="color: #888888">// Just pass title</span>
+    );
+    <span style="color: #888888">// ... rest of screen</span>
+  }
+}</code></pre>
+<p>This approach separates navigation concerns from data concerns. Routes pass minimal information (IDs, keys); screens fetch full data from state management.</p>
+<p><strong>Advantages:</strong> Scales to complex apps; state is centralized; screens are decoupled.</p>
+<p><strong>Disadvantages:</strong> Requires understanding state management.</p>
+<h3>Returning Data from a Screen</h3>
+<p>When you pop a screen, you can return data:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// In the detail screen, when the user is done editing</span>
+Navigator.pop(context, updatedNote);
+
+<span style="color: #888888">// In the calling screen, capture the result</span>
+<span style="color: #87ceeb">final</span> result <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> Navigator.push(
+  context,
+  MaterialPageRoute(builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> EditScreen()),
+);
+
+<span style="color: #87ceeb">if</span> (result <span style="color: #ffff44">!</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>) {
+  <span style="color: #888888">// User returned data</span>
+  print(<span style="color: #44ff44">&#39;Edited note: $result&#39;</span>);
+}</code></pre>
+<p><strong>Important:</strong> With state management, you usually don't need this. The detail screen updates the note via the provider, and the list screen watches the provider for changes. Data flows through the provider, not through Navigator return values.</p>
+<h2>Navigation Architecture: GoRouter</h2>
+<p>For larger apps, managing routes with a simple route table becomes unwieldy. <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GoRouter</code> is a package that provides a more powerful routing system:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">final</span> router <span style="color: #ffff44">=</span> GoRouter(
+  routes<span style="color: #ffff44">:</span> [
+    GoRoute(
+      path<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;/&#39;</span>,
+      builder<span style="color: #ffff44">:</span> (context, state) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> <span style="color: #87ceeb">const</span> HomeScreen(),
+      routes<span style="color: #ffff44">:</span> [
+        GoRoute(
+          path<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;notes/:id&#39;</span>,
+          builder<span style="color: #ffff44">:</span> (context, state) {
+            <span style="color: #87ceeb">final</span> id <span style="color: #ffff44">=</span> state.pathParameters[<span style="color: #44ff44">&#39;id&#39;</span>]<span style="color: #ffff44">!</span>;
+            <span style="color: #87ceeb">return</span> NoteDetailScreen(noteId<span style="color: #ffff44">:</span> id);
+          },
+        ),
+      ],
+    ),
+  ],
+);
+
+<span style="color: #888888">// Use GoRouter in your app</span>
+MaterialApp.router(
+  routerConfig<span style="color: #ffff44">:</span> router,
+);
+
+<span style="color: #888888">// Navigate with GoRouter</span>
+context.go(<span style="color: #44ff44">&#39;/notes/$noteId&#39;</span>);</code></pre>
+<p>GoRouter advantages:</p>
+<ul><li>URL-based routing (works on web, enables deep linking)</li><li>Hierarchical route structure</li><li>Route guards (check permissions before navigating)</li><li>Cleaner than manual Navigator management</li></ul>
+<p>However, for learning purposes and smaller apps, the built-in Navigator and named routes are sufficient.</p>
+<h2>Understanding Navigation Context</h2>
+<p>Navigation happens within a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">BuildContext</code>. This is important: not every context can navigate. The context must be from a widget that's a descendant of the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Navigator</code> (which is created by <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MaterialApp</code>).</p>
+<p>A common error:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  runApp(<span style="color: #87ceeb">const</span> MyApp());
+}
+
+<span style="color: #87ceeb">class</span> MyApp <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">const</span> MyApp();
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> MaterialApp(
+      home<span style="color: #ffff44">:</span> HomeScreen(),
+    );
+  }
+}
+
+<span style="color: #87ceeb">class</span> HomeScreen <span style="color: #87ceeb">extends</span> StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> ElevatedButton(
+      onPressed<span style="color: #ffff44">:</span> () {
+        Navigator.push(context, ...); <span style="color: #888888">// Works - context is under MaterialApp</span>
+      },
+      child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Go to next&#39;</span>),
+    );
+  }
+}</code></pre>
+<p>This works because <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">HomeScreen</code> is a descendant of <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MaterialApp</code>, which contains the Navigator.</p>
+<p>If you try to navigate from <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MyApp</code> itself, it fails:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> MyApp <span style="color: #87ceeb">extends</span> StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> MaterialApp(
+      home<span style="color: #ffff44">:</span> ElevatedButton(
+        onPressed<span style="color: #ffff44">:</span> () {
+          Navigator.push(context, ...); <span style="color: #888888">// Fails - context is MyApp, not under Navigator</span>
+        },
+        child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Go to next&#39;</span>),
+      ),
+    );
+  }
+}</code></pre>
+<p>The context is from <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MyApp</code>, which is the parent of the Navigator, not a descendant. The Navigator doesn't exist yet.</p>
+<h2>CRUD Operations Across Screens</h2>
+<p>Now we integrate what you learned in the State Management chapter. Routing and CRUD work together—routes move users between screens, and CRUD operations happen within those screens.</p>
+<h3>READ: Navigating to a Detail Screen</h3>
+<p>When a user taps a note in the list, you navigate to a detail screen to read its full content:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// In NoteListScreen</span>
+Consumer<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>(
+  builder<span style="color: #ffff44">:</span> (context, notesProvider, child) {
+    <span style="color: #87ceeb">return</span> ListView.builder(
+      itemCount<span style="color: #ffff44">:</span> notesProvider.notes.length,
+      itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+        <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> notesProvider.notes[index];
+        <span style="color: #87ceeb">return</span> ListTile(
+          title<span style="color: #ffff44">:</span> Text(note.title),
+          onTap<span style="color: #ffff44">:</span> () {
+            <span style="color: #888888">// Navigate to detail screen, passing the note title</span>
+            Navigator.pushNamed(
+              context,
+              <span style="color: #44ff44">&#39;/note-detail&#39;</span>,
+              arguments<span style="color: #ffff44">:</span> note.title, <span style="color: #888888">// Pass minimal data</span>
+            );
+          },
+        );
+      },
+    );
+  },
+)
+
+<span style="color: #888888">// In route table</span>
+<span style="color: #44ff44">&#39;/note-detail&#39;</span><span style="color: #ffff44">:</span> (context) {
+  <span style="color: #87ceeb">final</span> title <span style="color: #ffff44">=</span> ModalRoute.of(context)<span style="color: #ffff44">!</span>.settings.arguments <span style="color: #87ceeb">as</span> <span style="color: #ff4444">String</span>;
+  <span style="color: #87ceeb">return</span> NoteDetailScreen(noteTitle<span style="color: #ffff44">:</span> title);
+},
+
+<span style="color: #888888">// In NoteDetailScreen</span>
+<span style="color: #87ceeb">class</span> NoteDetailScreen <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> noteTitle;
+
+  <span style="color: #87ceeb">const</span> NoteDetailScreen({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.noteTitle});
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #888888">// READ: fetch the full note from provider using the title</span>
+    <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> context.watch<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>().findNoteByTitle(noteTitle);
+    
+    <span style="color: #87ceeb">if</span> (note <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>) {
+      <span style="color: #87ceeb">return</span> Scaffold(body<span style="color: #ffff44">:</span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Note not found&#39;</span>)));
+    }
+
+    <span style="color: #87ceeb">return</span> Scaffold(
+      appBar<span style="color: #ffff44">:</span> AppBar(title<span style="color: #ffff44">:</span> Text(note.title)),
+      body<span style="color: #ffff44">:</span> Center(child<span style="color: #ffff44">:</span> Text(note.content)),
+    );
+  }
+}</code></pre>
+<p>Key insight: The route passes minimal data (just the title). The detail screen fetches the full note from the provider. This decouples navigation from data fetching.</p>
+<h3>CREATE: Navigating to and Returning from Create Screen</h3>
+<p>When creating a note, you navigate to a create screen, and after the note is created, you return to the list:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// In NoteListScreen</span>
+FloatingActionButton(
+  onPressed<span style="color: #ffff44">:</span> () {
+    Navigator.pushNamed(context, <span style="color: #44ff44">&#39;/create-note&#39;</span>);
+    <span style="color: #888888">// No need to await - the provider already updated the list</span>
+  },
+  child<span style="color: #ffff44">:</span> Icon(Icons.add),
+)
+
+<span style="color: #888888">// In route table</span>
+<span style="color: #44ff44">&#39;/create-note&#39;</span><span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> CreateNoteScreen(),
+
+<span style="color: #888888">// In CreateNoteScreen</span>
+<span style="color: #87ceeb">class</span> CreateNoteScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>CreateNoteScreen<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _CreateNoteScreenState();
+}
+
+<span style="color: #87ceeb">class</span> _CreateNoteScreenState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>CreateNoteScreen<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">late</span> TextEditingController _titleController;
+  <span style="color: #87ceeb">late</span> TextEditingController _contentController;
+
+  @override
+  <span style="color: #87ceeb">void</span> initState() {
+    <span style="color: #87ceeb">super</span>.initState();
+    _titleController <span style="color: #ffff44">=</span> TextEditingController();
+    _contentController <span style="color: #ffff44">=</span> TextEditingController();
+  }
+
+  @override
+  <span style="color: #87ceeb">void</span> dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    <span style="color: #87ceeb">super</span>.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Scaffold(
+      appBar<span style="color: #ffff44">:</span> AppBar(
+        title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Create Note&#39;</span>),
+        actions<span style="color: #ffff44">:</span> [
+          IconButton(
+            icon<span style="color: #ffff44">:</span> Icon(Icons.check),
+            onPressed<span style="color: #ffff44">:</span> _saveNote,
+          ),
+        ],
+      ),
+      body<span style="color: #ffff44">:</span> Padding(
+        padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),
+        child<span style="color: #ffff44">:</span> Column(
+          children<span style="color: #ffff44">:</span> [
+            TextField(controller<span style="color: #ffff44">:</span> _titleController),
+            SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>),
+            TextField(controller<span style="color: #ffff44">:</span> _contentController),
+          ],
+        ),
+      ),
+    );
+  }
+
+  <span style="color: #87ceeb">void</span> _saveNote() {
+    <span style="color: #888888">// CREATE: add note via provider</span>
+    <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> Note(
+      title<span style="color: #ffff44">:</span> _titleController.text,
+      content<span style="color: #ffff44">:</span> _contentController.text,
+      folder<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;General&#39;</span>,
+      tags<span style="color: #ffff44">:</span> [],
+    );
+
+    context.read<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>().createNote(note);
+
+    <span style="color: #888888">// Return to list - the provider already notified listeners</span>
+    Navigator.pop(context);
+    
+    <span style="color: #888888">// Show success</span>
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Note created&#39;</span>)),
+    );
+  }
+}</code></pre>
+<p>Key insight: After CREATE, you simply pop the screen. The provider notified listeners, so the list screen automatically shows the new note. No need to return data through the Navigator.</p>
+<h3>UPDATE: Navigating to Edit and Reflecting Changes</h3>
+<p>When editing a note, navigate to a detail screen in edit mode, make changes, and return. The list automatically reflects changes because the provider notified listeners:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// In NoteListScreen, navigate to detail for editing</span>
+ListTile(
+  title<span style="color: #ffff44">:</span> Text(note.title),
+  onTap<span style="color: #ffff44">:</span> () {
+    Navigator.pushNamed(
+      context,
+      <span style="color: #44ff44">&#39;/note-detail&#39;</span>,
+      arguments<span style="color: #ffff44">:</span> note.title,
+    );
+  },
+)
+
+<span style="color: #888888">// In NoteDetailScreen, implement edit mode</span>
+<span style="color: #87ceeb">class</span> NoteDetailScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> noteTitle;
+
+  <span style="color: #87ceeb">const</span> NoteDetailScreen({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.noteTitle});
+
+  @override
+  State<span style="color: #ffff44"><</span>NoteDetailScreen<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _NoteDetailScreenState();
+}
+
+<span style="color: #87ceeb">class</span> _NoteDetailScreenState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>NoteDetailScreen<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">late</span> TextEditingController _contentController;
+  <span style="color: #ff4444">bool</span> _isEditing <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;
+
+  @override
+  <span style="color: #87ceeb">void</span> initState() {
+    <span style="color: #87ceeb">super</span>.initState();
+    <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> context.read<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>().findNoteByTitle(widget.noteTitle);
+    _contentController <span style="color: #ffff44">=</span> TextEditingController(text<span style="color: #ffff44">:</span> note<span style="color: #ffff44">?</span>.content <span style="color: #ffff44">?</span><span style="color: #ffff44">?</span> <span style="color: #44ff44">&#39;&#39;</span>);
+  }
+
+  @override
+  <span style="color: #87ceeb">void</span> dispose() {
+    _contentController.dispose();
+    <span style="color: #87ceeb">super</span>.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> context.watch<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>().findNoteByTitle(widget.noteTitle);
+
+    <span style="color: #87ceeb">if</span> (note <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>) {
+      <span style="color: #87ceeb">return</span> Scaffold(body<span style="color: #ffff44">:</span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Note not found&#39;</span>)));
+    }
+
+    <span style="color: #87ceeb">return</span> Scaffold(
+      appBar<span style="color: #ffff44">:</span> AppBar(
+        title<span style="color: #ffff44">:</span> Text(note.title),
+        actions<span style="color: #ffff44">:</span> [
+          <span style="color: #87ceeb">if</span> (_isEditing)
+            IconButton(
+              icon<span style="color: #ffff44">:</span> Icon(Icons.check),
+              onPressed<span style="color: #ffff44">:</span> _saveChanges,
+            )
+          <span style="color: #87ceeb">else</span>
+            IconButton(
+              icon<span style="color: #ffff44">:</span> Icon(Icons.edit),
+              onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _isEditing <span style="color: #ffff44">=</span> <span style="color: #87ceeb">true</span>),
+            ),
+        ],
+      ),
+      body<span style="color: #ffff44">:</span> SingleChildScrollView(
+        padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),
+        child<span style="color: #ffff44">:</span> _isEditing
+            <span style="color: #ffff44">?</span> TextField(controller<span style="color: #ffff44">:</span> _contentController)
+            <span style="color: #ffff44">:</span> Text(note.content),
+      ),
+    );
+  }
+
+  <span style="color: #87ceeb">void</span> _saveChanges() {
+    <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> context.read<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>().findNoteByTitle(widget.noteTitle)<span style="color: #ffff44">!</span>;
+    
+    <span style="color: #888888">// UPDATE: modify via provider</span>
+    context.read<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>().updateNote(
+      widget.noteTitle,
+      Note(
+        title<span style="color: #ffff44">:</span> note.title,
+        content<span style="color: #ffff44">:</span> _contentController.text,
+        folder<span style="color: #ffff44">:</span> note.folder,
+        tags<span style="color: #ffff44">:</span> note.tags,
+      ),
+    );
+
+    setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _isEditing <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>);
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Note updated&#39;</span>)),
+    );
+  }
+}</code></pre>
+<p>Key insight: When you UPDATE via the provider, listeners (the list screen) automatically see the changes. You don't need to pass data back through the Navigator.</p>
+<h3>DELETE: Safe Deletion and Navigation</h3>
+<p>When deleting, you might want to return to the list screen:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteDetailScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> noteTitle;
+
+  <span style="color: #87ceeb">const</span> NoteDetailScreen({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.noteTitle});
+
+  @override
+  State<span style="color: #ffff44"><</span>NoteDetailScreen<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _NoteDetailScreenState();
+}
+
+<span style="color: #87ceeb">class</span> _NoteDetailScreenState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>NoteDetailScreen<span style="color: #ffff44">></span> {
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> context.watch<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>().findNoteByTitle(widget.noteTitle);
+
+    <span style="color: #87ceeb">if</span> (note <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>) {
+      <span style="color: #888888">// Note was deleted - navigate back</span>
+      Navigator.pop(context);
+      <span style="color: #87ceeb">return</span> Container();
+    }
+
+    <span style="color: #87ceeb">return</span> Scaffold(
+      appBar<span style="color: #ffff44">:</span> AppBar(
+        title<span style="color: #ffff44">:</span> Text(note.title),
+        actions<span style="color: #ffff44">:</span> [
+          IconButton(
+            icon<span style="color: #ffff44">:</span> Icon(Icons.delete),
+            onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _confirmDelete(context),
+          ),
+        ],
+      ),
+      body<span style="color: #ffff44">:</span> Text(note.content),
+    );
+  }
+
+  <span style="color: #87ceeb">void</span> _confirmDelete(BuildContext context) {
+    showDialog(
+      context<span style="color: #ffff44">:</span> context,
+      builder<span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> AlertDialog(
+        title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Delete note?&#39;</span>),
+        actions<span style="color: #ffff44">:</span> [
+          TextButton(
+            onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Navigator.pop(context),
+            child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Cancel&#39;</span>),
+          ),
+          TextButton(
+            onPressed<span style="color: #ffff44">:</span> () {
+              <span style="color: #888888">// DELETE: remove via provider</span>
+              context.read<span style="color: #ffff44"><</span>NotesProvider<span style="color: #ffff44">></span>().deleteNote(widget.noteTitle);
+
+              <span style="color: #888888">// Close dialog</span>
+              Navigator.pop(context);
+
+              <span style="color: #888888">// Return to list</span>
+              Navigator.pop(context);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Note deleted&#39;</span>)),
+              );
+            },
+            child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Delete&#39;</span>, style<span style="color: #ffff44">:</span> TextStyle(color<span style="color: #ffff44">:</span> Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+}</code></pre>
+<p>Key insight: The detail screen watches the provider for the note. If the note is deleted (perhaps on another screen), the watcher detects it's gone and automatically pops the detail screen.</p>
+<h2>Multi-Screen Navigation Patterns</h2>
+<p>As your app grows, managing navigation across many screens requires structure.</p>
+<h3>Tab Navigation</h3>
+<p>Some apps have multiple screens that are peers (home, search, profile). Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">BottomNavigationBar</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">NavigationRail</code>:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> MainApp <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>MainApp<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _MainAppState();
+}
+
+<span style="color: #87ceeb">class</span> _MainAppState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>MainApp<span style="color: #ffff44">></span> {
+  <span style="color: #ff4444">int</span> _selectedIndex <span style="color: #ffff44">=</span> <span style="color: #bb86fc">0</span>;
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Scaffold(
+      body<span style="color: #ffff44">:</span> IndexedStack(
+        index<span style="color: #ffff44">:</span> _selectedIndex,
+        children<span style="color: #ffff44">:</span> [
+          NoteListScreen(),
+          SearchScreen(),
+          SettingsScreen(),
+        ],
+      ),
+      bottomNavigationBar<span style="color: #ffff44">:</span> BottomNavigationBar(
+        currentIndex<span style="color: #ffff44">:</span> _selectedIndex,
+        items<span style="color: #ffff44">:</span> [
+          BottomNavigationBarItem(icon<span style="color: #ffff44">:</span> Icon(Icons.home), label<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Home&#39;</span>),
+          BottomNavigationBarItem(icon<span style="color: #ffff44">:</span> Icon(Icons.search), label<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Search&#39;</span>),
+          BottomNavigationBarItem(icon<span style="color: #ffff44">:</span> Icon(Icons.settings), label<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Settings&#39;</span>),
+        ],
+        onTap<span style="color: #ffff44">:</span> (index) {
+          setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _selectedIndex <span style="color: #ffff44">=</span> index);
+        },
+      ),
+    );
+  }
+}</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">IndexedStack</code> keeps all screens alive (preserves state), switching between them by index.</p>
+<h3>Hierarchical Navigation</h3>
+<p>Some apps have a clear hierarchy: main screens with detail screens beneath them. Use named routes with a clear structure:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>routes<span style="color: #ffff44">:</span> {
+  <span style="color: #44ff44">&#39;/&#39;</span><span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> MainApp(),
+  <span style="color: #44ff44">&#39;/notes-list&#39;</span><span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NoteListScreen(),
+  <span style="color: #44ff44">&#39;/note-detail&#39;</span><span style="color: #ffff44">:</span> (context) {
+    <span style="color: #87ceeb">final</span> title <span style="color: #ffff44">=</span> ModalRoute.of(context)<span style="color: #ffff44">!</span>.settings.arguments <span style="color: #87ceeb">as</span> <span style="color: #ff4444">String</span>;
+    <span style="color: #87ceeb">return</span> NoteDetailScreen(noteTitle<span style="color: #ffff44">:</span> title);
+  },
+  <span style="color: #44ff44">&#39;/settings&#39;</span><span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> SettingsScreen(),
+  <span style="color: #44ff44">&#39;/about&#39;</span><span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> AboutScreen(),
+}</code></pre>
+<p>Routes follow a logical structure, making the app's organization clear.</p>
+<h2>Best Practices for Navigation</h2>
+<ol><li><strong>Centralize routes:</strong> Define all routes in one place (MaterialApp or a separate file). Don't scatter navigation throughout your code.</li></ol>
+<ol><li><strong>Use meaningful route names:</strong> <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44">/</span>note<span style="color: #ffff44">-</span>detail</code> is clearer than <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44">/</span>detail</code>. Route names are part of your app's API.</li></ol>
+<ol><li><strong>Minimize route arguments:</strong> Pass IDs or keys, not entire objects. Screens fetch full data from state management.</li></ol>
+<ol><li><strong>Respect the back stack:</strong> Users expect the back button to work intuitively. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">push</code> for forward navigation, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">pop</code> for back.</li></ol>
+<ol><li><strong>Show loading states:</strong> When navigating, especially with async operations, show progress.</li></ol>
+<ol><li><strong>Handle missing data gracefully:</strong> If a screen expects data that's missing, show an error or navigate back.</li></ol>
+<ol><li><strong>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">pushReplacement</code> sparingly:</strong> Only when the previous screen shouldn't exist anymore (like after login).</li></ol>
+<hr>
+<h2>Hands-On Project</h2>
+<p>Ready to apply routing with CRUD operations? Work through <a href="markdown-notes-project-part-d.html" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">Markdown Notes Project Part D</a> to refactor the notes app to use named routes and GoRouter, demonstrating how routing and state management work together for clean multi-screen CRUD workflows.</p>
+</body>
+<script src="common.js"></script>
+</html>

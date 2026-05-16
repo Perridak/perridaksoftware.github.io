@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>markdown-notes-project-part-b</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Markdown Notes Project Part B — Flutter UI</h1>
+<h2>Overview</h2>
+<p>This is Part B of your Markdown Note-Taking App. In Part A (Dart Basics), you built a command-line app with in-memory note storage. Now you'll convert that logic into a Flutter UI where users can view notes, edit their content, delete notes, and see a searchable note list.</p>
+<p><strong>Scope:</strong> Build a functional reading and editing interface. Adding new notes will come later in the State Management chapter.</p>
+<h2>Learning Objectives</h2>
+<p>By completing this project, you will:</p>
+<ol><li><strong>Understand widget composition</strong> — Assemble multiple widgets into a cohesive interface</li><li><strong>Manage layout</strong> — Use Row, Column, ListView, and spacing widgets effectively</li><li><strong>Implement interactivity</strong> — Handle user input with TextField, buttons, and GestureDetector</li><li><strong>Apply styling</strong> — Use themes, colors, and Material Design patterns</li><li><strong>Handle state locally</strong> — Use StatefulWidget to manage editing state</li><li><strong>Build a practical app</strong> — Create a real, functional interface users can interact with</li></ol>
+<h2>Project Structure</h2>
+<p>Your Flutter app will have:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>lib<span style="color: #ffff44">/</span>
+├── main.dart              <span style="color: #888888">// App entry point, MaterialApp setup</span>
+├── models<span style="color: #ffff44">/</span>
+│   └── note.dart          <span style="color: #888888">// Note data class (from Part A)</span>
+├── screens<span style="color: #ffff44">/</span>
+│   ├── note_list_screen.dart    <span style="color: #888888">// List of notes with search</span>
+│   └── note_detail_screen.dart  <span style="color: #888888">// Single note viewing/editing</span>
+└── widgets<span style="color: #ffff44">/</span>
+    └── note_card.dart     <span style="color: #888888">// Reusable note preview card</span></code></pre>
+<h2>Core Components</h2>
+<h3>Note Model</h3>
+<p>Reuse the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Note</code> class from Part A:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> Note {
+  <span style="color: #ff4444">String</span> title;
+  <span style="color: #ff4444">String</span> content;
+  <span style="color: #ff4444">String</span> folder;
+  <span style="color: #ff4444">DateTime</span> created;
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span> tags;
+  
+  Note({
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.title,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.content,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.folder,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.tags,
+  }) <span style="color: #ffff44">:</span> created <span style="color: #ffff44">=</span> <span style="color: #ff4444">DateTime</span>.now();
+}</code></pre>
+<h3>Main App Structure</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  runApp(<span style="color: #87ceeb">const</span> MyApp());
+}
+
+<span style="color: #87ceeb">class</span> MyApp <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">const</span> MyApp();
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> MaterialApp(
+      title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Markdown Notes&#39;</span>,
+      theme<span style="color: #ffff44">:</span> ThemeData(
+        useMaterial3<span style="color: #ffff44">:</span> <span style="color: #87ceeb">true</span>,
+        primarySwatch<span style="color: #ffff44">:</span> Colors.blue,
+      ),
+      home<span style="color: #ffff44">:</span> NoteListScreen(),
+    );
+  }
+}</code></pre>
+<h3>NoteListScreen (Main Screen)</h3>
+<p>Display all notes in a searchable list. Users can:</p>
+<ul><li>See all notes</li><li>Search by title or content</li><li>Tap a note to view/edit it</li><li>Delete notes with a swipe or long-press</li></ul>
+<p><strong>Key widgets:</strong></p>
+<ul><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Scaffold</code> — Top-level structure</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AppBar</code> — Title and search icon</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ListView.builder</code> — Scrollable list of notes</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SearchBar</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">TextField</code> — Search functionality</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Dismissible</code> — Swipe-to-delete</li></ul>
+<p><strong>Implementation hints:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteListScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>NoteListScreen<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _NoteListScreenState();
+}
+
+<span style="color: #87ceeb">class</span> _NoteListScreenState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>NoteListScreen<span style="color: #ffff44">></span> {
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> allNotes <span style="color: #ffff44">=</span> []; <span style="color: #888888">// Load from Part A logic</span>
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> filteredNotes <span style="color: #ffff44">=</span> [];
+  <span style="color: #ff4444">String</span> searchQuery <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;&#39;</span>;
+
+  <span style="color: #87ceeb">void</span> _filterNotes(<span style="color: #ff4444">String</span> query) {
+    setState(() {
+      searchQuery <span style="color: #ffff44">=</span> query;
+      filteredNotes <span style="color: #ffff44">=</span> allNotes
+        .where((note) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> 
+          note.title.toLowerCase().contains(query.toLowerCase()) <span style="color: #ffff44">|</span><span style="color: #ffff44">|</span>
+          note.content.toLowerCase().contains(query.toLowerCase())
+        )
+        .toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Scaffold(
+      appBar<span style="color: #ffff44">:</span> AppBar(
+        title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;My Notes&#39;</span>),
+        elevation<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0</span>,
+      ),
+      body<span style="color: #ffff44">:</span> Column(
+        children<span style="color: #ffff44">:</span> [
+          <span style="color: #888888">// Search field</span>
+          Padding(
+            padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),
+            child<span style="color: #ffff44">:</span> TextField(
+              decoration<span style="color: #ffff44">:</span> InputDecoration(
+                hintText<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Search notes...&#39;</span>,
+                prefixIcon<span style="color: #ffff44">:</span> Icon(Icons.search),
+                border<span style="color: #ffff44">:</span> OutlineInputBorder(
+                  borderRadius<span style="color: #ffff44">:</span> BorderRadius.circular(<span style="color: #bb86fc">8</span>),
+                ),
+              ),
+              onChanged<span style="color: #ffff44">:</span> _filterNotes,
+            ),
+          ),
+          <span style="color: #888888">// Note list</span>
+          Expanded(
+            child<span style="color: #ffff44">:</span> filteredNotes.isEmpty
+              <span style="color: #ffff44">?</span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;No notes found&#39;</span>))
+              <span style="color: #ffff44">:</span> ListView.builder(
+                  itemCount<span style="color: #ffff44">:</span> filteredNotes.length,
+                  itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+                    <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> filteredNotes[index];
+                    <span style="color: #87ceeb">return</span> NoteCard(
+                      note<span style="color: #ffff44">:</span> note,
+                      onTap<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _openNote(note),
+                      onDelete<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _deleteNote(note),
+                    );
+                  },
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  <span style="color: #87ceeb">void</span> _openNote(Note note) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder<span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NoteDetailScreen(note<span style="color: #ffff44">:</span> note),
+      ),
+    );
+  }
+
+  <span style="color: #87ceeb">void</span> _deleteNote(Note note) {
+    setState(() {
+      allNotes.remove(note);
+      filteredNotes.remove(note);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Note deleted&#39;</span>)),
+    );
+  }
+}</code></pre>
+<h3>NoteCard Widget</h3>
+<p>A reusable card showing note preview:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteCard <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> Note note;
+  <span style="color: #87ceeb">final</span> VoidCallback onTap;
+  <span style="color: #87ceeb">final</span> VoidCallback onDelete;
+
+  <span style="color: #87ceeb">const</span> NoteCard({
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.note,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onTap,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Dismissible(
+      key<span style="color: #ffff44">:</span> Key(note.title),
+      onDismissed<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> onDelete(),
+      background<span style="color: #ffff44">:</span> Container(
+        color<span style="color: #ffff44">:</span> Colors.red,
+        alignment<span style="color: #ffff44">:</span> Alignment.centerRight,
+        padding<span style="color: #ffff44">:</span> EdgeInsets.only(right<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>),
+        child<span style="color: #ffff44">:</span> Icon(Icons.delete, color<span style="color: #ffff44">:</span> Colors.white),
+      ),
+      child<span style="color: #ffff44">:</span> Card(
+        margin<span style="color: #ffff44">:</span> EdgeInsets.symmetric(horizontal<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>, vertical<span style="color: #ffff44">:</span> <span style="color: #bb86fc">4</span>),
+        child<span style="color: #ffff44">:</span> ListTile(
+          title<span style="color: #ffff44">:</span> Text(note.title, style<span style="color: #ffff44">:</span> TextStyle(fontWeight<span style="color: #ffff44">:</span> FontWeight.bold)),
+          subtitle<span style="color: #ffff44">:</span> Text(
+            note.content.length <span style="color: #ffff44">></span> <span style="color: #bb86fc">100</span>
+              <span style="color: #ffff44">?</span> note.content.substring(<span style="color: #bb86fc">0</span>, <span style="color: #bb86fc">100</span>) <span style="color: #ffff44">+</span> <span style="color: #44ff44">&#39;...&#39;</span>
+              <span style="color: #ffff44">:</span> note.content,
+            maxLines<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>,
+            overflow<span style="color: #ffff44">:</span> TextOverflow.ellipsis,
+          ),
+          trailing<span style="color: #ffff44">:</span> Icon(Icons.chevron_right),
+          onTap<span style="color: #ffff44">:</span> onTap,
+        ),
+      ),
+    );
+  }
+}</code></pre>
+<h3>NoteDetailScreen (Viewing/Editing)</h3>
+<p>Display a single note with editing capabilities. Users can:</p>
+<ul><li>Read the full note content</li><li>Edit the title and content</li><li>Delete the note</li><li>See metadata (created date, tags, folder)</li></ul>
+<p><strong>Key widgets:</strong></p>
+<ul><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code> to manage editing state</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">TextField</code> for title and content editing</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">IconButton</code> for save/delete actions</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AppBar</code> with action buttons</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">FloatingActionButton</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ElevatedButton</code> for save</li></ul>
+<p><strong>Implementation hints:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteDetailScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  <span style="color: #87ceeb">final</span> Note note;
+
+  <span style="color: #87ceeb">const</span> NoteDetailScreen({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.note});
+
+  @override
+  State<span style="color: #ffff44"><</span>NoteDetailScreen<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _NoteDetailScreenState();
+}
+
+<span style="color: #87ceeb">class</span> _NoteDetailScreenState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>NoteDetailScreen<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">late</span> TextEditingController _titleController;
+  <span style="color: #87ceeb">late</span> TextEditingController _contentController;
+  <span style="color: #ff4444">bool</span> _isEditing <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;
+
+  @override
+  <span style="color: #87ceeb">void</span> initState() {
+    <span style="color: #87ceeb">super</span>.initState();
+    _titleController <span style="color: #ffff44">=</span> TextEditingController(text<span style="color: #ffff44">:</span> widget.note.title);
+    _contentController <span style="color: #ffff44">=</span> TextEditingController(text<span style="color: #ffff44">:</span> widget.note.content);
+  }
+
+  @override
+  <span style="color: #87ceeb">void</span> dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    <span style="color: #87ceeb">super</span>.dispose();
+  }
+
+  <span style="color: #87ceeb">void</span> _saveNote() {
+    widget.note.title <span style="color: #ffff44">=</span> _titleController.text;
+    widget.note.content <span style="color: #ffff44">=</span> _contentController.text;
+    setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _isEditing <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Note saved&#39;</span>)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Scaffold(
+      appBar<span style="color: #ffff44">:</span> AppBar(
+        title<span style="color: #ffff44">:</span> Text(_isEditing <span style="color: #ffff44">?</span> <span style="color: #44ff44">&#39;Edit Note&#39;</span> <span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;View Note&#39;</span>),
+        actions<span style="color: #ffff44">:</span> [
+          <span style="color: #87ceeb">if</span> (_isEditing)
+            IconButton(
+              icon<span style="color: #ffff44">:</span> Icon(Icons.check),
+              onPressed<span style="color: #ffff44">:</span> _saveNote,
+            )
+          <span style="color: #87ceeb">else</span>
+            IconButton(
+              icon<span style="color: #ffff44">:</span> Icon(Icons.edit),
+              onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _isEditing <span style="color: #ffff44">=</span> <span style="color: #87ceeb">true</span>),
+            ),
+          IconButton(
+            icon<span style="color: #ffff44">:</span> Icon(Icons.delete),
+            onPressed<span style="color: #ffff44">:</span> () {
+              Navigator.pop(context);
+              <span style="color: #888888">// Note deletion is handled in parent screen</span>
+            },
+          ),
+        ],
+      ),
+      body<span style="color: #ffff44">:</span> SingleChildScrollView(
+        padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),
+        child<span style="color: #ffff44">:</span> Column(
+          crossAxisAlignment<span style="color: #ffff44">:</span> CrossAxisAlignment.start,
+          children<span style="color: #ffff44">:</span> [
+            <span style="color: #888888">// Title field</span>
+            _isEditing
+              <span style="color: #ffff44">?</span> TextField(
+                  controller<span style="color: #ffff44">:</span> _titleController,
+                  style<span style="color: #ffff44">:</span> TextStyle(fontSize<span style="color: #ffff44">:</span> <span style="color: #bb86fc">20</span>, fontWeight<span style="color: #ffff44">:</span> FontWeight.bold),
+                  decoration<span style="color: #ffff44">:</span> InputDecoration(
+                    hintText<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note title&#39;</span>,
+                    border<span style="color: #ffff44">:</span> OutlineInputBorder(),
+                  ),
+                )
+              <span style="color: #ffff44">:</span> Text(
+                  widget.note.title,
+                  style<span style="color: #ffff44">:</span> TextStyle(fontSize<span style="color: #ffff44">:</span> <span style="color: #bb86fc">20</span>, fontWeight<span style="color: #ffff44">:</span> FontWeight.bold),
+                ),
+            SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>),
+            
+            <span style="color: #888888">// Metadata</span>
+            <span style="color: #87ceeb">if</span> (<span style="color: #ffff44">!</span>_isEditing) ...[
+              Wrap(
+                spacing<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>,
+                children<span style="color: #ffff44">:</span> [
+                  Chip(label<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Folder: ${widget.note.folder}&#39;</span>)),
+                  <span style="color: #87ceeb">if</span> (widget.note.tags.isNotEmpty)
+                    ...widget.note.tags.map((tag) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Chip(label<span style="color: #ffff44">:</span> Text(tag))),
+                ],
+              ),
+              SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>),
+            ],
+            
+            <span style="color: #888888">// Content field</span>
+            _isEditing
+              <span style="color: #ffff44">?</span> TextField(
+                  controller<span style="color: #ffff44">:</span> _contentController,
+                  maxLines<span style="color: #ffff44">:</span> <span style="color: #87ceeb">null</span>,
+                  decoration<span style="color: #ffff44">:</span> InputDecoration(
+                    hintText<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note content&#39;</span>,
+                    border<span style="color: #ffff44">:</span> OutlineInputBorder(),
+                  ),
+                )
+              <span style="color: #ffff44">:</span> Text(widget.note.content),
+          ],
+        ),
+      ),
+    );
+  }
+}</code></pre>
+<h2>Implementation Steps</h2>
+<h3>Step 1: Create Note Model (10 mins)</h3>
+<ul><li>Copy the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Note</code> class from Part A</li><li>Ensure it has all necessary fields and methods</li></ul>
+<h3>Step 2: Set Up Main App (5 mins)</h3>
+<ul><li>Create <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">main.dart</code> with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MaterialApp</code></li><li>Set up basic theme</li><li>Create <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">NoteListScreen</code> placeholder</li></ul>
+<h3>Step 3: Build NoteListScreen (20 mins)</h3>
+<ul><li>Create <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Scaffold</code> with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AppBar</code></li><li>Add search <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">TextField</code></li><li>Implement <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ListView.builder</code> with sample notes</li><li>Handle filtering and display</li></ul>
+<h3>Step 4: Create NoteCard Widget (10 mins)</h3>
+<ul><li>Build reusable card for note preview</li><li>Add swipe-to-delete with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Dismissible</code></li><li>Style with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Card</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ListTile</code></li></ul>
+<h3>Step 5: Build NoteDetailScreen (20 mins)</h3>
+<ul><li>Create view mode (read-only display)</li><li>Create edit mode (editable TextFields)</li><li>Toggle between modes</li><li>Add save and delete functionality</li></ul>
+<h3>Step 6: Connect Navigation (5 mins)</h3>
+<ul><li>Wire up <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">NoteCard</code> onTap to navigate to detail screen</li><li>Handle back navigation</li><li>Refresh list after edits/deletions</li></ul>
+<h3>Step 7: Test and Polish (10 mins)</h3>
+<ul><li>Create sample notes for testing</li><li>Test search, edit, delete workflows</li><li>Verify UI responsiveness</li></ul>
+<p><strong>Total: ~60 minutes of hands-on coding</strong></p>
+<h2>Testing Checklist</h2>
+<ul><li>[ ] App launches without errors</li><li>[ ] Search filters notes by title and content</li><li>[ ] Tapping a note opens detail screen</li><li>[ ] Editing mode activates when edit button is pressed</li><li>[ ] Saving updates note title and content</li><li>[ ] Swiping note dismisses it and shows delete confirmation</li><li>[ ] Back navigation returns to list</li><li>[ ] List refreshes after edit or delete</li><li>[ ] All buttons are clearly visible and functional</li><li>[ ] Layout is readable on different screen sizes</li></ul>
+<h2>Stretch Goals</h2>
+<ul><li>[ ] Add basic markdown rendering (bold, italic, code blocks)</li><li>[ ] Implement note preview with formatted text</li><li>[ ] Add floating action button to jump to top of list</li><li>[ ] Persist notes to device storage (SharedPreferences)</li><li>[ ] Add folder filtering to the list screen</li></ul>
+<h2>Key Learning Points</h2>
+<p>You'll learn how to:</p>
+<ol><li><strong>Compose complex UIs</strong> from simple widgets</li><li><strong>Manage local state</strong> with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState</code></li><li><strong>Use common Material Design patterns</strong> (AppBar, FAB, Snackbar)</li><li><strong>Handle user input</strong> effectively</li><li><strong>Navigate between screens</strong> with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Navigator</code></li><li><strong>Style and theme</strong> your app</li><li><strong>Implement common workflows</strong> (CRUD operations at read/update/delete level)</li></ol>
+<h2>How This Evolves</h2>
+<p>In future chapters, you'll expand this app:</p>
+<ul><li><strong>State Management Chapter:</strong> Replace local <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState</code> with Provider or Riverpod for better scalability</li><li><strong>Routing Chapter:</strong> Add proper named routes and deep linking</li><li><strong>Adding notes:</strong> Implement the "Create" part of CRUD</li><li><strong>Persistence:</strong> Add SQLite storage instead of in-memory</li><li><strong>Best Practices Chapter:</strong> Refactor for testability and maintainability</li></ul>
+<p>For now, focus on building a solid UI that demonstrates widget composition and interactivity.</p>
+</body>
+<script src="common.js"></script>
+</html>

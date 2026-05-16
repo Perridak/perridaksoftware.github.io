@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04-FlutterWidgets</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Flutter Widgets</h1>
+<p>In Flutter, everything is a widget. A widget is an immutable description of part of your user interface. Unlike other UI frameworks that separate structure from styling, Flutter widgets combine both—they are self-contained, reusable components that describe what a piece of your UI should look like.</p>
+<p>This chapter covers Flutter's essential widgets in the order you'd naturally use them when building a real app. We'll start with app structure and navigation, then build layouts, add interactivity, apply styling, and handle async operations. By the end, you'll be able to construct a complete, functional mobile UI without relying on drag-and-drop tools.</p>
+<h2>Material vs. Cupertino: Design Systems</h2>
+<p>Flutter ships with two complete design systems:</p>
+<p><strong>Material Design</strong> implements Google's Material Design 3 specification. It's the default and recommended choice for most apps. Material provides a consistent, modern look across Android, iOS, web, and desktop. Components include <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AppBar</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">FloatingActionButton</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ElevatedButton</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Card</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SnackBar</code>, and hundreds more. If you're new to Flutter, start with Material.</p>
+<p><strong>Cupertino</strong> implements Apple's Human Interface Guidelines for iOS and macOS. Use Cupertino when building exclusively for Apple platforms or when you want the exact iOS/macOS native look. Cupertino components include <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CupertinoNavigationBar</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CupertinoButton</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CupertinoSwitch</code>, and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CupertinoAlertDialog</code>. They look and behave like native iOS controls.</p>
+<p>You can use both in the same app by checking the platform at runtime:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;dart:io&#39;</span>;
+<span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:flutter/material.dart&#39;</span>;
+<span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:flutter/cupertino.dart&#39;</span>;
+
+Widget getPlatformButton() {
+  <span style="color: #87ceeb">if</span> (Platform.isIOS) {
+    <span style="color: #87ceeb">return</span> CupertinoButton(
+      onPressed<span style="color: #ffff44">:</span> () {},
+      child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;iOS Button&#39;</span>),
+    );
+  } <span style="color: #87ceeb">else</span> {
+    <span style="color: #87ceeb">return</span> ElevatedButton(
+      onPressed<span style="color: #ffff44">:</span> () {},
+      child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Android Button&#39;</span>),
+    );
+  }
+}</code></pre>
+<p>For this chapter, we focus on Material Design, as it's the most common choice for cross-platform apps.</p>
+<h2>Core Widget Concepts</h2>
+<h3>Stateless vs. Stateful Widgets</h3>
+<p>A <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatelessWidget</code> is immutable and cannot change. Once created, it displays the same UI every time, based only on its constructor parameters. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatelessWidget</code> for UI that doesn't respond to user interaction or change over time.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> Greeting <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> name;
+
+  <span style="color: #87ceeb">const</span> Greeting({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.name});
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Text(<span style="color: #44ff44">&#39;Hello, $name!&#39;</span>);
+  }
+}</code></pre>
+<p>A <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code> manages mutable state and rebuilds when that state changes. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code> when your UI needs to respond to user input, timers, animations, or data changes. The widget itself is immutable, but its associated <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">State</code> object holds mutable data.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> Counter <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>Counter<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _CounterState();
+}
+
+<span style="color: #87ceeb">class</span> _CounterState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>Counter<span style="color: #ffff44">></span> {
+  <span style="color: #ff4444">int</span> count <span style="color: #ffff44">=</span> <span style="color: #bb86fc">0</span>;
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Column(
+      children<span style="color: #ffff44">:</span> [
+        Text(<span style="color: #44ff44">&#39;Count: $count&#39;</span>),
+        ElevatedButton(
+          onPressed<span style="color: #ffff44">:</span> () {
+            setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> count<span style="color: #ffff44">+</span><span style="color: #ffff44">+</span>);
+          },
+          child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Increment&#39;</span>),
+        ),
+      ],
+    );
+  }
+}</code></pre>
+<p><strong>Best practice:</strong> Start with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatelessWidget</code>. Only use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code> when you genuinely need mutable state. As your app grows, consider moving state management to dedicated patterns covered in the State Management chapter.</p>
+<h3>The `const` Keyword and Performance</h3>
+<p>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> constructors whenever possible. When a widget is declared as <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code>, Flutter reuses the same instance across rebuilds, avoiding unnecessary reconstruction work. This is especially important for widgets that don't change.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Good: const avoids rebuilds</span>
+<span style="color: #87ceeb">const</span> Text(<span style="color: #44ff44">&#39;Static label&#39;</span>)
+
+<span style="color: #888888">// Less efficient: rebuilds even though content is the same</span>
+Text(<span style="color: #44ff44">&#39;Static label&#39;</span>)
+
+<span style="color: #888888">// Also good: const for unchanging child widgets</span>
+<span style="color: #87ceeb">const</span> SizedBox(
+  width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>,
+  height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>,
+  child<span style="color: #ffff44">:</span> Icon(Icons.star),
+)</code></pre>
+<p>Many built-in widgets have <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> constructors. Use them when the widget's properties won't change.</p>
+<h3>BuildContext</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">BuildContext</code> is a handle to the location of a widget in the widget tree. It's passed to the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">build()</code> method and allows you to access inherited data, theme information, and the navigator. Think of it as a reference that says "you are here in the widget tree."</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>@override
+Widget build(BuildContext context) {
+  <span style="color: #888888">// Access the current theme</span>
+  <span style="color: #87ceeb">var</span> theme <span style="color: #ffff44">=</span> Theme.of(context);
+  
+  <span style="color: #888888">// Check device size</span>
+  <span style="color: #87ceeb">var</span> screenWidth <span style="color: #ffff44">=</span> MediaQuery.of(context).size.width;
+  
+  <span style="color: #888888">// Navigate to a new screen</span>
+  Navigator.push(context, MaterialPageRoute(builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NextPage()));
+  
+  <span style="color: #87ceeb">return</span> Container();
+}</code></pre>
+<h2>Building Your App Structure: MaterialApp and Scaffold</h2>
+<h3>MaterialApp</h3>
+<p>Every Flutter app starts with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MaterialApp</code>. It's your root widget and configures your entire app's theme, title, home screen, and routing.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  runApp(<span style="color: #87ceeb">const</span> MyApp());
+}
+
+<span style="color: #87ceeb">class</span> MyApp <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">const</span> MyApp();
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> MaterialApp(
+      title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;My App&#39;</span>,
+      theme<span style="color: #ffff44">:</span> ThemeData(
+        useMaterial3<span style="color: #ffff44">:</span> <span style="color: #87ceeb">true</span>,
+        primarySwatch<span style="color: #ffff44">:</span> Colors.blue,
+      ),
+      home<span style="color: #ffff44">:</span> HomeScreen(),
+    );
+  }
+}</code></pre>
+<h3>Scaffold</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Scaffold</code> provides the basic Material Design visual structure for a screen. It holds your <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AppBar</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Drawer</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">BottomNavigationBar</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">FloatingActionButton</code>, and main content area. Most screens in your app will use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Scaffold</code>.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>@override
+Widget build(BuildContext context) {
+  <span style="color: #87ceeb">return</span> Scaffold(
+    appBar<span style="color: #ffff44">:</span> AppBar(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Home&#39;</span>)),
+    drawer<span style="color: #ffff44">:</span> Drawer(child<span style="color: #ffff44">:</span> MyDrawerContent()),
+    body<span style="color: #ffff44">:</span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Main content&#39;</span>)),
+    floatingActionButton<span style="color: #ffff44">:</span> FloatingActionButton(
+      onPressed<span style="color: #ffff44">:</span> () {},
+      child<span style="color: #ffff44">:</span> Icon(Icons.add),
+    ),
+  );
+}</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Scaffold</code> automatically handles:</p>
+<ul><li>Padding under the system status bar</li><li>AppBar positioned at the top</li><li>Body content below the AppBar</li><li>Drawer slides in from the side</li><li>FloatingActionButton positioned in the corner</li><li>SnackBars displayed at the bottom</li></ul>
+<p>Without <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Scaffold</code>, you'd manually position all these elements. Use it.</p>
+<h3>AppBar</h3>
+<p>The <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AppBar</code> sits at the top of your screen and typically displays your app title, navigation controls, and actions. It's one of the most important components in mobile apps because users expect navigation options at the top.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>AppBar(
+  title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;My App&#39;</span>),
+  centerTitle<span style="color: #ffff44">:</span> <span style="color: #87ceeb">true</span>,              <span style="color: #888888">// Center the title</span>
+  elevation<span style="color: #ffff44">:</span> <span style="color: #bb86fc">4</span>,                   <span style="color: #888888">// Shadow depth</span>
+  backgroundColor<span style="color: #ffff44">:</span> Colors.blue,
+  foregroundColor<span style="color: #ffff44">:</span> Colors.white,  <span style="color: #888888">// Text and icon color</span>
+  leading<span style="color: #ffff44">:</span> Icon(Icons.menu),      <span style="color: #888888">// Left-side icon (usually hamburger)</span>
+  actions<span style="color: #ffff44">:</span> [
+    IconButton(
+      icon<span style="color: #ffff44">:</span> Icon(Icons.search),
+      onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Search tapped&#39;</span>),
+    ),
+    IconButton(
+      icon<span style="color: #ffff44">:</span> Icon(Icons.settings),
+      onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Settings tapped&#39;</span>),
+    ),
+  ],
+)</code></pre>
+<p><strong>When to use AppBar:</strong></p>
+<ul><li>Display your app name or current page title</li><li>Show navigation controls (back button, menu icon)</li><li>Display action buttons (search, settings, share)</li><li>Provide quick access to common functions</li></ul>
+<p>The <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">leading</code> widget is usually <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">null</span></code> (auto-generates a back button if there's a previous screen) or an icon for opening the drawer. The <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">actions</code> list holds buttons on the right side.</p>
+<h3>Drawer</h3>
+<p>A <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Drawer</code> slides in from the left side (or right, if you use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">endDrawer</code>) and provides navigation to different sections of your app. It's the "hamburger menu" users expect on mobile.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Scaffold(
+  appBar<span style="color: #ffff44">:</span> AppBar(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Home&#39;</span>)),
+  drawer<span style="color: #ffff44">:</span> Drawer(
+    child<span style="color: #ffff44">:</span> ListView(
+      padding<span style="color: #ffff44">:</span> EdgeInsets.zero,
+      children<span style="color: #ffff44">:</span> [
+        DrawerHeader(
+          decoration<span style="color: #ffff44">:</span> BoxDecoration(color<span style="color: #ffff44">:</span> Colors.blue),
+          child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Navigation&#39;</span>, style<span style="color: #ffff44">:</span> TextStyle(color<span style="color: #ffff44">:</span> Colors.white)),
+        ),
+        ListTile(
+          leading<span style="color: #ffff44">:</span> Icon(Icons.home),
+          title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Home&#39;</span>),
+          onTap<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Navigator.pop(context), <span style="color: #888888">// Close drawer</span>
+        ),
+        ListTile(
+          leading<span style="color: #ffff44">:</span> Icon(Icons.settings),
+          title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Settings&#39;</span>),
+          onTap<span style="color: #ffff44">:</span> () {
+            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> SettingsScreen()));
+          },
+        ),
+        ListTile(
+          leading<span style="color: #ffff44">:</span> Icon(Icons.info),
+          title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;About&#39;</span>),
+          onTap<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Navigator.pop(context),
+        ),
+      ],
+    ),
+  ),
+  body<span style="color: #ffff44">:</span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Main content&#39;</span>)),
+)</code></pre>
+<p><strong>When to use Drawer:</strong></p>
+<ul><li>Provide navigation to multiple sections of your app</li><li>Hide menu options to keep the main content area clean</li><li>Organize app features hierarchically</li></ul>
+<p>The drawer automatically gets a hamburger icon in the AppBar's leading position. When users tap it, the drawer slides open. Tap an item to navigate, then call <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Navigator.pop(context)</code> to close the drawer.</p>
+<h2>Basic Building Blocks</h2>
+<h3>Text and TextStyle</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Text</code> displays readable text on screen. Most UIs consist primarily of text.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Simple text</span>
+Text(<span style="color: #44ff44">&#39;Hello, World!&#39;</span>)
+
+<span style="color: #888888">// Styled text</span>
+Text(
+  <span style="color: #44ff44">&#39;Large bold text&#39;</span>,
+  style<span style="color: #ffff44">:</span> TextStyle(
+    fontSize<span style="color: #ffff44">:</span> <span style="color: #bb86fc">24</span>,
+    fontWeight<span style="color: #ffff44">:</span> FontWeight.bold,
+    color<span style="color: #ffff44">:</span> Colors.blue,
+  ),
+)
+
+<span style="color: #888888">// Multiple styles in one widget</span>
+RichText(
+  text<span style="color: #ffff44">:</span> TextSpan(
+    children<span style="color: #ffff44">:</span> [
+      TextSpan(text<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Bold &#39;</span>, style<span style="color: #ffff44">:</span> TextStyle(fontWeight<span style="color: #ffff44">:</span> FontWeight.bold)),
+      TextSpan(text<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;normal &#39;</span>, style<span style="color: #ffff44">:</span> TextStyle(fontWeight<span style="color: #ffff44">:</span> FontWeight.normal)),
+      TextSpan(text<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;italic&#39;</span>, style<span style="color: #ffff44">:</span> TextStyle(fontStyle<span style="color: #ffff44">:</span> FontStyle.italic)),
+    ],
+  ),
+)</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Text</code> is a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatelessWidget</code>—it doesn't respond to taps. To make text tappable, wrap it in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GestureDetector</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">InkWell</code>.</p>
+<h3>Icon</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Icon</code> displays vector graphics from Material's icon set. Icons are lightweight, scalable, and look great at any size.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Icon(Icons.home)                              <span style="color: #888888">// Default size (24)</span>
+Icon(Icons.favorite, color<span style="color: #ffff44">:</span> Colors.red)      <span style="color: #888888">// Red heart</span>
+Icon(Icons.settings, size<span style="color: #ffff44">:</span> <span style="color: #bb86fc">32</span>)                <span style="color: #888888">// Larger icon</span>
+Icon(Icons.shopping_cart, color<span style="color: #ffff44">:</span> Colors.blue, size<span style="color: #ffff44">:</span> <span style="color: #bb86fc">28</span>)</code></pre>
+<p>Flutter includes hundreds of Material icons. Browse them at the <a href="https://fonts.google.com/icons" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">Material Icons documentation</a>.</p>
+<h3>Container</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Container</code> is a catch-all widget for styling and positioning. It combines padding, margin, background color, border, and child alignment into one widget. Use it when you need to style a piece of your UI.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Container(
+  width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>,
+  height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>,
+  padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),              <span style="color: #888888">// Space inside</span>
+  margin<span style="color: #ffff44">:</span> EdgeInsets.symmetric(vertical<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>), <span style="color: #888888">// Space outside</span>
+  decoration<span style="color: #ffff44">:</span> BoxDecoration(
+    color<span style="color: #ffff44">:</span> Colors.blue,
+    border<span style="color: #ffff44">:</span> Border.all(color<span style="color: #ffff44">:</span> Colors.black, width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>),
+    borderRadius<span style="color: #ffff44">:</span> BorderRadius.circular(<span style="color: #bb86fc">8</span>),
+  ),
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Styled container&#39;</span>),
+)</code></pre>
+<p><strong>When to use Container:</strong></p>
+<ul><li>Add background color to a widget</li><li>Add padding or margin</li><li>Add a border or rounded corners</li><li>Combine multiple styling properties</li></ul>
+<p><strong>Watch out for:</strong> <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Container</code> has no <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> constructor (it's mutable). For simple fixed-size boxes or spacing, use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SizedBox</code> instead. It's more efficient and has a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> constructor.</p>
+<h3>SizedBox</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SizedBox</code> creates a box with a specific size, or adds fixed spacing between widgets. It's simpler and more efficient than <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Container</code> when you only need to control size.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Create a 200x100 box</span>
+SizedBox(width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>, child<span style="color: #ffff44">:</span> myWidget)
+
+<span style="color: #888888">// Add vertical spacing between widgets</span>
+Column(
+  children<span style="color: #ffff44">:</span> [
+    Text(<span style="color: #44ff44">&#39;Item 1&#39;</span>),
+    SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>),  <span style="color: #888888">// 16 pixels of space</span>
+    Text(<span style="color: #44ff44">&#39;Item 2&#39;</span>),
+  ],
+)
+
+<span style="color: #888888">// Add horizontal spacing</span>
+Row(
+  children<span style="color: #ffff44">:</span> [
+    Icon(Icons.email),
+    SizedBox(width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>),    <span style="color: #888888">// 8 pixels of space</span>
+    Text(<span style="color: #44ff44">&#39;user@example.com&#39;</span>),
+  ],
+)</code></pre>
+<p>Prefer <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SizedBox</code> over <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Container</code> for spacing and sizing. It's more performant because it has a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> constructor.</p>
+<h3>Padding</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Padding</code> adds space inside a widget. Use it when you want to create space between a widget and its edges (or between a widget and its content).</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Padding(
+  padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),  <span style="color: #888888">// 16 pixels on all sides</span>
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Padded text&#39;</span>),
+)
+
+Padding(
+  padding<span style="color: #ffff44">:</span> EdgeInsets.symmetric(horizontal<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>, vertical<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>),
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Custom padding&#39;</span>),
+)
+
+Padding(
+  padding<span style="color: #ffff44">:</span> EdgeInsets.only(left<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>, top<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>),
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Padding on specific sides&#39;</span>),
+)</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Padding</code> is cleaner than wrapping everything in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Container</code> when you only need padding.</p>
+<h2>Layout Widgets: Building Multi-Widget UIs</h2>
+<p>Layout widgets arrange multiple children. This is where you spend most of your Flutter time.</p>
+<h3>Row: Arrange Widgets Horizontally</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Row</code> arranges widgets in a single horizontal line (left to right). Use it when you want to display widgets side-by-side, like an icon next to text, or buttons in a row.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Row(
+  children<span style="color: #ffff44">:</span> [
+    Icon(Icons.email),
+    SizedBox(width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>),
+    Text(<span style="color: #44ff44">&#39;user@example.com&#39;</span>),
+  ],
+)</code></pre>
+<p>By default, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Row</code> sizes itself to fit its children and doesn't expand. Control its behaviour with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">mainAxisAlignment</code> (horizontal) and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">crossAxisAlignment</code> (vertical):</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Row(
+  mainAxisAlignment<span style="color: #ffff44">:</span> MainAxisAlignment.spaceBetween,  <span style="color: #888888">// Space items evenly</span>
+  crossAxisAlignment<span style="color: #ffff44">:</span> CrossAxisAlignment.center,       <span style="color: #888888">// Vertically centre</span>
+  children<span style="color: #ffff44">:</span> [
+    Text(<span style="color: #44ff44">&#39;Left&#39;</span>),
+    Text(<span style="color: #44ff44">&#39;Right&#39;</span>),
+  ],
+)</code></pre>
+<p><strong>Common alignments:</strong></p>
+<ul><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MainAxisAlignment.start</code> — Pack items to the left</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MainAxisAlignment.end</code> — Pack items to the right</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MainAxisAlignment.center</code> — Pack items in the centre</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MainAxisAlignment.spaceEvenly</code> — Equal space between and around items</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MainAxisAlignment.spaceBetween</code> — Equal space between items (none around edges)</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CrossAxisAlignment.stretch</code> — Expand items to fill available vertical space</li></ul>
+<p><strong>When to use Row:</strong></p>
+<ul><li>Display an icon with text next to it</li><li>Place buttons horizontally</li><li>Show a horizontal list of items</li><li>Create two-column layouts (with Expanded)</li></ul>
+<h3>Column: Arrange Widgets Vertically</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Column</code> arranges widgets in a single vertical line (top to bottom). Use it for most page layouts—headers, content, buttons.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Column(
+  children<span style="color: #ffff44">:</span> [
+    Text(<span style="color: #44ff44">&#39;Title&#39;</span>, style<span style="color: #ffff44">:</span> TextStyle(fontSize<span style="color: #ffff44">:</span> <span style="color: #bb86fc">20</span>, fontWeight<span style="color: #ffff44">:</span> FontWeight.bold)),
+    SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>),
+    Text(<span style="color: #44ff44">&#39;Subtitle&#39;</span>),
+    SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>),
+    ElevatedButton(onPressed<span style="color: #ffff44">:</span> () {}, child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Action&#39;</span>)),
+  ],
+)</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Column</code> controls spacing and alignment the same way as <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Row</code>, but with vertical (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">mainAxisAlignment</code>) and horizontal (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">crossAxisAlignment</code>) directions swapped:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Column(
+  mainAxisAlignment<span style="color: #ffff44">:</span> MainAxisAlignment.start,       <span style="color: #888888">// Top alignment</span>
+  crossAxisAlignment<span style="color: #ffff44">:</span> CrossAxisAlignment.stretch,   <span style="color: #888888">// Full width</span>
+  children<span style="color: #ffff44">:</span> [
+    Text(<span style="color: #44ff44">&#39;Item 1&#39;</span>),
+    Text(<span style="color: #44ff44">&#39;Item 2&#39;</span>),
+  ],
+)</code></pre>
+<p><strong>When to use Column:</strong></p>
+<ul><li>Build most page layouts</li><li>Stack text, buttons, and other widgets vertically</li><li>Create forms with fields stacked vertically</li></ul>
+<h3>Flex and Expanded: Divide Available Space</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Flex</code> is the base for both <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Row</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Column</code>. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Expanded</code> to make a child take up a proportional share of available space.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Row(
+  children<span style="color: #ffff44">:</span> [
+    Expanded(
+      flex<span style="color: #ffff44">:</span> <span style="color: #bb86fc">1</span>,
+      child<span style="color: #ffff44">:</span> Container(color<span style="color: #ffff44">:</span> Colors.red, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>),
+    ),
+    Expanded(
+      flex<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>,
+      child<span style="color: #ffff44">:</span> Container(color<span style="color: #ffff44">:</span> Colors.blue, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>),
+    ),
+    <span style="color: #888888">// Red takes 1 part, blue takes 2 parts</span>
+    <span style="color: #888888">// Together they fill the row</span>
+  ],
+)</code></pre>
+<p><strong>When to use Expanded:</strong></p>
+<ul><li>Make widgets fill available space in a Row or Column</li><li>Create responsive layouts that adapt to screen size</li><li>Distribute space proportionally among multiple widgets</li></ul>
+<h3>Stack: Layer Widgets</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Stack</code> lets you layer widgets on top of each other. The first child in the list appears at the bottom, the last at the top.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Stack(
+  children<span style="color: #ffff44">:</span> [
+    Container(width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>, color<span style="color: #ffff44">:</span> Colors.blue),
+    Positioned(
+      top<span style="color: #ffff44">:</span> <span style="color: #bb86fc">10</span>,
+      right<span style="color: #ffff44">:</span> <span style="color: #bb86fc">10</span>,
+      child<span style="color: #ffff44">:</span> Container(width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">50</span>, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">50</span>, color<span style="color: #ffff44">:</span> Colors.red),
+    ),
+    Positioned(
+      bottom<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0</span>,
+      left<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0</span>,
+      right<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0</span>,
+      child<span style="color: #ffff44">:</span> Container(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">50</span>, color<span style="color: #ffff44">:</span> Colors.green),
+    ),
+  ],
+)</code></pre>
+<p>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Positioned</code> to place children at exact positions. Omit <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Positioned</code> to place a widget at the default position (top-left). You can position from top/bottom and left/right:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Positioned(
+  top<span style="color: #ffff44">:</span> <span style="color: #bb86fc">20</span>,
+  left<span style="color: #ffff44">:</span> <span style="color: #bb86fc">20</span>,
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Top-left&#39;</span>),
+)
+
+Positioned(
+  bottom<span style="color: #ffff44">:</span> <span style="color: #bb86fc">20</span>,
+  right<span style="color: #ffff44">:</span> <span style="color: #bb86fc">20</span>,
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Bottom-right&#39;</span>),
+)</code></pre>
+<p><strong>When to use Stack:</strong></p>
+<ul><li>Create floating buttons or badges</li><li>Layer a gradient over an image</li><li>Overlay text on images</li><li>Build complex custom layouts</li></ul>
+<h3>Wrap: Layout That Wraps to Next Line</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Wrap</code> is like <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Row</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Column</code>, but wraps to the next line when it runs out of space. Use it for flexible layouts like tag clouds or button groups that should reflow on small screens.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Wrap(
+  spacing<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>,      <span style="color: #888888">// Space between items horizontally</span>
+  runSpacing<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>,   <span style="color: #888888">// Space between rows</span>
+  children<span style="color: #ffff44">:</span> [
+    Chip(label<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Tag 1&#39;</span>)),
+    Chip(label<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Tag 2&#39;</span>)),
+    Chip(label<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Tag 3&#39;</span>)),
+    Chip(label<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Tag 4&#39;</span>)),
+    <span style="color: #888888">// Wraps to next line if needed</span>
+  ],
+)</code></pre>
+<p><strong>When to use Wrap:</strong></p>
+<ul><li>Display tags or chips that reflow</li><li>Show button groups that wrap</li><li>Create flexible grids without defining columns</li></ul>
+<h3>ListView: Scrollable List</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ListView</code> displays a scrollable list of widgets. Use it when you have more content than fits on screen.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>ListView(
+  children<span style="color: #ffff44">:</span> [
+    ListTile(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Item 1&#39;</span>)),
+    ListTile(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Item 2&#39;</span>)),
+    ListTile(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Item 3&#39;</span>)),
+  ],
+)</code></pre>
+<p>For large lists (hundreds or thousands of items), use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ListView.builder</code> to build items lazily—only creating widgets for items visible on screen:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>ListView.builder(
+  itemCount<span style="color: #ffff44">:</span> <span style="color: #bb86fc">1000</span>,
+  itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+    <span style="color: #87ceeb">return</span> ListTile(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Item $index&#39;</span>));
+  },
+)</code></pre>
+<p><strong>When to use ListView:</strong></p>
+<ul><li>Display more content than fits on one screen</li><li>Show a list of items (messages, search results, notifications)</li><li>Create scrollable forms or settings screens</li></ul>
+<p><strong>Watch out for:</strong> Don't nest <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ListView</code> inside a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Column</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SingleChildScrollView</code>. They compete for space. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ListView</code> directly or use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SingleChildScrollView</code> with a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Column</code> if you have a small amount of content.</p>
+<h3>GridView: Scrollable Grid</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GridView</code> displays items in a grid (rows and columns). Use it for image galleries, app launchers, or any grid-based layout.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>GridView.count(
+  crossAxisCount<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>,  <span style="color: #888888">// 2 columns</span>
+  children<span style="color: #ffff44">:</span> <span style="color: #ff4444">List</span>.generate(<span style="color: #bb86fc">20</span>, (index) {
+    <span style="color: #87ceeb">return</span> Card(
+      child<span style="color: #ffff44">:</span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Item $index&#39;</span>)),
+    );
+  }),
+)</code></pre>
+<p>For dynamic layouts or large grids, use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GridView.builder</code>:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>GridView.builder(
+  gridDelegate<span style="color: #ffff44">:</span> SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount<span style="color: #ffff44">:</span> <span style="color: #bb86fc">3</span>,  <span style="color: #888888">// 3 columns</span>
+  ),
+  itemCount<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>,
+  itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+    <span style="color: #87ceeb">return</span> Container(
+      color<span style="color: #ffff44">:</span> Colors.blue[((index <span style="color: #ffff44">+</span> <span style="color: #bb86fc">1</span>) <span style="color: #ffff44">*</span> <span style="color: #bb86fc">100</span>)],
+      child<span style="color: #ffff44">:</span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;$index&#39;</span>)),
+    );
+  },
+)</code></pre>
+<p><strong>When to use GridView:</strong></p>
+<ul><li>Display image galleries</li><li>Show app icons or launcher screens</li><li>Create grid-based product listings</li></ul>
+<h3>SingleChildScrollView</h3>
+<p>Make a single child scrollable when it's larger than the available space:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>SingleChildScrollView(
+  child<span style="color: #ffff44">:</span> Column(
+    children<span style="color: #ffff44">:</span> [
+      <span style="color: #888888">// Many widgets that might overflow screen height</span>
+      Text(<span style="color: #44ff44">&#39;Item 1&#39;</span>),
+      SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>),
+      Text(<span style="color: #44ff44">&#39;Item 2&#39;</span>),
+      SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>),
+      <span style="color: #888888">// ... more content</span>
+    ],
+  ),
+)</code></pre>
+<p><strong>When to use SingleChildScrollView:</strong></p>
+<ul><li>Wrap a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Column</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Row</code> when content might overflow</li><li>Make a form scrollable</li><li>Handle variable-height content</li></ul>
+<p><strong>Watch out for:</strong> Don't use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SingleChildScrollView</code> with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ListView</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GridView</code>—they handle scrolling internally and will cause errors if wrapped in another scrollable widget.</p>
+<h3>Center and Align: Position Widgets</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Center</code> places a child in the middle of available space:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Centred text&#39;</span>))</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Align</code> positions a child within available space with more control:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Align(
+  alignment<span style="color: #ffff44">:</span> Alignment.bottomRight,
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Bottom right&#39;</span>),
+)
+
+Align(
+  alignment<span style="color: #ffff44">:</span> Alignment.topCenter,
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Top centre&#39;</span>),
+)</code></pre>
+<p><strong>When to use Center/Align:</strong></p>
+<ul><li>Centre content on a screen</li><li>Position widgets at specific alignments</li><li>Create balanced layouts</li></ul>
+<h2>Interactive Widgets</h2>
+<h3>Button Widgets</h3>
+<p><strong>ElevatedButton</strong> for primary actions. It has a shadow and stands out:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>ElevatedButton(
+  onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Pressed&#39;</span>),
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Save&#39;</span>),
+)</code></pre>
+<p><strong>TextButton</strong> for low-emphasis actions. No background, just text:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>TextButton(
+  onPressed<span style="color: #ffff44">:</span> () {},
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Cancel&#39;</span>),
+)</code></pre>
+<p><strong>OutlinedButton</strong> for secondary actions. Has a border but no fill:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>OutlinedButton(
+  onPressed<span style="color: #ffff44">:</span> () {},
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Edit&#39;</span>),
+)</code></pre>
+<p><strong>IconButton</strong> for icon-only buttons. Perfect for AppBar actions:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>IconButton(
+  icon<span style="color: #ffff44">:</span> Icon(Icons.favorite),
+  onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Liked&#39;</span>),
+)</code></pre>
+<p><strong>FloatingActionButton</strong> for the primary action on a screen. Sits in a corner:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>FloatingActionButton(
+  onPressed<span style="color: #ffff44">:</span> () {},
+  child<span style="color: #ffff44">:</span> Icon(Icons.add),
+)</code></pre>
+<p><strong>When to use each:</strong></p>
+<ul><li><strong>ElevatedButton:</strong> Primary action (Submit, Save, Confirm)</li><li><strong>TextButton:</strong> Secondary or low-emphasis action (Cancel, Learn More)</li><li><strong>OutlinedButton:</strong> Important secondary action (Delete, Edit)</li><li><strong>IconButton:</strong> Quick actions (Search, Settings, Close)</li><li><strong>FloatingActionButton:</strong> Single primary action on a screen (Create, Add, Share)</li></ul>
+<h3>TextField and TextFormField</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">TextField</code> captures user input:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>TextField(
+  decoration<span style="color: #ffff44">:</span> InputDecoration(
+    hintText<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Enter your name&#39;</span>,
+    labelText<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Name&#39;</span>,
+    border<span style="color: #ffff44">:</span> OutlineInputBorder(),
+    prefixIcon<span style="color: #ffff44">:</span> Icon(Icons.person),
+  ),
+  onChanged<span style="color: #ffff44">:</span> (value) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Value: $value&#39;</span>),
+)</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">TextFormField</code> is used in forms. It supports validation and integrates with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Form</code>:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>TextFormField(
+  decoration<span style="color: #ffff44">:</span> InputDecoration(labelText<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Email&#39;</span>),
+  validator<span style="color: #ffff44">:</span> (value) {
+    <span style="color: #87ceeb">if</span> (value <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span> <span style="color: #ffff44">|</span><span style="color: #ffff44">|</span> value.isEmpty) {
+      <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;Email is required&#39;</span>;
+    }
+    <span style="color: #87ceeb">if</span> (<span style="color: #ffff44">!</span>value.contains(<span style="color: #44ff44">&#39;@&#39;</span>)) {
+      <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;Enter a valid email&#39;</span>;
+    }
+    <span style="color: #87ceeb">return</span> <span style="color: #87ceeb">null</span>;
+  },
+)</code></pre>
+<p><strong>When to use TextField:</strong></p>
+<ul><li>Search fields</li><li>Single-line inputs</li><li>Settings where validation isn't required</li></ul>
+<p><strong>When to use TextFormField:</strong></p>
+<ul><li>Login forms</li><li>Sign-up forms</li><li>Any form with validation</li></ul>
+<h3>Checkbox and Switch</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Checkbox</code> lets users select multiple options:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #ff4444">bool</span> isChecked <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;
+
+Checkbox(
+  value<span style="color: #ffff44">:</span> isChecked,
+  onChanged<span style="color: #ffff44">:</span> (value) {
+    setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> isChecked <span style="color: #ffff44">=</span> value <span style="color: #ffff44">?</span><span style="color: #ffff44">?</span> <span style="color: #87ceeb">false</span>);
+  },
+)</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Switch</code> is for on/off toggles:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #ff4444">bool</span> isEnabled <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;
+
+Switch(
+  value<span style="color: #ffff44">:</span> isEnabled,
+  onChanged<span style="color: #ffff44">:</span> (value) {
+    setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> isEnabled <span style="color: #ffff44">=</span> value);
+  },
+)</code></pre>
+<p><strong>When to use Checkbox:</strong></p>
+<ul><li>Allow users to select multiple items</li><li>Agree to terms</li><li>Filter options</li></ul>
+<p><strong>When to use Switch:</strong></p>
+<ul><li>Toggle features on/off</li><li>Enable/disable notifications</li><li>Dark mode toggle</li></ul>
+<h3>Dropdown and DropdownButton</h3>
+<p>Let users select from a predefined list:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #ff4444">String</span> selectedValue <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Option 1&#39;</span>;
+
+DropdownButton<span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span>(
+  value<span style="color: #ffff44">:</span> selectedValue,
+  items<span style="color: #ffff44">:</span> [<span style="color: #44ff44">&#39;Option 1&#39;</span>, <span style="color: #44ff44">&#39;Option 2&#39;</span>, <span style="color: #44ff44">&#39;Option 3&#39;</span>]
+    .map((e) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> DropdownMenuItem(value<span style="color: #ffff44">:</span> e, child<span style="color: #ffff44">:</span> Text(e)))
+    .toList(),
+  onChanged<span style="color: #ffff44">:</span> (value) {
+    setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> selectedValue <span style="color: #ffff44">=</span> value <span style="color: #ffff44">?</span><span style="color: #ffff44">?</span> <span style="color: #44ff44">&#39;Option 1&#39;</span>);
+  },
+)</code></pre>
+<p><strong>When to use DropdownButton:</strong></p>
+<ul><li>Select from a list of predefined options</li><li>Filter by category</li><li>Choose a sorting method</li></ul>
+<h3>GestureDetector and InkWell</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GestureDetector</code> detects taps and gestures on any widget:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>GestureDetector(
+  onTap<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Tapped&#39;</span>),
+  onLongPress<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Long pressed&#39;</span>),
+  onDoubleTap<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Double tapped&#39;</span>),
+  child<span style="color: #ffff44">:</span> Container(width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>, color<span style="color: #ffff44">:</span> Colors.blue),
+)</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">InkWell</code> is similar but provides Material Design ripple feedback:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>InkWell(
+  onTap<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Tapped with ripple&#39;</span>),
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Tap me&#39;</span>),
+)</code></pre>
+<p><strong>When to use GestureDetector:</strong></p>
+<ul><li>Detect custom gestures</li><li>Respond to drags or swipes</li><li>Make any widget tappable without ripple feedback</li></ul>
+<p><strong>When to use InkWell:</strong></p>
+<ul><li>Make widgets tappable with visual feedback</li><li>Show Material Design ripple animation</li><li>Button-like widgets that aren't actual buttons</li></ul>
+<h3>Form and TextFormField</h3>
+<p>For complex forms with validation, use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Form</code> with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">TextFormField</code>:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> LoginForm <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>LoginForm<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _LoginFormState();
+}
+
+<span style="color: #87ceeb">class</span> _LoginFormState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>LoginForm<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">final</span> _formKey <span style="color: #ffff44">=</span> GlobalKey<span style="color: #ffff44"><</span>FormState<span style="color: #ffff44">></span>();
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Form(
+      key<span style="color: #ffff44">:</span> _formKey,
+      child<span style="color: #ffff44">:</span> Column(
+        children<span style="color: #ffff44">:</span> [
+          TextFormField(
+            decoration<span style="color: #ffff44">:</span> InputDecoration(labelText<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Email&#39;</span>),
+            validator<span style="color: #ffff44">:</span> (value) {
+              <span style="color: #87ceeb">if</span> (value <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span> <span style="color: #ffff44">|</span><span style="color: #ffff44">|</span> value.isEmpty) <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;Email required&#39;</span>;
+              <span style="color: #87ceeb">if</span> (<span style="color: #ffff44">!</span>value.contains(<span style="color: #44ff44">&#39;@&#39;</span>)) <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;Invalid email&#39;</span>;
+              <span style="color: #87ceeb">return</span> <span style="color: #87ceeb">null</span>;
+            },
+          ),
+          TextFormField(
+            decoration<span style="color: #ffff44">:</span> InputDecoration(labelText<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Password&#39;</span>),
+            obscureText<span style="color: #ffff44">:</span> <span style="color: #87ceeb">true</span>,
+            validator<span style="color: #ffff44">:</span> (value) {
+              <span style="color: #87ceeb">if</span> (value <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span> <span style="color: #ffff44">|</span><span style="color: #ffff44">|</span> value.length <span style="color: #ffff44"><</span> <span style="color: #bb86fc">6</span>) <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;Password too short&#39;</span>;
+              <span style="color: #87ceeb">return</span> <span style="color: #87ceeb">null</span>;
+            },
+          ),
+          ElevatedButton(
+            onPressed<span style="color: #ffff44">:</span> () {
+              <span style="color: #87ceeb">if</span> (_formKey.currentState<span style="color: #ffff44">!</span>.validate()) {
+                print(<span style="color: #44ff44">&#39;Form is valid&#39;</span>);
+              }
+            },
+            child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Login&#39;</span>),
+          ),
+        ],
+      ),
+    );
+  }
+}</code></pre>
+<p><strong>When to use Form:</strong></p>
+<ul><li>Validate multiple fields together</li><li>Submit all form data at once</li><li>Reset all fields simultaneously</li></ul>
+<h2>Styling and Theming</h2>
+<h3>Theme and ThemeData</h3>
+<p>Define a consistent colour scheme and text styles for your entire app:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>MaterialApp(
+  theme<span style="color: #ffff44">:</span> ThemeData(
+    useMaterial3<span style="color: #ffff44">:</span> <span style="color: #87ceeb">true</span>,
+    primaryColor<span style="color: #ffff44">:</span> Colors.blue,
+    primarySwatch<span style="color: #ffff44">:</span> Colors.blue,
+    appBarTheme<span style="color: #ffff44">:</span> AppBarTheme(
+      backgroundColor<span style="color: #ffff44">:</span> Colors.blue,
+      foregroundColor<span style="color: #ffff44">:</span> Colors.white,
+    ),
+    inputDecorationTheme<span style="color: #ffff44">:</span> InputDecorationTheme(
+      border<span style="color: #ffff44">:</span> OutlineInputBorder(),
+      filled<span style="color: #ffff44">:</span> <span style="color: #87ceeb">true</span>,
+      fillColor<span style="color: #ffff44">:</span> Colors.grey[<span style="color: #bb86fc">100</span>],
+    ),
+  ),
+  home<span style="color: #ffff44">:</span> HomeScreen(),
+)</code></pre>
+<p>Access theme data in your widgets:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>@override
+Widget build(BuildContext context) {
+  <span style="color: #87ceeb">var</span> theme <span style="color: #ffff44">=</span> Theme.of(context);
+  <span style="color: #87ceeb">return</span> Text(
+    <span style="color: #44ff44">&#39;Themed text&#39;</span>,
+    style<span style="color: #ffff44">:</span> TextStyle(color<span style="color: #ffff44">:</span> theme.primaryColor),
+  );
+}</code></pre>
+<p><strong>When to use Theme:</strong></p>
+<ul><li>Ensure consistent branding across your app</li><li>Support light/dark modes</li><li>Make the app easy to rebrand</li></ul>
+<h3>Card</h3>
+<p>A Material Design card with elevation and padding. Use it to group related content:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Card(
+  elevation<span style="color: #ffff44">:</span> <span style="color: #bb86fc">4</span>,
+  child<span style="color: #ffff44">:</span> Padding(
+    padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),
+    child<span style="color: #ffff44">:</span> Column(
+      crossAxisAlignment<span style="color: #ffff44">:</span> CrossAxisAlignment.start,
+      children<span style="color: #ffff44">:</span> [
+        Text(<span style="color: #44ff44">&#39;Card Title&#39;</span>, style<span style="color: #ffff44">:</span> TextStyle(fontWeight<span style="color: #ffff44">:</span> FontWeight.bold)),
+        SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>),
+        Text(<span style="color: #44ff44">&#39;Card content goes here&#39;</span>),
+      ],
+    ),
+  ),
+)</code></pre>
+<p><strong>When to use Card:</strong></p>
+<ul><li>Group related content</li><li>Create list items</li><li>Display product information</li><li>Make content visually distinct</li></ul>
+<h3>Opacity and Visibility</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Opacity</code> makes a widget partially transparent:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Opacity(
+  opacity<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0.5</span>,  <span style="color: #888888">// 50% transparent</span>
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Semi-transparent text&#39;</span>),
+)</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Visibility</code> shows or hides a widget:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Visibility(
+  visible<span style="color: #ffff44">:</span> isVisible,
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Visible or hidden&#39;</span>),
+  replacement<span style="color: #ffff44">:</span> SizedBox.shrink(),  <span style="color: #888888">// Show this instead</span>
+)</code></pre>
+<p><strong>When to use Opacity:</strong></p>
+<ul><li>Fade out disabled content</li><li>Highlight or dim elements</li><li>Create visual hierarchy</li></ul>
+<p><strong>When to use Visibility:</strong></p>
+<ul><li>Conditionally show/hide entire widgets</li><li>Replace widgets based on state</li></ul>
+<h2>Displaying Images and Assets</h2>
+<h3>Image</h3>
+<p>Display images from various sources:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// From app assets</span>
+Image.asset(<span style="color: #44ff44">&#39;assets/my_image.png&#39;</span>, width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>)
+
+<span style="color: #888888">// From internet</span>
+Image.network(<span style="color: #44ff44">&#39;https://example.com/image.png&#39;</span>)
+
+<span style="color: #888888">// With error handling</span>
+Image.network(
+  <span style="color: #44ff44">&#39;https://example.com/image.png&#39;</span>,
+  errorBuilder<span style="color: #ffff44">:</span> (context, error, stackTrace) {
+    <span style="color: #87ceeb">return</span> Text(<span style="color: #44ff44">&#39;Failed to load image&#39;</span>);
+  },
+  loadingBuilder<span style="color: #ffff44">:</span> (context, child, loadingProgress) {
+    <span style="color: #87ceeb">if</span> (loadingProgress <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>) <span style="color: #87ceeb">return</span> child;
+    <span style="color: #87ceeb">return</span> CircularProgressIndicator();
+  },
+)</code></pre>
+<p><strong>When to use Image:</strong></p>
+<ul><li>Display user avatars</li><li>Show product images</li><li>Create image galleries</li></ul>
+<h3>Icon</h3>
+<p>Display Material icons:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Icon(Icons.home)
+Icon(Icons.favorite, color<span style="color: #ffff44">:</span> Colors.red, size<span style="color: #ffff44">:</span> <span style="color: #bb86fc">32</span>)
+Icon(Icons.shopping_cart, color<span style="color: #ffff44">:</span> Colors.blue)</code></pre>
+<p><strong>When to use Icon:</strong></p>
+<ul><li>Navigation indicators</li><li>Button icons</li><li>Status indicators</li><li>App branding</li></ul>
+<h3>ClipRRect and ClipOval</h3>
+<p>Clip widgets to rounded corners or ovals:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>ClipRRect(
+  borderRadius<span style="color: #ffff44">:</span> BorderRadius.circular(<span style="color: #bb86fc">8</span>),
+  child<span style="color: #ffff44">:</span> Image.asset(<span style="color: #44ff44">&#39;image.png&#39;</span>, width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>),
+)
+
+ClipOval(
+  child<span style="color: #ffff44">:</span> Image.asset(<span style="color: #44ff44">&#39;image.png&#39;</span>, width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>),
+)</code></pre>
+<p><strong>When to use Clipping:</strong></p>
+<ul><li>Create circular avatars</li><li>Round corners on images</li><li>Create custom shapes</li></ul>
+<h2>Handling Async Operations</h2>
+<h3>FutureBuilder</h3>
+<p>Display different UI based on a Future's state (loading, completed, error):</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>FutureBuilder<span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span>(
+  future<span style="color: #ffff44">:</span> fetchData(),
+  builder<span style="color: #ffff44">:</span> (context, snapshot) {
+    <span style="color: #87ceeb">if</span> (snapshot.connectionState <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> ConnectionState.waiting) {
+      <span style="color: #87ceeb">return</span> CircularProgressIndicator();
+    }
+    <span style="color: #87ceeb">if</span> (snapshot.hasError) {
+      <span style="color: #87ceeb">return</span> Text(<span style="color: #44ff44">&#39;Error: ${snapshot.error}&#39;</span>);
+    }
+    <span style="color: #87ceeb">return</span> Text(<span style="color: #44ff44">&#39;Data: ${snapshot.data}&#39;</span>);
+  },
+)
+
+<span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span> fetchData() <span style="color: #87ceeb">async</span> {
+  <span style="color: #87ceeb">await</span> <span style="color: #ff4444">Future</span>.delayed(<span style="color: #ff4444">Duration</span>(seconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>));
+  <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;Loaded data&#39;</span>;
+}</code></pre>
+<p><strong>When to use FutureBuilder:</strong></p>
+<ul><li>Load data from an API</li><li>Wait for file operations</li><li>Display loading states</li></ul>
+<h3>StreamBuilder</h3>
+<p>Handle streams of data that arrive over time:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>StreamBuilder<span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span>(
+  stream<span style="color: #ffff44">:</span> countStream(),
+  builder<span style="color: #ffff44">:</span> (context, snapshot) {
+    <span style="color: #87ceeb">if</span> (snapshot.hasData) {
+      <span style="color: #87ceeb">return</span> Text(<span style="color: #44ff44">&#39;Count: ${snapshot.data}&#39;</span>);
+    }
+    <span style="color: #87ceeb">return</span> CircularProgressIndicator();
+  },
+)
+
+<span style="color: #ff4444">Stream</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> countStream() <span style="color: #87ceeb">async</span><span style="color: #ffff44">*</span> {
+  <span style="color: #87ceeb">for</span> (<span style="color: #ff4444">int</span> i <span style="color: #ffff44">=</span> <span style="color: #bb86fc">1</span>; i <span style="color: #ffff44"><</span><span style="color: #ffff44">=</span> <span style="color: #bb86fc">100</span>; i<span style="color: #ffff44">+</span><span style="color: #ffff44">+</span>) {
+    <span style="color: #87ceeb">await</span> <span style="color: #ff4444">Future</span>.delayed(<span style="color: #ff4444">Duration</span>(milliseconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">500</span>));
+    <span style="color: #87ceeb">yield</span> i;
+  }
+}</code></pre>
+<p><strong>When to use StreamBuilder:</strong></p>
+<ul><li>Real-time data updates</li><li>WebSocket connections</li><li>Sensor data streams</li><li>Animations that continuously update</li></ul>
+<h2>Understanding Constraints and Layout Rules</h2>
+<p>Flutter's layout system works with constraints. Understanding this is crucial for building responsive UIs.</p>
+<p><strong>How it works:</strong></p>
+<ol><li>Parent passes size constraints to child (minimum and maximum width/height)</li><li>Child chooses its size within those constraints</li><li>Parent positions the child based on alignment</li></ol>
+<p><strong>Key insight:</strong> A widget cannot be larger than its parent's constraints allow. A widget cannot decide to be 500 pixels wide if its parent only allows 300 pixels.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Container expands to fill parent&#39;s constraints</span>
+Container(color<span style="color: #ffff44">:</span> Colors.blue)  <span style="color: #888888">// Takes all available space</span>
+
+<span style="color: #888888">// SizedBox respects its size parameter (within constraints)</span>
+SizedBox(width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>)  <span style="color: #888888">// Always 100x100 (or less if parent constrains it)</span>
+
+<span style="color: #888888">// Expanded fills remaining space in Row/Column</span>
+Expanded(child<span style="color: #ffff44">:</span> myWidget)  <span style="color: #888888">// Fills all available space</span></code></pre>
+<p><strong>Common gotcha:</strong> <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Center</code> doesn't constrain its child to any size—it just centres whatever size the child chooses. To centre a widget with a specific size, wrap it in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SizedBox</code> first:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Correct</span>
+Center(
+  child<span style="color: #ffff44">:</span> SizedBox(width<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>, height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">200</span>, child<span style="color: #ffff44">:</span> myWidget),
+)
+
+<span style="color: #888888">// Wrong - myWidget can be any size</span>
+Center(child<span style="color: #ffff44">:</span> myWidget)</code></pre>
+<p><strong>Important for responsive design:</strong></p>
+<ul><li>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MediaQuery</code> to check screen size</li><li>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Expanded</code> to fill available space proportionally</li><li>Use constraints to force specific dimensions</li><li>Test on different screen sizes</li></ul>
+<h2>Best Practices</h2>
+<ol><li><strong>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> constructors</strong> wherever possible to avoid unnecessary rebuilds.</li><li><strong>Break large widgets into smaller ones.</strong> If your <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">build()</code> method exceeds 50 lines, extract parts into separate widget classes.</li><li><strong>Avoid deep nesting.</strong> Extract nested widgets into separate classes for readability and performance.</li><li><strong>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ListView.builder</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GridView.builder</code></strong> for long lists to avoid building off-screen widgets.</li><li><strong>Prefer <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatelessWidget</code></strong> over <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code>. Move state to dedicated patterns as your app grows.</li><li><strong>Understand constraints and layout rules.</strong> Most layout bugs stem from misunderstanding how size flows through the widget tree.</li><li><strong>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Scaffold</code> for screen structure.</strong> Don't manually position AppBar, Drawer, and body.</li><li><strong>Apply <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Material</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Cupertino</code> consistently.</strong> Don't mix design systems randomly.</li><li><strong>Theme your app globally.</strong> Define colours and styles in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ThemeData</code>, not in individual widgets.</li></ol>
+<h2>Additional Widgets</h2>
+<p>The Flutter ecosystem includes many more widgets beyond those covered in this chapter. The following are important but explored in greater detail in later chapters or the Widget Reference Appendix:</p>
+<p><strong>State and Navigation (covered in later chapters):</strong></p>
+<ul><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Navigator</code> — Handle screen navigation</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code> lifecycle — Covered in State Management chapter</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Provider</code> and state management widgets — Covered in State Management chapter</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">BottomNavigationBar</code> — Multi-screen navigation with tabs</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Drawer</code> and navigation patterns — Covered in Routing & Navigation chapter</li></ul>
+<p><strong>Animation and Effects (Widget Reference Appendix):</strong></p>
+<ul><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AnimatedContainer</code> — Animate property changes</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AnimatedOpacity</code> — Animate opacity</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Hero</code> — Animated transitions between screens</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Transform</code> — Rotate, scale, skew widgets</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CustomPaint</code> — Draw custom shapes</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Shader</code> — Advanced visual effects</li></ul>
+<p><strong>Advanced Layout (Widget Reference Appendix):</strong></p>
+<ul><li>Slivers (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SliverAppBar</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SliverList</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">SliverGrid</code>) — Advanced scrolling</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CustomMultiChildLayout</code> — Full control over child positioning</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Flow</code> — Custom flow-based layout</li></ul>
+<p><strong>Accessibility (Widget Reference Appendix):</strong></p>
+<ul><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Semantics</code> — Improve accessibility</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MergeSemantics</code> — Manage semantic tree</li></ul>
+<p><strong>Platform-Specific Widgets (Widget Reference Appendix):</strong></p>
+<ul><li>Cupertino-specific variants (navigation, buttons, etc.)</li><li>Platform-adaptive widgets that look native on each OS</li></ul>
+<p>Refer to the <a href="https://docs.flutter.dev/reference/widgets" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">Flutter Widget Index</a> for a complete reference of all available widgets.</p>
+<hr>
+<h2>Hands-On Project</h2>
+<p>Ready to apply what you've learned? Work through the <a href="markdown-notes-project-part-b.html" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">Markdown Notes Project Part B</a> to build a functional note-viewing interface in Flutter. You'll practise using Scaffold, AppBar, ListView, TextFields, buttons, and state management as you create a real, interactive app that users can navigate and use.</p>
+</body>
+<script src="common.js"></script>
+</html>

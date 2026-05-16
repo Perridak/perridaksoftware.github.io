@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03-DartBasics</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Dart Basics</h1>
+<p>Dart is a statically-typed, object-oriented language designed for building fast, multi-platform applications. It combines the best parts of languages you likely know—type safety, functional programming, and a pragmatic syntax that feels familiar if you've worked with other modern languages.</p>
+<p>This chapter covers everything an experienced developer needs to confidently write Dart code, from variables and functions to advanced features like mixins and extension methods. We'll highlight where Dart differs from other languages you may be more at home with, and flag gotchas that can trip up developers coming from other backgrounds.</p>
+<h2>Variables, Types, and Null Safety</h2>
+<h3>Declaring Variables</h3>
+<p>Dart offers several ways to declare variables, each with different semantics:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #888888">// Dynamic typing with type inference</span>
+  <span style="color: #87ceeb">var</span> name <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Alice&#39;</span>;           <span style="color: #888888">// Inferred as String</span>
+  <span style="color: #87ceeb">var</span> count <span style="color: #ffff44">=</span> <span style="color: #bb86fc">42</span>;               <span style="color: #888888">// Inferred as int</span>
+  
+  <span style="color: #888888">// Explicit typing</span>
+  <span style="color: #ff4444">String</span> greeting <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Hello&#39;</span>;
+  <span style="color: #ff4444">int</span> age <span style="color: #ffff44">=</span> <span style="color: #bb86fc">30</span>;
+  <span style="color: #ff4444">double</span> salary <span style="color: #ffff44">=</span> <span style="color: #bb86fc">50000.0</span>;
+  <span style="color: #ff4444">bool</span> isActive <span style="color: #ffff44">=</span> <span style="color: #87ceeb">true</span>;
+  
+  <span style="color: #888888">// Type-agnostic (dynamic)</span>
+  <span style="color: #87ceeb">dynamic</span> mystery <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;could be anything&#39;</span>;
+  mystery <span style="color: #ffff44">=</span> <span style="color: #bb86fc">42</span>;                 <span style="color: #888888">// No error—dynamic accepts any type</span>
+  
+  print(name);
+}</code></pre>
+<p><strong>The difference between <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">var</span></code>, explicit types, and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">dynamic</span></code>:</strong></p>
+<ul><li><strong><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">var</span></code></strong>: Type is inferred at declaration and <strong>fixed thereafter</strong>. Once <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">var</span> name <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Alice&#39;</span></code>, the variable is a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">String</span></code> for its entire lifetime. This is the preferred approach when the type is obvious from context.</li><li><strong>Explicit types</strong> (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">String</span></code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">int</span></code>, etc.): Make intent clear. Recommended for function parameters and return types, and when type inference would be ambiguous.</li><li><strong><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">dynamic</span></code></strong>: Disables type checking. Any method can be called on it at runtime. Avoid this unless absolutely necessary—it defeats the purpose of Dart's type system.</li></ul>
+<p><strong>Watch out for:</strong> If you're coming from JavaScript where <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">let</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> allow flexible reassignment, Dart's <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">var</span></code> locks the type at declaration. The variable itself can be reassigned to different values, but only of the same type. Trying <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">var</span> x <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;hello&#39;</span>; x <span style="color: #ffff44">=</span> <span style="color: #bb86fc">42</span>;</code> will fail at compile time. In Kotlin, this is similar—<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">var</span></code> infers and locks the type, though Kotlin's type system is slightly more flexible with supertypes.</p>
+<h3>Null Safety: Dart&#39;s Defining Feature</h3>
+<p>Dart enforces <strong>sound null safety</strong> by default. A variable cannot be <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">null</span></code> unless you explicitly say it can be:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #ff4444">String</span> name <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Alice&#39;</span>;        <span style="color: #888888">// Non-nullable—must always have a String value</span>
+  <span style="color: #ff4444">String</span><span style="color: #ffff44">?</span> nickname <span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>;      <span style="color: #888888">// Nullable—can be null or a String</span>
+  
+  <span style="color: #888888">// This compiles:</span>
+  nickname <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Ali&#39;</span>;
+  nickname <span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>;
+  
+  <span style="color: #888888">// This causes a compile error:</span>
+  <span style="color: #888888">// String wrong = null;       // ERROR: null cannot be assigned to non-nullable String</span>
+}</code></pre>
+<p>When you have a nullable variable, you must check for null before using it:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #ff4444">String</span><span style="color: #ffff44">?</span> nickname <span style="color: #ffff44">=</span> getUserNickname();
+  
+  <span style="color: #888888">// This won&#39;t compile—nickname might be null:</span>
+  <span style="color: #888888">// print(nickname.length);    // ERROR</span>
+  
+  <span style="color: #888888">// Option 1: Null check</span>
+  <span style="color: #87ceeb">if</span> (nickname <span style="color: #ffff44">!</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>) {
+    print(nickname.length);     <span style="color: #888888">// Safe—type system knows it&#39;s not null here</span>
+  }
+  
+  <span style="color: #888888">// Option 2: Null-coalescing operator</span>
+  print(nickname<span style="color: #ffff44">?</span>.length);      <span style="color: #888888">// Evaluates to null if nickname is null</span>
+  
+  <span style="color: #888888">// Option 3: Null-coalescing assignment</span>
+  print(nickname <span style="color: #ffff44">?</span><span style="color: #ffff44">?</span> <span style="color: #44ff44">&#39;Anonymous&#39;</span>);  <span style="color: #888888">// Use &#39;Anonymous&#39; if nickname is null</span>
+}
+
+<span style="color: #ff4444">String</span><span style="color: #ffff44">?</span> getUserNickname() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> <span style="color: #87ceeb">null</span>;</code></pre>
+<p><strong>Be aware of:</strong> This is a major departure from many other languages. In JavaScript, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">null</span></code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">undefined</code> are constantly lurking, requiring runtime checks. Dart makes null safety a <strong>compile-time guarantee</strong>—the type system prevents entire classes of bugs before your code runs. C# has nullable reference types (similar syntax with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44">?</span></code>), but those are optional and came much later. Dart has had sound null safety since 2021 and it's mandatory, by design.</p>
+<h3>Collections</h3>
+<p>Dart provides three main collection types:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #888888">// Lists (ordered, mutable)</span>
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span> names <span style="color: #ffff44">=</span> [<span style="color: #44ff44">&#39;Alice&#39;</span>, <span style="color: #44ff44">&#39;Bob&#39;</span>, <span style="color: #44ff44">&#39;Charlie&#39;</span>];
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> numbers <span style="color: #ffff44">=</span> [<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>];
+  <span style="color: #87ceeb">var</span> mixed <span style="color: #ffff44">=</span> [<span style="color: #bb86fc">1</span>, <span style="color: #44ff44">&#39;two&#39;</span>, <span style="color: #bb86fc">3.0</span>];  <span style="color: #888888">// Inferred as List&lt;Object&gt;</span>
+  
+  <span style="color: #888888">// Maps (key-value pairs)</span>
+  <span style="color: #ff4444">Map</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span>, <span style="color: #ff4444">int</span><span style="color: #ffff44">></span> ages <span style="color: #ffff44">=</span> {
+    <span style="color: #44ff44">&#39;Alice&#39;</span><span style="color: #ffff44">:</span> <span style="color: #bb86fc">30</span>,
+    <span style="color: #44ff44">&#39;Bob&#39;</span><span style="color: #ffff44">:</span> <span style="color: #bb86fc">25</span>,
+  };
+  <span style="color: #87ceeb">var</span> person <span style="color: #ffff44">=</span> {<span style="color: #44ff44">&#39;name&#39;</span><span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Alice&#39;</span>, <span style="color: #44ff44">&#39;age&#39;</span><span style="color: #ffff44">:</span> <span style="color: #bb86fc">30</span>};  <span style="color: #888888">// Inferred as Map&lt;String, Object&gt;</span>
+  
+  <span style="color: #888888">// Sets (unordered, unique)</span>
+  <span style="color: #ff4444">Set</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span> uniqueNames <span style="color: #ffff44">=</span> {<span style="color: #44ff44">&#39;Alice&#39;</span>, <span style="color: #44ff44">&#39;Bob&#39;</span>, <span style="color: #44ff44">&#39;Alice&#39;</span>};  <span style="color: #888888">// Duplicate removed</span>
+  <span style="color: #87ceeb">var</span> numbers <span style="color: #ffff44">=</span> {<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>};  <span style="color: #888888">// Inferred as Set&lt;int&gt;</span>
+  
+  print(names[<span style="color: #bb86fc">0</span>]);           <span style="color: #888888">// &#39;Alice&#39;</span>
+  print(ages[<span style="color: #44ff44">&#39;Alice&#39;</span>]);      <span style="color: #888888">// 30</span>
+  print(uniqueNames);        <span style="color: #888888">// {Alice, Bob}</span>
+}</code></pre>
+<p><strong>Type parameters matter:</strong> Lists and Maps are generic. <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span></code> is a list of strings; <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">dynamic</span><span style="color: #ffff44">></span></code> is a list of anything. Be explicit about what you're storing.</p>
+<p><strong>Be aware of:</strong> Set literal syntax <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">{<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>}</code> looks identical to a map literal <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">{<span style="color: #44ff44">&#39;a&#39;</span><span style="color: #ffff44">:</span> <span style="color: #bb86fc">1</span>}</code>. Dart infers the type based on context. If you want a set and Dart infers a map (or vice versa), explicitly annotate: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">Set</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> numbers <span style="color: #ffff44">=</span> {<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>};</code>.</p>
+<h3>Immutability with `final` and `const`</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #888888">// final: immutable after initialization</span>
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> name <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Alice&#39;</span>;
+  <span style="color: #888888">// name = &#39;Bob&#39;;               // ERROR: cannot be reassigned</span>
+  
+  <span style="color: #888888">// const: compile-time constant, implicitly final</span>
+  <span style="color: #87ceeb">const</span> <span style="color: #ff4444">int</span> maxAttempts <span style="color: #ffff44">=</span> <span style="color: #bb86fc">3</span>;
+  <span style="color: #888888">// maxAttempts = 5;            // ERROR</span>
+  
+  <span style="color: #888888">// final without type (type is inferred)</span>
+  <span style="color: #87ceeb">final</span> count <span style="color: #ffff44">=</span> <span style="color: #bb86fc">42</span>;
+  
+  <span style="color: #888888">// const collections are deeply immutable</span>
+  <span style="color: #87ceeb">const</span> <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> numbers <span style="color: #ffff44">=</span> [<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>];
+  <span style="color: #888888">// numbers[0] = 10;            // ERROR: cannot modify const list</span>
+  
+  <span style="color: #888888">// final collections can be modified</span>
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> mutable <span style="color: #ffff44">=</span> [<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>];
+  mutable[<span style="color: #bb86fc">0</span>] <span style="color: #ffff44">=</span> <span style="color: #bb86fc">10</span>;              <span style="color: #888888">// OK</span>
+  mutable.add(<span style="color: #bb86fc">4</span>);               <span style="color: #888888">// OK</span>
+}</code></pre>
+<p><strong>The distinction:</strong></p>
+<ul><li><strong><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">final</span></code></strong>: Runtime constant. Once assigned, cannot be reassigned. The variable itself is immutable, but if it holds a list or object, those contents can change.</li><li><strong><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code></strong>: Compile-time constant. Deeply immutable. If you reassign a const to a different const, Dart might even reuse the same object in memory.</li></ul>
+<p><strong>Pro tip:</strong> If you come from other languages where <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> is used liberally, recalibrate your thinking. Dart's <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> is stricter—it requires a compile-time constant value. If you're constructing an object at runtime (even with known values), use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">final</span></code>, not <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code>. This distinction prevents bugs where you accidentally try to modify something you thought was mutable.</p>
+<h2>Functions</h2>
+<h3>Declaring and Calling Functions</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Explicit return type and parameters</span>
+<span style="color: #ff4444">int</span> add(<span style="color: #ff4444">int</span> a, <span style="color: #ff4444">int</span> b) {
+  <span style="color: #87ceeb">return</span> a <span style="color: #ffff44">+</span> b;
+}
+
+<span style="color: #888888">// Arrow syntax (=&gt; for single-expression functions)</span>
+<span style="color: #ff4444">int</span> multiply(<span style="color: #ff4444">int</span> a, <span style="color: #ff4444">int</span> b) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> a <span style="color: #ffff44">*</span> b;
+
+<span style="color: #888888">// No return type (defaults to dynamic)</span>
+sum(<span style="color: #ff4444">int</span> a, <span style="color: #ff4444">int</span> b) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> a <span style="color: #ffff44">+</span> b;         <span style="color: #888888">// Avoid this—always specify return type</span>
+
+<span style="color: #888888">// Named parameters (in braces)</span>
+<span style="color: #ff4444">String</span> greet({<span style="color: #ff4444">String</span> name <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Guest&#39;</span>}) {
+  <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;Hello, $name!&#39;</span>;
+}
+
+<span style="color: #888888">// Required named parameters (Dart 2.12+)</span>
+<span style="color: #ff4444">String</span> greetRequired({<span style="color: #87ceeb">required</span> <span style="color: #ff4444">String</span> name}) {
+  <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;Hello, $name!&#39;</span>;
+}
+
+<span style="color: #888888">// Positional parameters with defaults</span>
+<span style="color: #87ceeb">void</span> retry(<span style="color: #87ceeb">Function</span> callback, [<span style="color: #ff4444">int</span> maxAttempts <span style="color: #ffff44">=</span> <span style="color: #bb86fc">3</span>]) {
+  <span style="color: #87ceeb">for</span> (<span style="color: #ff4444">int</span> i <span style="color: #ffff44">=</span> <span style="color: #bb86fc">0</span>; i <span style="color: #ffff44"><</span> maxAttempts; i<span style="color: #ffff44">+</span><span style="color: #ffff44">+</span>) {
+    <span style="color: #87ceeb">try</span> {
+      callback();
+      <span style="color: #87ceeb">return</span>;
+    } <span style="color: #87ceeb">catch</span> (e) {
+      <span style="color: #87ceeb">if</span> (i <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> maxAttempts <span style="color: #ffff44">-</span> <span style="color: #bb86fc">1</span>) <span style="color: #87ceeb">rethrow</span>;
+    }
+  }
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  print(add(<span style="color: #bb86fc">5</span>, <span style="color: #bb86fc">3</span>));                    <span style="color: #888888">// 8</span>
+  print(multiply(<span style="color: #bb86fc">5</span>, <span style="color: #bb86fc">3</span>));               <span style="color: #888888">// 15</span>
+  print(greet(name<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Alice&#39;</span>));         <span style="color: #888888">// Hello, Alice!</span>
+  print(greetRequired(name<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Bob&#39;</span>));   <span style="color: #888888">// Hello, Bob!</span>
+  retry(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Attempting...&#39;</span>));
+}</code></pre>
+<p><strong>Named vs. positional parameters:</strong></p>
+<ul><li><strong>Positional</strong> (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">int</span> a, <span style="color: #ff4444">int</span> b</code>): Called in order. Optional positional parameters go in square brackets <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">[<span style="color: #ff4444">int</span> maxAttempts <span style="color: #ffff44">=</span> <span style="color: #bb86fc">3</span>]</code>.</li><li><strong>Named</strong> (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">{<span style="color: #ff4444">String</span> name <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Guest&#39;</span>}</code>): Called by name (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">name<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Alice&#39;</span></code>). More readable for functions with many parameters. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">required</span></code> to make a named parameter mandatory.</li></ul>
+<p><strong>Be aware of:</strong> Unlike some other languages you may be more at home with, Dart doesn't allow arbitrary numbers of variadic arguments (no <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">...args</code> parameter style). If you need flexible argument counts, use a list parameter instead: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">void</span> log(<span style="color: #ff4444">String</span> message, <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Object<span style="color: #ffff44">></span> args)</code>.</p>
+<h3>First-Class Functions and Closures</h3>
+<p>Functions are objects. You can pass them around, store them, and return them:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Function type annotation</span>
+<span style="color: #87ceeb">void</span> <span style="color: #87ceeb">Function</span>(<span style="color: #ff4444">String</span>) logger <span style="color: #ffff44">=</span> (<span style="color: #ff4444">String</span> msg) {
+  print(<span style="color: #44ff44">&#39;[LOG] $msg&#39;</span>);
+};
+
+<span style="color: #888888">// Typedef for readability</span>
+<span style="color: #87ceeb">typedef</span> Callback <span style="color: #ffff44">=</span> <span style="color: #87ceeb">void</span> <span style="color: #87ceeb">Function</span>(<span style="color: #ff4444">String</span>);
+
+Callback createLogger(<span style="color: #ff4444">String</span> prefix) {
+  <span style="color: #87ceeb">return</span> (<span style="color: #ff4444">String</span> msg) {
+    print(<span style="color: #44ff44">&#39;[$prefix] $msg&#39;</span>);
+  };
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  logger(<span style="color: #44ff44">&#39;Hello&#39;</span>);                    <span style="color: #888888">// [LOG] Hello</span>
+  
+  Callback appLogger <span style="color: #ffff44">=</span> createLogger(<span style="color: #44ff44">&#39;APP&#39;</span>);
+  appLogger(<span style="color: #44ff44">&#39;Starting&#39;</span>);              <span style="color: #888888">// [APP] Starting</span>
+  
+  <span style="color: #888888">// Higher-order functions</span>
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> numbers <span style="color: #ffff44">=</span> [<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>];
+  <span style="color: #87ceeb">var</span> doubled <span style="color: #ffff44">=</span> numbers.map((x) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> x <span style="color: #ffff44">*</span> <span style="color: #bb86fc">2</span>);  <span style="color: #888888">// [2, 4, 6]</span>
+}</code></pre>
+<p>Closures capture variables from their enclosing scope:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #ff4444">int</span> multiplier <span style="color: #ffff44">=</span> <span style="color: #bb86fc">2</span>;
+  
+  <span style="color: #87ceeb">Function</span> multiply <span style="color: #ffff44">=</span> (<span style="color: #ff4444">int</span> x) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> x <span style="color: #ffff44">*</span> multiplier;
+  
+  print(multiply(<span style="color: #bb86fc">5</span>));                 <span style="color: #888888">// 10</span>
+  
+  multiplier <span style="color: #ffff44">=</span> <span style="color: #bb86fc">3</span>;
+  print(multiply(<span style="color: #bb86fc">5</span>));                 <span style="color: #888888">// 15 (closure sees the updated value)</span>
+}</code></pre>
+<p><strong>Pro tip:</strong> Closures in Dart work similarly to other languages you may be more at home with, but Dart's type system is stricter. Always annotate function types when storing functions in variables—don't rely on inference. This makes your code more maintainable and catches type errors earlier.</p>
+<h2>Object-Oriented Programming</h2>
+<h3>Classes and Constructors</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> Person {
+  <span style="color: #ff4444">String</span> name;
+  <span style="color: #ff4444">int</span> age;
+  
+  <span style="color: #888888">// Standard constructor</span>
+  Person(<span style="color: #ff4444">String</span> name, <span style="color: #ff4444">int</span> age) {
+    <span style="color: #87ceeb">this</span>.name <span style="color: #ffff44">=</span> name;
+    <span style="color: #87ceeb">this</span>.age <span style="color: #ffff44">=</span> age;
+  }
+  
+  <span style="color: #888888">// Syntactic sugar for above</span>
+  Person.shorthand(<span style="color: #87ceeb">this</span>.name, <span style="color: #87ceeb">this</span>.age);
+  
+  <span style="color: #888888">// Named constructor</span>
+  Person.newborn(<span style="color: #87ceeb">this</span>.name) <span style="color: #ffff44">:</span> age <span style="color: #ffff44">=</span> <span style="color: #bb86fc">0</span>;
+  
+  <span style="color: #888888">// Factory constructor (for custom creation logic)</span>
+  <span style="color: #87ceeb">factory</span> Person.fromString(<span style="color: #ff4444">String</span> data) {
+    <span style="color: #87ceeb">final</span> parts <span style="color: #ffff44">=</span> data.split(<span style="color: #44ff44">&#39;,&#39;</span>);
+    <span style="color: #87ceeb">return</span> Person(parts[<span style="color: #bb86fc">0</span>], <span style="color: #ff4444">int</span>.parse(parts[<span style="color: #bb86fc">1</span>]));
+  }
+  
+  <span style="color: #ff4444">String</span> greet() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> <span style="color: #44ff44">&#39;Hello, I am $name&#39;</span>;
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  <span style="color: #87ceeb">var</span> person1 <span style="color: #ffff44">=</span> Person(<span style="color: #44ff44">&#39;Alice&#39;</span>, <span style="color: #bb86fc">30</span>);
+  <span style="color: #87ceeb">var</span> person2 <span style="color: #ffff44">=</span> Person.shorthand(<span style="color: #44ff44">&#39;Bob&#39;</span>, <span style="color: #bb86fc">25</span>);
+  <span style="color: #87ceeb">var</span> person3 <span style="color: #ffff44">=</span> Person.newborn(<span style="color: #44ff44">&#39;Charlie&#39;</span>);
+  <span style="color: #87ceeb">var</span> person4 <span style="color: #ffff44">=</span> Person.fromString(<span style="color: #44ff44">&#39;Diana,28&#39;</span>);
+}</code></pre>
+<p><strong>Constructor patterns:</strong></p>
+<ul><li><strong>Standard</strong>: Explicit <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">this</span></code> assignment.</li><li><strong>Shorthand</strong>: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Person(<span style="color: #87ceeb">this</span>.name, <span style="color: #87ceeb">this</span>.age)</code> automatically assigns parameters to fields.</li><li><strong>Named constructors</strong>: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Person.newborn()</code> for special creation logic.</li><li><strong>Factory constructors</strong>: Return instances with custom logic, possibly returning cached or subclass instances.</li></ul>
+<p><strong>Gotcha:</strong> Dart requires you to initialize all non-nullable fields. If a field has no default and isn't initialized in the constructor, you'll get a compile error. Use nullable types (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">String</span><span style="color: #ffff44">?</span></code>) or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">late</span></code> for fields initialized later.</p>
+<h3>Inheritance and Polymorphism</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> Animal {
+  <span style="color: #ff4444">String</span> name;
+  
+  Animal(<span style="color: #87ceeb">this</span>.name);
+  
+  <span style="color: #87ceeb">void</span> speak() {
+    print(<span style="color: #44ff44">&#39;$name makes a sound&#39;</span>);
+  }
+}
+
+<span style="color: #87ceeb">class</span> Dog <span style="color: #87ceeb">extends</span> Animal {
+  @override
+  <span style="color: #87ceeb">void</span> speak() {
+    print(<span style="color: #44ff44">&#39;$name barks&#39;</span>);
+  }
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  Animal animal <span style="color: #ffff44">=</span> Dog(<span style="color: #44ff44">&#39;Rex&#39;</span>);
+  animal.speak();                     <span style="color: #888888">// Rex barks</span>
+}</code></pre>
+<p><strong>Be aware of:</strong> Unlike C# where <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">override</code> is required, Dart doesn't mandate the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">@override</code> annotation—it's optional. However, using it is best practice because it makes your intent explicit and helps catch typos in method names at compile time.</p>
+<h3>Abstract Classes and Interfaces</h3>
+<p>Dart doesn't have a separate <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">interface</code> keyword. Any class can be used as an interface:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">abstract</span> <span style="color: #87ceeb">class</span> Animal {
+  <span style="color: #ff4444">String</span> name;
+  
+  Animal(<span style="color: #87ceeb">this</span>.name);
+  
+  <span style="color: #87ceeb">void</span> speak();                       <span style="color: #888888">// Abstract method (no body)</span>
+  
+  <span style="color: #87ceeb">void</span> move() {
+    print(<span style="color: #44ff44">&#39;$name moves&#39;</span>);            <span style="color: #888888">// Concrete method</span>
+  }
+}
+
+<span style="color: #87ceeb">class</span> Dog <span style="color: #87ceeb">implements</span> Animal {
+  @override
+  <span style="color: #ff4444">String</span> name;
+  
+  Dog(<span style="color: #87ceeb">this</span>.name);
+  
+  @override
+  <span style="color: #87ceeb">void</span> speak() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;$name barks&#39;</span>);
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  <span style="color: #888888">// Animal animal = Animal(&#39;Generic&#39;);  // ERROR: cannot instantiate abstract class</span>
+  Dog dog <span style="color: #ffff44">=</span> Dog(<span style="color: #44ff44">&#39;Rex&#39;</span>);
+  dog.speak();
+}</code></pre>
+<p><strong>Watch out for:</strong> When using <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">implements</span></code>, you must implement all abstract members, even if the abstract class provides default implementations. If you want to inherit some behaviour, use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">extends</span></code> instead. This distinction matters—<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">implements</span></code> says "you're a type of this", while <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">extends</span></code> says "you are this, with some changes".</p>
+<h3>Mixins: Composition Over Multiple Inheritance</h3>
+<p>Dart doesn't support multiple inheritance, but mixins allow you to reuse code across unrelated classes:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">mixin</span> Swimmer {
+  <span style="color: #87ceeb">void</span> swim() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Swimming&#39;</span>);
+}
+
+<span style="color: #87ceeb">mixin</span> Flyer {
+  <span style="color: #87ceeb">void</span> fly() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Flying&#39;</span>);
+}
+
+<span style="color: #87ceeb">class</span> Bird <span style="color: #87ceeb">with</span> Flyer {
+  <span style="color: #ff4444">String</span> name;
+  Bird(<span style="color: #87ceeb">this</span>.name);
+}
+
+<span style="color: #87ceeb">class</span> Duck <span style="color: #87ceeb">with</span> Swimmer, Flyer {
+  <span style="color: #ff4444">String</span> name;
+  Duck(<span style="color: #87ceeb">this</span>.name);
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  <span style="color: #87ceeb">var</span> duck <span style="color: #ffff44">=</span> Duck(<span style="color: #44ff44">&#39;Donald&#39;</span>);
+  duck.swim();                        <span style="color: #888888">// Swimming</span>
+  duck.fly();                         <span style="color: #888888">// Flying</span>
+}</code></pre>
+<p><strong>When to use mixins:</strong></p>
+<ul><li>Share methods across unrelated classes.</li><li>Avoid the "diamond problem" of multiple inheritance.</li><li>Keep concerns separate (e.g., "things that can swim" as a mixin).</li></ul>
+<p><strong>Be aware of:</strong> Mixins are applied left-to-right with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">with</span></code>. If two mixins define the same method, the rightmost wins. Order matters, and this can be a source of subtle bugs if you're not careful about mixin composition.</p>
+<h2>Advanced Type System</h2>
+<h3>Generics</h3>
+<p>Generics allow you to write reusable code that works with different types:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> Box<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> {
+  T<span style="color: #ffff44">?</span> content;
+  
+  <span style="color: #87ceeb">void</span> put(T item) {
+    content <span style="color: #ffff44">=</span> item;
+  }
+  
+  T<span style="color: #ffff44">?</span> <span style="color: #87ceeb">get</span>() {
+    <span style="color: #87ceeb">return</span> content;
+  }
+}
+
+<span style="color: #888888">// Generic functions</span>
+T first<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span>(<span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> items) {
+  <span style="color: #87ceeb">return</span> items[<span style="color: #bb86fc">0</span>];
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  <span style="color: #87ceeb">var</span> stringBox <span style="color: #ffff44">=</span> Box<span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span>();
+  stringBox.put(<span style="color: #44ff44">&#39;Hello&#39;</span>);
+  print(stringBox.<span style="color: #87ceeb">get</span>());             <span style="color: #888888">// Hello</span>
+  
+  <span style="color: #87ceeb">var</span> intBox <span style="color: #ffff44">=</span> Box<span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span>();
+  intBox.put(<span style="color: #bb86fc">42</span>);
+  print(intBox.<span style="color: #87ceeb">get</span>());                <span style="color: #888888">// 42</span>
+  
+  print(first([<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>]));            <span style="color: #888888">// 1</span>
+  print(first([<span style="color: #44ff44">&#39;a&#39;</span>, <span style="color: #44ff44">&#39;b&#39;</span>, <span style="color: #44ff44">&#39;c&#39;</span>]));      <span style="color: #888888">// a</span>
+}</code></pre>
+<p>Type parameters can have bounds:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> Repository<span style="color: #ffff44"><</span>T <span style="color: #87ceeb">extends</span> Object<span style="color: #ffff44">></span> {
+  <span style="color: #888888">// T must extend Object (or implement an interface)</span>
+}</code></pre>
+<p><strong>Watch out for:</strong> Dart uses type erasure—at runtime, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span></code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span></code> are the same object. You cannot do runtime type checks like <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">if</span> (items <span style="color: #87ceeb">is</span> <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span>)</code>. You can check <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">if</span> (items <span style="color: #87ceeb">is</span> <span style="color: #ff4444">List</span>)</code>, but not the type parameter. This is common across compiled languages, but can surprise developers coming from runtime-typed languages.</p>
+<h3>Extension Methods</h3>
+<p>Extension methods let you add methods to existing classes without subclassing:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>extension StringExtensions <span style="color: #87ceeb">on</span> <span style="color: #ff4444">String</span> {
+  <span style="color: #ff4444">String</span> capitalize() {
+    <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;${this[0].toUpperCase()}${substring(1)}&#39;</span>;
+  }
+  
+  <span style="color: #ff4444">bool</span> isValidEmail() {
+    <span style="color: #87ceeb">return</span> contains(<span style="color: #44ff44">&#39;@&#39;</span>);
+  }
+}
+
+extension ListExtensions<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> <span style="color: #87ceeb">on</span> <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> {
+  T<span style="color: #ffff44">?</span> firstOrNull() {
+    <span style="color: #87ceeb">return</span> isEmpty <span style="color: #ffff44">?</span> <span style="color: #87ceeb">null</span> <span style="color: #ffff44">:</span> first;
+  }
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  print(<span style="color: #44ff44">&#39;hello&#39;</span>.capitalize());        <span style="color: #888888">// Hello</span>
+  print(<span style="color: #44ff44">&#39;test@example.com&#39;</span>.isValidEmail());  <span style="color: #888888">// true</span>
+  
+  print([<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>].firstOrNull());     <span style="color: #888888">// 1</span>
+  print(<span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span>[].firstOrNull());       <span style="color: #888888">// null</span>
+}</code></pre>
+<p><strong>Be aware of:</strong> Extension methods are resolved statically. If you assign a String to a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">dynamic</span></code> variable, calling the extension method won't work. The type system must know it's a String at compile time to find the extension. This is by design—it keeps the system predictable.</p>
+<h2>Asynchronous Programming</h2>
+<h3>Futures and Async/Await</h3>
+<p>A <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">Future</span></code> represents a value (or error) that will be available at some point in the future:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Simulating an async operation</span>
+<span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span> fetchUserName(<span style="color: #ff4444">int</span> userId) <span style="color: #87ceeb">async</span> {
+  <span style="color: #888888">// In real code, this would fetch from an API</span>
+  <span style="color: #87ceeb">await</span> <span style="color: #ff4444">Future</span>.delayed(<span style="color: #ff4444">Duration</span>(seconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">1</span>));
+  <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;User #$userId&#39;</span>;
+}
+
+<span style="color: #87ceeb">void</span> main() <span style="color: #87ceeb">async</span> {
+  <span style="color: #888888">// Option 1: Using await</span>
+  <span style="color: #ff4444">String</span> name <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> fetchUserName(<span style="color: #bb86fc">1</span>);
+  print(name);
+  
+  <span style="color: #888888">// Option 2: Using .then() callback</span>
+  fetchUserName(<span style="color: #bb86fc">2</span>).then((name) {
+    print(name);
+  });
+  
+  <span style="color: #888888">// Option 3: Chain multiple async operations</span>
+  <span style="color: #87ceeb">var</span> name <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> fetchUserName(<span style="color: #bb86fc">3</span>);
+  <span style="color: #87ceeb">var</span> details <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> fetchUserDetails(name);
+  print(details);
+}
+
+<span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span> fetchUserDetails(<span style="color: #ff4444">String</span> name) <span style="color: #87ceeb">async</span> {
+  <span style="color: #87ceeb">await</span> <span style="color: #ff4444">Future</span>.delayed(<span style="color: #ff4444">Duration</span>(milliseconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">500</span>));
+  <span style="color: #87ceeb">return</span> <span style="color: #44ff44">&#39;Details for $name&#39;</span>;
+}</code></pre>
+<p><strong><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">async</span></code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">await</span></code>:</strong></p>
+<ul><li><strong><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">async</span></code></strong>: Marks a function as asynchronous. It automatically wraps the return value in a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">Future</span></code>.</li><li><strong><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">await</span></code></strong>: Pauses execution until a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">Future</span></code> completes, then returns its value.</li></ul>
+<p><strong>Pro tip:</strong> You can only use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">await</span></code> inside an <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">async</span></code> function. If you want to use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">await</span></code> in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">main()</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">main()</code> must be declared <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">async</span></code>. This is different from some other languages where the entire runtime context is async—in Dart, async is opt-in per function.</p>
+<h3>Handling Errors</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> divide(<span style="color: #ff4444">int</span> a, <span style="color: #ff4444">int</span> b) <span style="color: #87ceeb">async</span> {
+  <span style="color: #87ceeb">if</span> (b <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #bb86fc">0</span>) {
+    <span style="color: #87ceeb">throw</span> ArgumentError(<span style="color: #44ff44">&#39;Divisor cannot be zero&#39;</span>);
+  }
+  <span style="color: #87ceeb">return</span> a ~<span style="color: #ffff44">/</span> b;  <span style="color: #888888">// Integer division</span>
+}
+
+<span style="color: #87ceeb">void</span> main() <span style="color: #87ceeb">async</span> {
+  <span style="color: #888888">// Try/catch with async</span>
+  <span style="color: #87ceeb">try</span> {
+    <span style="color: #ff4444">int</span> result <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> divide(<span style="color: #bb86fc">10</span>, <span style="color: #bb86fc">2</span>);
+    print(result);                    <span style="color: #888888">// 5</span>
+  } <span style="color: #87ceeb">catch</span> (e) {
+    print(<span style="color: #44ff44">&#39;Error: $e&#39;</span>);
+  }
+  
+  <span style="color: #888888">// .catchError() for Futures</span>
+  divide(<span style="color: #bb86fc">10</span>, <span style="color: #bb86fc">0</span>).catchError((e) {
+    print(<span style="color: #44ff44">&#39;Caught: $e&#39;</span>);
+  });
+}</code></pre>
+<h3>Streams</h3>
+<p>A <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">Stream</span></code> is like a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">Future</span></code>, but it can emit multiple values over time:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #ff4444">Stream</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> countUp(<span style="color: #ff4444">int</span> n) <span style="color: #87ceeb">async</span><span style="color: #ffff44">*</span> {
+  <span style="color: #87ceeb">for</span> (<span style="color: #ff4444">int</span> i <span style="color: #ffff44">=</span> <span style="color: #bb86fc">1</span>; i <span style="color: #ffff44"><</span><span style="color: #ffff44">=</span> n; i<span style="color: #ffff44">+</span><span style="color: #ffff44">+</span>) {
+    <span style="color: #87ceeb">await</span> <span style="color: #ff4444">Future</span>.delayed(<span style="color: #ff4444">Duration</span>(milliseconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>));
+    <span style="color: #87ceeb">yield</span> i;
+  }
+}
+
+<span style="color: #87ceeb">void</span> main() <span style="color: #87ceeb">async</span> {
+  <span style="color: #888888">// Listen to a stream</span>
+  <span style="color: #87ceeb">await</span> <span style="color: #87ceeb">for</span> (<span style="color: #ff4444">int</span> count <span style="color: #87ceeb">in</span> countUp(<span style="color: #bb86fc">5</span>)) {
+    print(count);                     <span style="color: #888888">// 1, 2, 3, 4, 5</span>
+  }
+  
+  <span style="color: #888888">// Or use .listen()</span>
+  countUp(<span style="color: #bb86fc">3</span>).listen((count) {
+    print(<span style="color: #44ff44">&#39;Count: $count&#39;</span>);
+  });
+}</code></pre>
+<p><strong>Be aware of:</strong> Streams are lazy—nothing happens until you listen. If you don't call <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.listen()</code> or use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">await</span> <span style="color: #87ceeb">for</span></code>, the stream never executes. This can be confusing if you create a stream and expect it to run automatically. Always explicitly listen to activate a stream.</p>
+<h2>String Interpolation and Formatting</h2>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #ff4444">String</span> name <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Alice&#39;</span>;
+  <span style="color: #ff4444">int</span> age <span style="color: #ffff44">=</span> <span style="color: #bb86fc">30</span>;
+  
+  <span style="color: #888888">// String interpolation with $</span>
+  print(<span style="color: #44ff44">&#39;Name: $name, Age: $age&#39;</span>);
+  
+  <span style="color: #888888">// Expressions in interpolation</span>
+  print(<span style="color: #44ff44">&#39;In 5 years: ${age + 5}&#39;</span>);
+  
+  <span style="color: #888888">// Method calls</span>
+  print(<span style="color: #44ff44">&#39;Upper: ${name.toUpperCase()}&#39;</span>);
+  
+  <span style="color: #888888">// Multi-line strings</span>
+  <span style="color: #ff4444">String</span> multiline <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;&#39;</span><span style="color: #44ff44">&#39;
+    Line 1
+    Line 2
+    Line 3
+  &#39;</span><span style="color: #44ff44">&#39;&#39;</span>;
+  print(multiline);
+  
+  <span style="color: #888888">// Raw strings (no interpolation)</span>
+  print(r<span style="color: #44ff44">&#39;This is $name&#39;</span>);             <span style="color: #888888">// Prints: This is $name</span>
+}</code></pre>
+<h2>Exception Handling</h2>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #87ceeb">try</span> {
+    <span style="color: #ff4444">int</span> result <span style="color: #ffff44">=</span> <span style="color: #bb86fc">10</span> ~<span style="color: #ffff44">/</span> <span style="color: #bb86fc">0</span>;             <span style="color: #888888">// Integer division by zero</span>
+  } <span style="color: #87ceeb">on</span> IntegerDivisionByZeroException {
+    print(<span style="color: #44ff44">&#39;Cannot divide by zero&#39;</span>);
+  } <span style="color: #87ceeb">on</span> FormatException {
+    print(<span style="color: #44ff44">&#39;Invalid format&#39;</span>);
+  } <span style="color: #87ceeb">catch</span> (e) {
+    print(<span style="color: #44ff44">&#39;Unknown error: $e&#39;</span>);
+  } <span style="color: #87ceeb">finally</span> {
+    print(<span style="color: #44ff44">&#39;Cleanup&#39;</span>);
+  }
+}</code></pre>
+<p><strong>Dart exceptions:</strong></p>
+<ul><li>Throw any object (though <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Exception</code> is conventional).</li><li>Catch specific exception types with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">on</span></code>.</li><li>Use generic <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">catch</span></code> for anything.</li></ul>
+<h2>Control Flow</h2>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #ff4444">int</span> x <span style="color: #ffff44">=</span> <span style="color: #bb86fc">5</span>;
+  
+  <span style="color: #888888">// If/else as expression</span>
+  <span style="color: #ff4444">String</span> result <span style="color: #ffff44">=</span> x <span style="color: #ffff44">></span> <span style="color: #bb86fc">0</span> <span style="color: #ffff44">?</span> <span style="color: #44ff44">&#39;positive&#39;</span> <span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;non-positive&#39;</span>;
+  
+  <span style="color: #888888">// For loops</span>
+  <span style="color: #87ceeb">for</span> (<span style="color: #ff4444">int</span> i <span style="color: #ffff44">=</span> <span style="color: #bb86fc">0</span>; i <span style="color: #ffff44"><</span> <span style="color: #bb86fc">3</span>; i<span style="color: #ffff44">+</span><span style="color: #ffff44">+</span>) {
+    print(i);
+  }
+  
+  <span style="color: #888888">// For-in (like for...of in JavaScript)</span>
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span> names <span style="color: #ffff44">=</span> [<span style="color: #44ff44">&#39;Alice&#39;</span>, <span style="color: #44ff44">&#39;Bob&#39;</span>];
+  <span style="color: #87ceeb">for</span> (<span style="color: #ff4444">String</span> name <span style="color: #87ceeb">in</span> names) {
+    print(name);
+  }
+  
+  <span style="color: #888888">// While and do-while</span>
+  <span style="color: #ff4444">int</span> count <span style="color: #ffff44">=</span> <span style="color: #bb86fc">0</span>;
+  <span style="color: #87ceeb">while</span> (count <span style="color: #ffff44"><</span> <span style="color: #bb86fc">3</span>) {
+    print(count<span style="color: #ffff44">+</span><span style="color: #ffff44">+</span>);
+  }
+  
+  <span style="color: #888888">// Switch</span>
+  <span style="color: #87ceeb">switch</span> (x) {
+    <span style="color: #87ceeb">case</span> <span style="color: #bb86fc">1</span><span style="color: #ffff44">:</span>
+    <span style="color: #87ceeb">case</span> <span style="color: #bb86fc">2</span><span style="color: #ffff44">:</span>
+      print(<span style="color: #44ff44">&#39;One or two&#39;</span>);
+      <span style="color: #87ceeb">break</span>;
+    <span style="color: #87ceeb">case</span> <span style="color: #bb86fc">5</span><span style="color: #ffff44">:</span>
+      print(<span style="color: #44ff44">&#39;Five&#39;</span>);
+      <span style="color: #87ceeb">break</span>;
+    <span style="color: #87ceeb">default</span><span style="color: #ffff44">:</span>
+      print(<span style="color: #44ff44">&#39;Other&#39;</span>);
+  }
+}</code></pre>
+<h2>Operators and Special Syntax</h2>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  <span style="color: #888888">// Null-coalescing operator</span>
+  <span style="color: #ff4444">String</span><span style="color: #ffff44">?</span> nickname <span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>;
+  print(nickname <span style="color: #ffff44">?</span><span style="color: #ffff44">?</span> <span style="color: #44ff44">&#39;Anonymous&#39;</span>);     <span style="color: #888888">// Anonymous</span>
+  
+  <span style="color: #888888">// Null-aware operators</span>
+  <span style="color: #ff4444">String</span><span style="color: #ffff44">?</span> text <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;hello&#39;</span>;
+  print(text<span style="color: #ffff44">?</span>.length);                <span style="color: #888888">// 5 (or null if text is null)</span>
+  print(text<span style="color: #ffff44">?</span>.toUpperCase());         <span style="color: #888888">// HELLO</span>
+  
+  <span style="color: #888888">// Cascade operator (..): call multiple methods on same object</span>
+  <span style="color: #87ceeb">var</span> buffer <span style="color: #ffff44">=</span> StringBuffer();
+  buffer
+    ..write(<span style="color: #44ff44">&#39;Hello&#39;</span>)
+    ..write(<span style="color: #44ff44">&#39; &#39;</span>)
+    ..write(<span style="color: #44ff44">&#39;World&#39;</span>);
+  print(buffer.toString());           <span style="color: #888888">// Hello World</span>
+  
+  <span style="color: #888888">// Spread operator (...)</span>
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> numbers1 <span style="color: #ffff44">=</span> [<span style="color: #bb86fc">1</span>, <span style="color: #bb86fc">2</span>, <span style="color: #bb86fc">3</span>];
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> numbers2 <span style="color: #ffff44">=</span> [<span style="color: #bb86fc">0</span>, ...numbers1, <span style="color: #bb86fc">4</span>];  <span style="color: #888888">// [0, 1, 2, 3, 4]</span>
+}</code></pre>
+<p><strong>Cascade operator (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">..)</code> is unique to Dart</strong> and very useful for configuring objects:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> TextStyle {
+  <span style="color: #ff4444">String</span><span style="color: #ffff44">?</span> fontFamily;
+  <span style="color: #ff4444">int</span><span style="color: #ffff44">?</span> fontSize;
+  <span style="color: #ff4444">bool</span><span style="color: #ffff44">?</span> bold;
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  <span style="color: #87ceeb">var</span> style <span style="color: #ffff44">=</span> TextStyle()
+    ..fontFamily <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;Arial&#39;</span>
+    ..fontSize <span style="color: #ffff44">=</span> <span style="color: #bb86fc">16</span>
+    ..bold <span style="color: #ffff44">=</span> <span style="color: #87ceeb">true</span>;
+}</code></pre>
+<h2>Enums</h2>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">enum</span> Status {
+  pending,
+  active,
+  completed,
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  Status status <span style="color: #ffff44">=</span> Status.active;
+  
+  <span style="color: #87ceeb">switch</span> (status) {
+    <span style="color: #87ceeb">case</span> Status.pending<span style="color: #ffff44">:</span>
+      print(<span style="color: #44ff44">&#39;Waiting...&#39;</span>);
+      <span style="color: #87ceeb">break</span>;
+    <span style="color: #87ceeb">case</span> Status.active<span style="color: #ffff44">:</span>
+      print(<span style="color: #44ff44">&#39;Running...&#39;</span>);
+      <span style="color: #87ceeb">break</span>;
+    <span style="color: #87ceeb">case</span> Status.completed<span style="color: #ffff44">:</span>
+      print(<span style="color: #44ff44">&#39;Done!&#39;</span>);
+      <span style="color: #87ceeb">break</span>;
+  }
+}</code></pre>
+<p>Dart 2.17+ supports enhanced enums with properties and methods:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">enum</span> Status {
+  pending(<span style="color: #44ff44">&#39;Waiting&#39;</span>),
+  active(<span style="color: #44ff44">&#39;Running&#39;</span>),
+  completed(<span style="color: #44ff44">&#39;Done&#39;</span>);
+  
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> label;
+  
+  <span style="color: #87ceeb">const</span> Status(<span style="color: #87ceeb">this</span>.label);
+}
+
+<span style="color: #87ceeb">void</span> main() {
+  print(Status.active.label);         <span style="color: #888888">// Running</span>
+}</code></pre>
+<h2>Key Takeaways</h2>
+<ol><li><strong>Type safety by default</strong>: Dart forces you to think about types upfront, preventing whole categories of runtime errors.</li><li><strong>Null safety is built-in</strong>: Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44">?</span></code> to allow nulls; otherwise, nulls are compile-time errors.</li><li><strong>Pragmatic syntax</strong>: Dart's syntax is designed for developer productivity without sacrificing safety.</li><li><strong>Functional programming</strong>: First-class functions, closures, and functional methods on collections are first-class citizens.</li><li><strong>Async-first</strong>: Futures and async/await are integrated into the language, not afterthoughts.</li><li><strong>Mixins over multiple inheritance</strong>: Dart's answer to code reuse without the complexity of multiple inheritance.</li></ol>
+<p>This foundation prepares you to write Dart code confidently for both command-line apps and Flutter.</p>
+<hr>
+<h2>Hands-On Project</h2>
+<p>Ready to apply what you've learned? Work through the <a href="markdown-notes-project-part-a.html" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">Markdown Notes Project Part A</a> to build a complete command-line note-taking application. You'll reinforce these concepts through 60 minutes of practical coding that demonstrates classes, collections, null safety, and file I/O in a real-world context.</p>
+</body>
+<script src="common.js"></script>
+</html>

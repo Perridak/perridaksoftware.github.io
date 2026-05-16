@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>09-MoreWidgets</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>More Widgets</h1>
+<p>This chapter has two parts. First, we'll learn how to create your own widgets—the foundation for building reusable, maintainable UI components. Second, we'll provide a reference guide to widgets from Flutter's toolkit that we missed or skimmed in the earlier Flutter Widgets chapter.</p>
+<h2>Part 1: Creating Your Own Widgets</h2>
+<p>Every widget you use in Flutter is built from more basic widgets. At some point, you'll need to build something that doesn't exist in Flutter's toolkit, or you'll want to extract part of your UI into a reusable piece. Creating custom widgets teaches you how Flutter works and gives you the power to build exactly what your app needs.</p>
+<h3>Understanding When to Create a Custom Widget</h3>
+<p>Before diving into how, understand when. You should create a custom widget when:</p>
+<ul><li>You repeat the same widget pattern across multiple screens</li><li>A widget in your UI is complex enough to warrant its own file</li><li>You want to encapsulate logic and styling together</li><li>You're building a component library for your team</li></ul>
+<p>Example: In the Markdown Notes app, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">NoteCard</code> (the reusable note preview widget) is a perfect candidate for a custom widget. It combines layout, styling, and interaction logic.</p>
+<h3>Creating a Custom Stateless Widget</h3>
+<p>A <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatelessWidget</code> is the simplest custom widget. It's immutable—once built, its properties never change.</p>
+<p><strong>Step 1: Understand the Structure</strong></p>
+<p>Every widget needs to extend either <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatelessWidget</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code> and override the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">build()</code> method:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> MyCustomWidget <span style="color: #87ceeb">extends</span> StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #888888">// Return the UI</span>
+  }
+}</code></pre>
+<p><strong>Step 2: Build Your First Custom Widget</strong></p>
+<p>Let's create a simple widget that displays a note preview:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteCard <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> Note note;
+  <span style="color: #87ceeb">final</span> VoidCallback onTap;
+
+  <span style="color: #87ceeb">const</span> NoteCard({
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.note,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> GestureDetector(
+      onTap<span style="color: #ffff44">:</span> onTap,
+      child<span style="color: #ffff44">:</span> Card(
+        margin<span style="color: #ffff44">:</span> EdgeInsets.symmetric(vertical<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>, horizontal<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span>),
+        child<span style="color: #ffff44">:</span> Padding(
+          padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),
+          child<span style="color: #ffff44">:</span> Column(
+            crossAxisAlignment<span style="color: #ffff44">:</span> CrossAxisAlignment.start,
+            children<span style="color: #ffff44">:</span> [
+              Text(
+                note.title,
+                style<span style="color: #ffff44">:</span> Theme.of(context).textTheme.titleLarge,
+              ),
+              SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>),
+              Text(
+                note.content,
+                maxLines<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>,
+                overflow<span style="color: #ffff44">:</span> TextOverflow.ellipsis,
+                style<span style="color: #ffff44">:</span> TextStyle(color<span style="color: #ffff44">:</span> Colors.grey[<span style="color: #bb86fc">600</span>]),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}</code></pre>
+<p>Key observations:</p>
+<ul><li>The constructor accepts required parameters (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">note</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">onTap</code>)</li><li>It uses <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> to mark the constructor, enabling optimizations</li><li>The <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">build()</code> method returns a widget tree</li><li>It uses composition: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Card</code> wraps <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Padding</code> wraps <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Column</code></li></ul>
+<p><strong>Step 3: Use Your Custom Widget</strong></p>
+<p>Once defined, use it like any Flutter widget:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>ListView.builder(
+  itemCount<span style="color: #ffff44">:</span> notes.length,
+  itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+    <span style="color: #87ceeb">return</span> NoteCard(
+      note<span style="color: #ffff44">:</span> notes[index],
+      onTap<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> openNoteDetail(notes[index]),
+    );
+  },
+)</code></pre>
+<h3>Creating a Custom Stateful Widget</h3>
+<p>A <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code> can change over time. It's appropriate when your widget needs to maintain state or respond to user interaction internally.</p>
+<p><strong>Example: A Collapsible Note Card</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> CollapsibleNoteCard <span style="color: #87ceeb">extends</span> StatefulWidget {
+  <span style="color: #87ceeb">final</span> Note note;
+
+  <span style="color: #87ceeb">const</span> CollapsibleNoteCard({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.note});
+
+  @override
+  State<span style="color: #ffff44"><</span>CollapsibleNoteCard<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _CollapsibleNoteCardState();
+}
+
+<span style="color: #87ceeb">class</span> _CollapsibleNoteCardState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>CollapsibleNoteCard<span style="color: #ffff44">></span> {
+  <span style="color: #ff4444">bool</span> _isExpanded <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Card(
+      child<span style="color: #ffff44">:</span> Column(
+        children<span style="color: #ffff44">:</span> [
+          ListTile(
+            title<span style="color: #ffff44">:</span> Text(widget.note.title),
+            trailing<span style="color: #ffff44">:</span> IconButton(
+              icon<span style="color: #ffff44">:</span> Icon(_isExpanded <span style="color: #ffff44">?</span> Icons.expand_less <span style="color: #ffff44">:</span> Icons.expand_more),
+              onPressed<span style="color: #ffff44">:</span> () {
+                setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _isExpanded <span style="color: #ffff44">=</span> <span style="color: #ffff44">!</span>_isExpanded);
+              },
+            ),
+          ),
+          <span style="color: #87ceeb">if</span> (_isExpanded)
+            Padding(
+              padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),
+              child<span style="color: #ffff44">:</span> Text(widget.note.content),
+            ),
+        ],
+      ),
+    );
+  }
+}</code></pre>
+<p>Key differences from stateless:</p>
+<ul><li>Extends <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code> with a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">createState()</code> method</li><li>State is held in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">_CollapsibleNoteCardState</code></li><li>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">widget.</code> to access properties from the widget</li><li>Call <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> to update the UI when state changes</li><li>The underscore prefix (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">_CollapsibleNoteCardState</code>) is Dart convention for private classes</li></ul>
+<p><strong>Understanding the Split</strong></p>
+<p>The widget itself (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CollapsibleNoteCard</code>) is immutable. The state (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">_CollapsibleNoteCardState</code>) is mutable. This split might seem odd, but it ensures clean separation: the widget describes what to display, the state manages how it changes.</p>
+<h3>Creating a Custom Painter Widget (CustomPaint)</h3>
+<p>For custom graphics beyond what widgets provide, use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CustomPaint</code>. This is advanced but powerful.</p>
+<p><strong>Example: A Simple Progress Ring</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> ProgressRing <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">double</span> progress; <span style="color: #888888">// 0.0 to 1.0</span>
+
+  <span style="color: #87ceeb">const</span> ProgressRing({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.progress});
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> CustomPaint(
+      painter<span style="color: #ffff44">:</span> ProgressRingPainter(progress),
+      size<span style="color: #ffff44">:</span> Size(<span style="color: #bb86fc">100</span>, <span style="color: #bb86fc">100</span>),
+    );
+  }
+}
+
+<span style="color: #87ceeb">class</span> ProgressRingPainter <span style="color: #87ceeb">extends</span> CustomPainter {
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">double</span> progress;
+
+  ProgressRingPainter(<span style="color: #87ceeb">this</span>.progress);
+
+  @override
+  <span style="color: #87ceeb">void</span> paint(Canvas canvas, Size size) {
+    <span style="color: #87ceeb">final</span> center <span style="color: #ffff44">=</span> Offset(size.width <span style="color: #ffff44">/</span> <span style="color: #bb86fc">2</span>, size.height <span style="color: #ffff44">/</span> <span style="color: #bb86fc">2</span>);
+    <span style="color: #87ceeb">final</span> radius <span style="color: #ffff44">=</span> size.width <span style="color: #ffff44">/</span> <span style="color: #bb86fc">2</span>;
+
+    <span style="color: #888888">// Draw background ring</span>
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()
+        ..color <span style="color: #ffff44">=</span> Colors.grey[<span style="color: #bb86fc">300</span>]<span style="color: #ffff44">!</span>
+        ..strokeWidth <span style="color: #ffff44">=</span> <span style="color: #bb86fc">4</span>
+        ..style <span style="color: #ffff44">=</span> PaintingStyle.stroke,
+    );
+
+    <span style="color: #888888">// Draw progress ring</span>
+    <span style="color: #87ceeb">final</span> sweep <span style="color: #ffff44">=</span> <span style="color: #bb86fc">2</span> <span style="color: #ffff44">*</span> <span style="color: #bb86fc">3.14159</span> <span style="color: #ffff44">*</span> progress; <span style="color: #888888">// 2π * progress</span>
+    canvas.drawArc(
+      Rect.fromCircle(center<span style="color: #ffff44">:</span> center, radius<span style="color: #ffff44">:</span> radius),
+      <span style="color: #ffff44">-</span><span style="color: #bb86fc">3.14159</span> <span style="color: #ffff44">/</span> <span style="color: #bb86fc">2</span>, <span style="color: #888888">// Start at top</span>
+      sweep,
+      <span style="color: #87ceeb">false</span>,
+      Paint()
+        ..color <span style="color: #ffff44">=</span> Colors.blue
+        ..strokeWidth <span style="color: #ffff44">=</span> <span style="color: #bb86fc">4</span>
+        ..style <span style="color: #ffff44">=</span> PaintingStyle.stroke,
+    );
+  }
+
+  @override
+  <span style="color: #ff4444">bool</span> shouldRepaint(ProgressRingPainter oldDelegate) {
+    <span style="color: #87ceeb">return</span> oldDelegate.progress <span style="color: #ffff44">!</span><span style="color: #ffff44">=</span> progress;
+  }
+}</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CustomPaint</code> requires two things:</p>
+<ol><li><strong>A painter</strong> — extends <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">CustomPainter</code> and implements <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">paint()</code> to draw</li><li><strong>shouldRepaint()</strong> — returns true if the widget needs to redraw (optimization)</li></ol>
+<p>This approach is for truly custom graphics. For most UI needs, composition (combining existing widgets) is simpler and preferred.</p>
+<h3>Widget Composition Best Practices</h3>
+<p>When building custom widgets, prefer composition over building from scratch:</p>
+<p><strong>Compose existing widgets:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NotePreview <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> Note note;
+  
+  <span style="color: #87ceeb">const</span> NotePreview({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.note});
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Container(
+      padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),
+      decoration<span style="color: #ffff44">:</span> BoxDecoration(
+        border<span style="color: #ffff44">:</span> Border.all(color<span style="color: #ffff44">:</span> Colors.grey),
+        borderRadius<span style="color: #ffff44">:</span> BorderRadius.circular(<span style="color: #bb86fc">8</span>),
+      ),
+      child<span style="color: #ffff44">:</span> Column(
+        crossAxisAlignment<span style="color: #ffff44">:</span> CrossAxisAlignment.start,
+        children<span style="color: #ffff44">:</span> [
+          Text(note.title, style<span style="color: #ffff44">:</span> TextStyle(fontWeight<span style="color: #ffff44">:</span> FontWeight.bold)),
+          SizedBox(height<span style="color: #ffff44">:</span> <span style="color: #bb86fc">8</span>),
+          Text(note.content),
+        ],
+      ),
+    );
+  }
+}</code></pre>
+<p>This is simpler than custom painting and handles responsiveness automatically.</p>
+<h3>Extracting Widgets for Clarity</h3>
+<p>If your <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">build()</code> method exceeds 50 lines or contains nested columns/rows, extract sections into separate widgets:</p>
+<p><strong>Before:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>@override
+Widget build(BuildContext context) {
+  <span style="color: #87ceeb">return</span> Scaffold(
+    appBar<span style="color: #ffff44">:</span> AppBar(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Notes&#39;</span>)),
+    body<span style="color: #ffff44">:</span> Column(
+      children<span style="color: #ffff44">:</span> [
+        Container(<span style="color: #888888">/*header styling*/</span>),
+        ListView.builder(<span style="color: #888888">/*list*/</span>),
+        Container(<span style="color: #888888">/*footer styling*/</span>),
+      ],
+    ),
+  );
+}</code></pre>
+<p><strong>After:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>@override
+Widget build(BuildContext context) {
+  <span style="color: #87ceeb">return</span> Scaffold(
+    appBar<span style="color: #ffff44">:</span> AppBar(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Notes&#39;</span>)),
+    body<span style="color: #ffff44">:</span> Column(
+      children<span style="color: #ffff44">:</span> [
+        _buildHeader(),
+        _buildList(),
+        _buildFooter(),
+      ],
+    ),
+  );
+}
+
+Widget _buildHeader() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Container(<span style="color: #888888">/*header styling*/</span>);
+Widget _buildList() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> ListView.builder(<span style="color: #888888">/*list*/</span>);
+Widget _buildFooter() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Container(<span style="color: #888888">/*footer styling*/</span>);</code></pre>
+<p>Or extract into separate widget classes for maximum reusability.</p>
+<hr>
+<h2>Part 2: Widget Reference Guide</h2>
+<p>Flutter's widget catalog is extensive. This section covers widgets we haven't fully explored yet, organized by category. Each widget includes its purpose, when to use it, key properties, and a simple example.</p>
+<h3>Scrolling Widgets</h3>
+<p><strong>SingleChildScrollView</strong></p>
+<p>Scrolls a single child widget. Use when you have one widget that might overflow the screen.</p>
+<p>Key properties: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">scrollDirection</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">reverse</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">padding</code></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>SingleChildScrollView(
+  child<span style="color: #ffff44">:</span> Column(
+    children<span style="color: #ffff44">:</span> [<span style="color: #888888">/*many widgets*/</span>],
+  ),
+)</code></pre>
+<p><strong>ListView and ListView.builder</strong></p>
+<p>Scrolls multiple children. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.builder</code> for long lists (lazy loading). Both covered in earlier chapter; included for completeness.</p>
+<p><strong>GridView and GridView.builder</strong></p>
+<p>Lays out children in a grid. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GridView.count</code> for fixed columns, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GridView.builder</code> for lazy-loaded grids.</p>
+<p>Key properties: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">crossAxisCount</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">mainAxisSpacing</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">crossAxisSpacing</code></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>GridView.count(
+  crossAxisCount<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>,
+  children<span style="color: #ffff44">:</span> [<span style="color: #888888">/*widgets*/</span>],
+)</code></pre>
+<p><strong>PageView</strong></p>
+<p>Displays pages that users swipe between (carousel). Useful for onboarding flows or image galleries.</p>
+<p>Key properties: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">children</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">onPageChanged</code></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>PageView(
+  onPageChanged<span style="color: #ffff44">:</span> (index) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> currentPage <span style="color: #ffff44">=</span> index),
+  children<span style="color: #ffff44">:</span> [Page1(), Page2(), Page3()],
+)</code></pre>
+<p><strong>CustomScrollView and Slivers</strong></p>
+<p>Advanced scrolling with complex behaviors (e.g., collapsing app bars, pinned headers). Uses <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Sliver</code> widgets instead of regular children.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>CustomScrollView(
+  slivers<span style="color: #ffff44">:</span> [
+    SliverAppBar(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;App&#39;</span>), floating<span style="color: #ffff44">:</span> <span style="color: #87ceeb">true</span>),
+    SliverList(delegate<span style="color: #ffff44">:</span> SliverChildListDelegate([<span style="color: #888888">/*items*/</span>])),
+  ],
+)</code></pre>
+<h3>Interaction and Input Widgets</h3>
+<p><strong>GestureDetector</strong></p>
+<p>Detects gestures (taps, drags, long presses). Covered in earlier chapter; mentioned here as a foundational interaction widget.</p>
+<p><strong>InkWell</strong></p>
+<p>Like <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GestureDetector</code> but adds Material ripple effects. Preferred for Material design.</p>
+<p>Key properties: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">onTap</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">onLongPress</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">splashColor</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">highlightColor</code></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>InkWell(
+  onTap<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Tapped&#39;</span>),
+  child<span style="color: #ffff44">:</span> Padding(
+    padding<span style="color: #ffff44">:</span> EdgeInsets.all(<span style="color: #bb86fc">16</span>),
+    child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Tap me&#39;</span>),
+  ),
+)</code></pre>
+<p><strong>Dismissible</strong></p>
+<p>Allows users to swipe/drag to dismiss. Commonly used for swipe-to-delete.</p>
+<p>Key properties: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">key</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">onDismissed</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">background</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">secondaryBackground</code></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Dismissible(
+  key<span style="color: #ffff44">:</span> Key(item.id),
+  onDismissed<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> deleteItem(item.id),
+  background<span style="color: #ffff44">:</span> Container(color<span style="color: #ffff44">:</span> Colors.red),
+  child<span style="color: #ffff44">:</span> ListTile(title<span style="color: #ffff44">:</span> Text(item.title)),
+)</code></pre>
+<p><strong>Draggable and DragTarget</strong></p>
+<p>Enables drag-and-drop. <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Draggable</code> is the source, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">DragTarget</code> is the destination.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Draggable<span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span>(
+  data<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;item&#39;</span>,
+  child<span style="color: #ffff44">:</span> Container(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Drag me&#39;</span>)),
+  feedback<span style="color: #ffff44">:</span> Container(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Dragging...&#39;</span>)),
+)
+
+DragTarget<span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span>(
+  onAccept<span style="color: #ffff44">:</span> (data) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Dropped: $data&#39;</span>),
+  builder<span style="color: #ffff44">:</span> (context, candidateData, rejectedData) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span>
+    Container(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Drop here&#39;</span>)),
+)</code></pre>
+<h3>Animation Widgets</h3>
+<p><strong>AnimatedBuilder</strong></p>
+<p>Builds a widget in response to an animation. Use when you have complex animations tied to a single AnimationController.</p>
+<p>Key properties: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">animation</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">builder</code></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>AnimatedBuilder(
+  animation<span style="color: #ffff44">:</span> controller,
+  builder<span style="color: #ffff44">:</span> (context, child) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Transform.rotate(
+    angle<span style="color: #ffff44">:</span> controller.value <span style="color: #ffff44">*</span> <span style="color: #bb86fc">2</span> <span style="color: #ffff44">*</span> <span style="color: #bb86fc">3.14159</span>,
+    child<span style="color: #ffff44">:</span> Icon(Icons.refresh),
+  ),
+)</code></pre>
+<p><strong>AnimatedContainer, AnimatedOpacity, AnimatedPositioned</strong></p>
+<p>Implicit animations that animate between property changes. Use when you want simple property animations without explicit controller.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>AnimatedContainer(
+  duration<span style="color: #ffff44">:</span> <span style="color: #ff4444">Duration</span>(milliseconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">300</span>),
+  width<span style="color: #ffff44">:</span> _isExpanded <span style="color: #ffff44">?</span> <span style="color: #bb86fc">200</span> <span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>,
+  height<span style="color: #ffff44">:</span> _isExpanded <span style="color: #ffff44">?</span> <span style="color: #bb86fc">200</span> <span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>,
+  color<span style="color: #ffff44">:</span> _isExpanded <span style="color: #ffff44">?</span> Colors.blue <span style="color: #ffff44">:</span> Colors.red,
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Animate me&#39;</span>),
+)</code></pre>
+<p><strong>TweenAnimationBuilder</strong></p>
+<p>Animates a value over time. Use for specific numeric animations.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>TweenAnimationBuilder<span style="color: #ffff44"><</span><span style="color: #ff4444">double</span><span style="color: #ffff44">></span>(
+  tween<span style="color: #ffff44">:</span> Tween(begin<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0</span>, end<span style="color: #ffff44">:</span> <span style="color: #bb86fc">1</span>),
+  duration<span style="color: #ffff44">:</span> <span style="color: #ff4444">Duration</span>(seconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>),
+  builder<span style="color: #ffff44">:</span> (context, value, child) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Opacity(
+    opacity<span style="color: #ffff44">:</span> value,
+    child<span style="color: #ffff44">:</span> child,
+  ),
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Fade in&#39;</span>),
+)</code></pre>
+<h3>Styling and Theming Widgets</h3>
+<p><strong>DecoratedBox</strong></p>
+<p>Applies decoration (border, shadow, color) to a child. More flexible than just using <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Container</code>.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>DecoratedBox(
+  decoration<span style="color: #ffff44">:</span> BoxDecoration(
+    color<span style="color: #ffff44">:</span> Colors.blue,
+    borderRadius<span style="color: #ffff44">:</span> BorderRadius.circular(<span style="color: #bb86fc">8</span>),
+    boxShadow<span style="color: #ffff44">:</span> [BoxShadow(blurRadius<span style="color: #ffff44">:</span> <span style="color: #bb86fc">4</span>)],
+  ),
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Decorated&#39;</span>),
+)</code></pre>
+<p><strong>ClipRRect, ClipOval, ClipPath</strong></p>
+<p>Clips children to shapes. Use for rounded corners, circles, or custom shapes.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>ClipRRect(
+  borderRadius<span style="color: #ffff44">:</span> BorderRadius.circular(<span style="color: #bb86fc">8</span>),
+  child<span style="color: #ffff44">:</span> Image.asset(<span style="color: #44ff44">&#39;image.png&#39;</span>),
+)</code></pre>
+<p><strong>Opacity</strong></p>
+<p>Makes a widget partially transparent. Covered earlier; included for reference.</p>
+<p><strong>Transform</strong></p>
+<p>Applies transformations (rotation, scaling, translation) to a child.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Transform.rotate(
+  angle<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0.5</span>, <span style="color: #888888">// radians</span>
+  child<span style="color: #ffff44">:</span> Icon(Icons.star),
+)
+
+Transform.scale(
+  scale<span style="color: #ffff44">:</span> <span style="color: #bb86fc">1.5</span>,
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Bigger&#39;</span>),
+)</code></pre>
+<h3>Layout Helpers</h3>
+<p><strong>AspectRatio</strong></p>
+<p>Constrains a child to a specific aspect ratio.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>AspectRatio(
+  aspectRatio<span style="color: #ffff44">:</span> <span style="color: #bb86fc">16</span> <span style="color: #ffff44">/</span> <span style="color: #bb86fc">9</span>,
+  child<span style="color: #ffff44">:</span> Image.asset(<span style="color: #44ff44">&#39;landscape.png&#39;</span>),
+)</code></pre>
+<p><strong>FractionallySizedBox</strong></p>
+<p>Sizes a child as a fraction of the parent.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>FractionallySizedBox(
+  widthFactor<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0.5</span>, <span style="color: #888888">// 50% of parent width</span>
+  heightFactor<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0.8</span>,
+  child<span style="color: #ffff44">:</span> Container(color<span style="color: #ffff44">:</span> Colors.blue),
+)</code></pre>
+<p><strong>LimitedBox</strong></p>
+<p>Constrains a child's size when it's in an unbounded context (e.g., inside a ListView).</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>LimitedBox(
+  maxHeight<span style="color: #ffff44">:</span> <span style="color: #bb86fc">100</span>,
+  child<span style="color: #ffff44">:</span> Container(),
+)</code></pre>
+<p><strong>Spacer</strong></p>
+<p>Fills available space. Useful in Rows and Columns.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Row(
+  children<span style="color: #ffff44">:</span> [
+    Text(<span style="color: #44ff44">&#39;Left&#39;</span>),
+    Spacer(), <span style="color: #888888">// Pushes next widget to the right</span>
+    Text(<span style="color: #44ff44">&#39;Right&#39;</span>),
+  ],
+)</code></pre>
+<h3>Async and Loading Widgets</h3>
+<p><strong>FutureBuilder</strong></p>
+<p>Builds a widget based on the state of a Future. Covered in State Management chapter; included for reference.</p>
+<p><strong>StreamBuilder</strong></p>
+<p>Like <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">FutureBuilder</code> but for Streams. Rebuilds whenever the stream emits a new value.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>StreamBuilder<span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span>(
+  stream<span style="color: #ffff44">:</span> countStream,
+  builder<span style="color: #ffff44">:</span> (context, snapshot) {
+    <span style="color: #87ceeb">if</span> (snapshot.hasData) {
+      <span style="color: #87ceeb">return</span> Text(<span style="color: #44ff44">&#39;Count: ${snapshot.data}&#39;</span>);
+    }
+    <span style="color: #87ceeb">return</span> CircularProgressIndicator();
+  },
+)</code></pre>
+<h3>Other Essential Widgets</h3>
+<p><strong>Tooltip</strong></p>
+<p>Shows a label when the user hovers or long-presses.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Tooltip(
+  message<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;This is a button&#39;</span>,
+  child<span style="color: #ffff44">:</span> IconButton(icon<span style="color: #ffff44">:</span> Icon(Icons.help), onPressed<span style="color: #ffff44">:</span> () {}),
+)</code></pre>
+<p><strong>PopupMenuButton</strong></p>
+<p>Displays a dropdown menu.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>PopupMenuButton(
+  itemBuilder<span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> [
+    PopupMenuItem(value<span style="color: #ffff44">:</span> <span style="color: #bb86fc">1</span>, child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Option 1&#39;</span>)),
+    PopupMenuItem(value<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>, child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Option 2&#39;</span>)),
+  ],
+  onSelected<span style="color: #ffff44">:</span> (value) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> print(<span style="color: #44ff44">&#39;Selected: $value&#39;</span>),
+)</code></pre>
+<p><strong>ExpansionTile</strong></p>
+<p>A tile that expands to reveal more content.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>ExpansionTile(
+  title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Expand me&#39;</span>),
+  children<span style="color: #ffff44">:</span> [Text(<span style="color: #44ff44">&#39;Hidden content&#39;</span>)],
+)</code></pre>
+<p><strong>AlertDialog</strong></p>
+<p>Shows a modal dialog for important messages.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>showDialog(
+  context<span style="color: #ffff44">:</span> context,
+  builder<span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> AlertDialog(
+    title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Confirm&#39;</span>),
+    content<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Are you sure?&#39;</span>),
+    actions<span style="color: #ffff44">:</span> [
+      TextButton(onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Navigator.pop(context), child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Cancel&#39;</span>)),
+      TextButton(onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> confirm(), child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Yes&#39;</span>)),
+    ],
+  ),
+)</code></pre>
+<p><strong>BottomSheet</strong></p>
+<p>Shows a sheet that slides up from the bottom.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>showModalBottomSheet(
+  context<span style="color: #ffff44">:</span> context,
+  builder<span style="color: #ffff44">:</span> (context) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Container(
+    child<span style="color: #ffff44">:</span> Column(
+      mainAxisSize<span style="color: #ffff44">:</span> MainAxisSize.min,
+      children<span style="color: #ffff44">:</span> [Text(<span style="color: #44ff44">&#39;Bottom sheet content&#39;</span>)],
+    ),
+  ),
+)</code></pre>
+<hr>
+<h2>Choosing the Right Widget</h2>
+<p>With hundreds of widgets available, how do you choose? Start with these principles:</p>
+<ol><li><strong>Prefer composition over custom painting.</strong> Build from simpler widgets when possible.</li><li><strong>Use the most specific widget for your need.</strong> <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">InkWell</code> instead of <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">GestureDetector</code> for Material, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Dismissible</code> for swipe-to-delete.</li><li><strong>Read widget documentation.</strong> Flutter's API docs explain exactly what each widget does.</li><li><strong>Experiment.</strong> The best way to understand widgets is to build with them.</li></ol>
+<p>As you build more apps, you'll develop intuition for which widget solves which problem. The widgets you use most often will become familiar friends.</p>
+</body>
+<script src="common.js"></script>
+</html>

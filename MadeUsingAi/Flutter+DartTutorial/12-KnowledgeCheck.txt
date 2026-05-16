@@ -1,0 +1,1398 @@
+What is the primary advantage of Dart's null safety feature?
+A) It prevents null errors at compile time rather than runtime
+B) It makes variables faster
+C) It eliminates the need for type checking
+D) It reduces memory usage
+A
+
+What does the `var` keyword do in Dart?
+A) Creates a dynamic variable that can hold any type
+B) Infers the type at declaration and locks it for the variable's lifetime
+C) Creates a constant variable
+D) Declares a variable with automatic null safety
+B
+
+When should you use `final` instead of `const` in Dart?
+A) When the value is known at compile time only
+B) When you need deep immutability of collections
+C) When initializing a value at runtime that shouldn't be reassigned
+D) When creating global constants
+C
+
+What is the difference between `String?` and `String` in Dart?
+A) `String?` is faster
+B) `String` cannot be null, while `String?` can be
+C) `String?` is used for shorter strings
+D) There is no difference
+B
+
+Which collection type in Dart removes duplicate values automatically?
+A) List
+B) Map
+C) Set
+D) Array
+C
+
+What does the arrow syntax `=>` do in Dart?
+A) It creates a loop
+B) It's used for single-expression functions
+C) It declares a constant
+D) It creates a nullable type
+B
+
+In Dart, what is a `dynamic` type used for?
+A) It's the preferred way to declare variables
+B) It disables type checking and allows any type
+C) It's equivalent to `var`
+D) It automatically handles null safety
+B
+
+What is the correct way to declare a required named parameter in Dart?
+A) `function({String name})`
+B) `function({required String name})`
+C) `function(required String name)`
+D) `function([String name])`
+B
+
+What does the null-coalescing operator `??` do?
+A) It checks if a value is null
+B) It returns the left operand if it's not null, otherwise the right operand
+C) It combines two strings
+D) It creates a nullable variable
+B
+
+Which of the following best describes a mixin in Dart?
+A) A way to inherit from multiple classes
+B) A way to share code across unrelated classes without multiple inheritance
+C) A type of interface
+D) A method that mixes two data types
+B
+
+What happens when you use `implements` instead of `extends` in Dart?
+A) You inherit all methods from the parent class
+B) You must implement all abstract members, even if they have default implementations
+C) The class becomes abstract
+D) You gain access to private members
+B
+
+What is the primary purpose of the `@override` annotation in Dart?
+A) It forces a subclass to override a method
+B) It signals intent and helps catch typos in method names
+C) It prevents a method from being overridden
+D) It makes a method abstract
+B
+
+In Dart, what does type erasure mean for generics?
+A) Type parameters are removed at compile time
+B) At runtime, `List<String>` and `List<int>` are the same object
+C) Generic types cannot store data
+D) Type erasure is a feature that improves performance
+B
+
+How do extension methods behave with `dynamic` variables?
+A) They work the same as with typed variables
+B) They are not accessible on `dynamic` variables because type is unknown at compile time
+C) They automatically convert `dynamic` to the correct type
+D) They throw a runtime error
+B
+
+What is the main difference between `await` and `.then()` for handling Futures?
+A) `await` is synchronous, `.then()` is asynchronous
+B) `await` pauses execution and returns the value, `.then()` uses callbacks
+C) `.then()` is more efficient
+D) There is no difference
+B
+
+What does the `async*` syntax indicate in Dart?
+A) An asynchronous function that returns a Future
+B) A synchronous generator function
+C) An asynchronous generator function that returns a Stream
+D) A function that handles multiple errors
+C
+
+Why are Streams considered lazy in Dart?
+A) They process data slowly
+B) Nothing happens until you listen to them
+C) They automatically cache results
+D) They require explicit typing
+B
+
+What is the cascade operator `..` used for in Dart?
+A) It creates a list of values
+B) It allows calling multiple methods on the same object sequentially
+C) It combines two strings
+D) It checks for null values
+B
+
+In Dart's type system, what does it mean when a generic has a bound like `<T extends Object>`?
+A) T must be a subclass of Object
+B) T cannot be Object
+C) T is limited to primitive types
+D) T must implement Object's methods
+A
+
+What is the purpose of the spread operator `...` in Dart?
+A) It spreads a string across multiple lines
+B) It unpacks elements from a collection into another collection
+C) It creates a range of numbers
+D) It handles null values
+B
+
+How does Dart's `firstWhere()` method differ from accessing an index directly?
+A) `firstWhere()` is faster
+B) `firstWhere()` allows you to find an element based on a condition, not just by position
+C) `firstWhere()` returns null instead of throwing an error
+D) `firstWhere()` modifies the list
+B
+
+What is the key difference between a class and an abstract class in Dart?
+A) Abstract classes have no fields
+B) Abstract classes cannot be instantiated directly
+C) Classes are always faster
+D) There is no difference
+B
+
+When you declare a variable as `late`, what does it mean in Dart?
+A) The variable will be initialized eventually before first use
+B) The variable is lazily evaluated
+C) The variable can be reassigned multiple times
+D) The variable has delayed garbage collection
+A
+
+What does the null-aware operator `?.` do in Dart?
+A) It always returns null
+B) It checks if a value is null and safely accesses members or returns null
+C) It assigns null to a variable
+D) It compares two values for nullness
+B
+
+Which of these is NOT a valid way to declare a function in Dart?
+A) `int add(int a, int b) => a + b;`
+B) `int add(int a, int b) { return a + b; }`
+C) `add(int a, int b) => a + b;`
+D) `function add(int a, int b) { return a + b; }`
+D
+
+What is the primary purpose of MaterialApp in a Flutter app?
+A) Configure theme, title, and root widget of the app
+B) Create Material Design buttons only
+C) Handle all user input events
+D) Manage database connections
+A
+
+What does Scaffold provide in Flutter?
+A) A template for creating custom widgets
+B) Basic Material Design visual structure with AppBar, body, and FAB
+C) A widget for displaying lists only
+D) A tool for code compilation
+B
+
+Which widget displays content at the top of a screen and typically contains the app title?
+A) BottomNavigationBar
+B) Drawer
+C) AppBar
+D) FloatingActionButton
+C
+
+What is the purpose of a Drawer widget?
+A) Display images in a grid
+B) Provide navigation menu that slides in from the side
+C) Create animated transitions between screens
+D) Handle form input validation
+B
+
+Which widget arranges children horizontally in a single row?
+A) Column
+B) Stack
+C) Row
+D) ListView
+C
+
+Which widget arranges children vertically in a single column?
+A) Row
+B) Column
+C) Wrap
+D) GridView
+B
+
+What does the Expanded widget do?
+A) Makes a widget larger than its parent
+B) Fills available space proportionally in Row or Column
+C) Makes a widget transparent
+D) Adds a border around a widget
+B
+
+Which widget is used to create a scrollable list of items?
+A) Row
+B) Column
+C) ListView
+D) Container
+C
+
+What is SizedBox primarily used for?
+A) Display text with styling
+B) Create a box with specific size or add fixed spacing
+C) Handle user input
+D) Manage app state
+B
+
+Which widget layers widgets on top of each other?
+A) Row
+B) Column
+C) Stack
+D) Wrap
+C
+
+What does the Positioned widget do inside a Stack?
+A) Positions a widget at specific coordinates
+B) Centers a widget on screen
+C) Makes a widget scrollable
+D) Changes a widget's size
+A
+
+Which button widget is used for primary actions like Submit or Save?
+A) TextButton
+B) OutlinedButton
+C) ElevatedButton
+D) IconButton
+C
+
+What is the purpose of TextField?
+A) Display static text
+B) Capture user input from keyboard
+C) Create navigation tabs
+D) Display images from assets
+B
+
+Which widget provides Material Design ripple feedback on tap?
+A) GestureDetector
+B) InkWell
+C) Container
+D) Card
+B
+
+What does const constructor do for widget performance?
+A) Makes the app run faster overall
+B) Allows Flutter to reuse widget instances and avoid rebuilds
+C) Automatically saves memory
+D) Reduces app size significantly
+B
+
+Which widget displays content in a grid with rows and columns?
+A) ListView
+B) Column
+C) GridView
+D) Wrap
+C
+
+What is the purpose of Padding widget?
+A) Add space outside a widget
+B) Add space inside a widget or container
+C) Create borders around widgets
+D) Make widgets transparent
+B
+
+Which widget wraps to the next line when space runs out?
+A) Row
+B) Column
+C) ListView
+D) Wrap
+D
+
+What does FutureBuilder do?
+A) Builds widgets based on a Future's state (loading, complete, error)
+B) Creates a list of futures
+C) Manages app navigation
+D) Handles database queries
+A
+
+What is Card widget primarily used for?
+A) Display credit card information only
+B) Group related content with elevation and styling
+C) Create navigation menus
+D) Handle user input
+B
+
+Which widget conditionally shows or hides other widgets?
+A) Opacity
+B) Container
+C) Visibility
+D) SizedBox
+C
+
+What does the Theme widget do?
+A) Changes the background color only
+B) Applies consistent styling and colors throughout the app
+C) Creates animated transitions
+D) Manages user preferences
+B
+
+Which design system implements Apple's Human Interface Guidelines?
+A) Material Design
+B) Cupertino
+C) Flat Design
+D) Bootstrap
+B
+
+What is StatelessWidget used for?
+A) Widgets that manage mutable state
+B) Widgets that are immutable and don't change
+C) Creating animation effects
+D) Handling database operations
+B
+
+What is the correct order of layout in Flutter's constraint system?
+A) Parent passes constraints → Child chooses size → Parent positions child
+B) Child passes constraints → Parent chooses size → Child positions parent
+C) Both decide size simultaneously
+D) Constraints don't affect layout
+A
+
+What is the key difference between local state and app-wide state?
+A) Local state is faster
+B) Local state belongs to a single widget, app-wide state is needed by multiple widgets
+C) App-wide state must use Provider, local state uses setState()
+D) There is no meaningful difference
+B
+
+What is the primary problem with using setState() for app-wide state?
+A) It's too slow
+B) It leads to prop-drilling through intermediate widgets
+C) It prevents rebuilds
+D) It doesn't work across screens
+B
+
+What does notifyListeners() do in a ChangeNotifier?
+A) Sends a notification to the user's phone
+B) Tells Flutter to rebuild widgets listening to this notifier
+C) Logs a message to the console
+D) Pauses the app temporarily
+B
+
+Which of the following is an example of local state?
+A) Current user login information
+B) List of all notes in an app
+C) Whether a text input field is focused
+D) App theme preference
+C
+
+In Provider, when should you use Consumer instead of context.read()?
+A) When you want to call a method
+B) When you want to display data and rebuild when it changes
+C) When you need context
+D) They are interchangeable
+B
+
+What is prop-drilling?
+A) A technique for faster drilling in Flutter
+B) Passing state through multiple widget constructors even though intermediate widgets don't use it
+C) Storing props in a database
+D) A Flutter design pattern
+B
+
+Which class do you extend to create a state holder in Provider?
+A) StatefulWidget
+B) State
+C) ChangeNotifier
+D) BuildContext
+C
+
+What happens when you call notifyListeners() in a ChangeNotifier?
+A) Only the parent widget rebuilds
+B) All widgets in the app rebuild
+C) All widgets listening to this notifier rebuild
+D) Nothing happens until the next frame
+C
+
+How do you access a provider without causing a rebuild?
+A) context.watch()
+B) context.read()
+C) Consumer
+D) ref.read()
+B
+
+In what order should MultiProvider providers be listed?
+A) Alphabetical order
+B) The order doesn't matter
+C) Dependencies first (if one depends on another)
+D) Most complex first
+C
+
+What is the purpose of dependency injection?
+A) Making apps run faster
+B) Providing dependencies from outside instead of widgets creating their own
+C) Injecting code into the app
+D) Managing animations
+B
+
+When should you use setState() for state management?
+A) Never, always use Provider
+B) For local state only (checkbox, text input)
+C) For all state in your app
+D) Only for animations
+B
+
+What is an AsyncState pattern used for?
+A) Making async operations synchronous
+B) Encapsulating loading, success, and error states in one variable
+C) Cancelling async operations
+D) Speeding up async operations
+B
+
+In Riverpod, which widget type should you use instead of StatelessWidget?
+A) StatefulWidget
+B) ConsumerWidget
+C) ProviderWidget
+D) AsyncWidget
+B
+
+What does the FutureProvider in Riverpod handle automatically?
+A) Only loading state
+B) Loading, success, and error states
+C) Database connections
+D) User authentication
+B
+
+Why is immutability important when updating state?
+A) It makes code run faster
+B) It's a Flutter requirement
+C) It makes state changes explicit and prevents accidental mutations
+D) It doesn't matter
+C
+
+When should you trigger an async operation like fetchNotes()?
+A) In the build method
+B) In the state's initState() after the frame builds
+C) In the widget's constructor
+D) Whenever the user taps a button only
+B
+
+What is the difference between watch() and read() in Riverpod?
+A) watch() requires context, read() doesn't
+B) watch() listens and rebuilds, read() accesses without rebuild
+C) They are the same
+D) read() is faster
+B
+
+Which pattern encapsulates async state more safely?
+A) Using separate isLoading, isError, and data variables
+B) Using a single AsyncState class with subclasses
+C) Using null values to indicate state
+D) They are equally safe
+B
+
+How does Provider prevent prop-drilling?
+A) It doesn't, you still have to pass data through constructors
+B) It makes data available through the widget tree without explicit passing
+C) It automatically converts widgets to StatelessWidgets
+D) It stores all state in a global variable
+B
+
+What should you do if you need state that depends on another state?
+A) Just read both providers and combine them manually
+B) Create a computed provider that depends on the other provider
+C) Use two separate widgets
+D) Combine them in a single large provider
+B
+
+When using Consumer, what parameters does the builder function receive?
+A) Only the state
+B) Context, provider state, and optional child widget
+C) Just context and state
+D) Only the notifier
+B
+
+What is the main advantage of Riverpod over Provider?
+A) It's faster
+B) It doesn't require context and has better composability
+C) It uses less memory
+D) It's easier to learn
+B
+
+How do you initialize sample data when using Provider?
+A) In the provider's constructor or initialization method
+B) In the app's main() function
+C) In the widget's initState()
+D) It cannot be done
+A
+
+What should you do if a provider has an error during initialization?
+A) Ignore it and hope it fixes itself
+B) Handle it gracefully, perhaps with a default value or error state
+C) Let the app crash so you know there's a problem
+D) Log it but continue anyway
+B
+
+What is the primary advantage of named routes over anonymous routes?
+A) Named routes are faster
+B) Routes are centralized and decoupled from screen construction
+C) Named routes work on all platforms
+D) They require less code
+B
+
+What does the Navigator stack represent in Flutter?
+A) The order of providers in your app
+B) The history of screens that have been navigated to
+C) The widgets waiting to be rendered
+D) A list of all routes in your app
+B
+
+Which Navigator method adds a new screen to the top of the stack?
+A) Navigator.pop()
+B) Navigator.pushReplacementNamed()
+C) Navigator.push()
+D) Navigator.popAndPushNamed()
+C
+
+What does Navigator.pop() do?
+A) Adds a new screen to the stack
+B) Removes the top screen from the stack
+C) Clears the entire stack
+D) Pauses navigation temporarily
+B
+
+When should you use Navigator.pushReplacementNamed() instead of Navigator.pushNamed()?
+A) When navigating to a screen that shouldn't be returned to
+B) When you want faster navigation
+C) When navigating between tabs
+D) They are functionally the same
+A
+
+What must a BuildContext have to enable navigation?
+A) It must be from a widget under MaterialApp
+B) It must be from the home screen only
+C) It must have explicit permissions
+D) Any BuildContext can navigate
+A
+
+How do you pass data to a named route?
+A) Add it as a property of the route name
+B) Use the arguments parameter in pushNamed()
+C) Store it in a global variable
+D) Pass it through MaterialApp configuration
+B
+
+How does a screen retrieve arguments from a named route?
+A) From its constructor parameters
+B) Using ModalRoute.of(context).settings.arguments
+C) From the Provider
+D) From the Navigator directly
+B
+
+In the CRUD context, what should a route pass to a detail screen when using named routes?
+A) The entire data object
+B) A minimal identifier (ID or title)
+C) Nothing—let the screen construct the data itself
+D) A copy of the data
+B
+
+Why should screens fetch data from the provider instead of receiving it as route arguments?
+A) Route arguments are always null
+B) It decouples routing from data, making navigation cleaner
+C) Providers are faster than route arguments
+D) It's a Flutter requirement
+B
+
+What is the purpose of a route table in MaterialApp?
+A) Store user-created routes
+B) Map route names to screen builders
+C) Manage the navigation stack
+D) Cache screen widgets
+B
+
+When navigating with named routes, where should the route table be defined?
+A) In each screen class
+B) In a centralized location (main.dart or a separate file)
+C) In the provider
+D) It doesn't matter
+B
+
+What does IndexedStack do in tab navigation?
+A) Manages the navigation stack
+B) Keeps all tab screens alive while switching between them
+C) Replaces the Navigator
+D) Prevents navigation
+B
+
+How do you handle the case where a screen receives invalid arguments via a named route?
+A) Ignore them
+B) Throw an exception immediately
+C) Provide safe casting and show an error screen if arguments are missing
+D) Return to the home screen
+C
+
+What is deep linking?
+A) Nesting routes within other routes
+B) Opening a specific screen via a URL or link
+C) Creating multiple navigation stacks
+D) Using the back button multiple times
+B
+
+In the CRUD context, after CREATE operation via a named route, what should happen?
+A) Pop the create screen and let the provider notify listeners
+B) Push the list screen on top
+C) Use pushReplacement to ensure the create screen can't be returned to
+D) It depends on the app's requirements
+A
+
+How does GoRouter differ from the default Flutter Navigator?
+A) GoRouter is slower
+B) GoRouter provides URL-based routing with more powerful features
+C) GoRouter doesn't support state management
+D) There is no difference
+B
+
+What is the relationship between routing and state management in a well-designed app?
+A) They are the same thing
+B) Routes depend on state; state doesn't depend on routes
+C) They are separate concerns that work together cleanly
+D) Only one of them is necessary
+C
+
+In named route navigation, where should you pass the entire data object?
+A) Always pass the entire object as arguments
+B) Only pass minimal identifiers; screens fetch full data from the provider
+C) Never pass data via routes
+D) Only when using GoRouter
+B
+
+What does ModalRoute.of(context) return?
+A) The currently open modal dialog
+B) The route settings of the current route
+C) The previous route in the stack
+D) The home route
+B
+
+When should you use Navigator.pushNamed() versus Navigator.push()?
+A) pushNamed is always better
+B) Use pushNamed for larger apps with centralized routes; push for simple cases
+C) push is always more efficient
+D) They are interchangeable
+B
+
+How do you return data from a popped screen in a named route architecture?
+A) Pass it as arguments to pushNamed()
+B) Return it via Navigator.pop(context, data)
+C) Use the provider to manage shared state
+D) Store it in a global variable
+C
+
+What is the purpose of navigation context when using named routes?
+A) To store navigation history
+B) To provide access to the Navigator for the current widget
+C) To manage route arguments
+D) To create new routes dynamically
+B
+
+In the CRUD context, what happens to the detail screen when the note is deleted on another screen?
+A) The detail screen crashes
+B) If the screen watches the provider, it detects the note is gone and handles it gracefully
+C) The detail screen continues showing the old note
+D) The app automatically navigates back
+B
+
+What is a common pattern for organizing routes in a larger app?
+A) Store route names as magic strings throughout the code
+B) Define routes hierarchically in a centralized route table
+C) Create routes dynamically at runtime
+D) Use a different NavigationStack for each screen
+B
+
+What is the primary purpose of Test-Driven Development (TDD)?
+A) To document your code
+B) To write tests before implementation, ensuring code is designed to be testable
+C) To catch bugs after release
+D) To make debugging faster
+B
+
+Which test type verifies the smallest piece of testable software?
+A) Widget tests
+B) Integration tests
+C) Unit tests
+D) System tests
+C
+
+What does the `test()` function in Dart's test package do?
+A) Defines a unit test
+B) Runs a test immediately
+C) Creates a test group
+D) Skips a test
+A
+
+In TDD, what does the "Green" phase represent?
+A) Writing code that fails the test
+B) Writing the minimal code to make the test pass
+C) Refactoring code
+D) Deleting failing tests
+B
+
+What is the primary advantage of using mocking in tests?
+A) Tests run faster
+B) Mocks isolate the code under test from external dependencies
+C) Mocks eliminate the need for real data
+D) Mocks make tests easier to read
+B
+
+Which package is the standard mocking library for Dart?
+A) test_builder
+B) mockito
+C) mock_flutter
+D) test_mock
+B
+
+What does `when(mock.method()).thenAnswer(...)` do?
+A) Verifies the mock was called
+B) Defines what the mock should return
+C) Deletes the mock
+D) Asserts the mock's behavior
+B
+
+What is the purpose of `verify()` in mockito?
+A) Confirms that a mocked method was called with expected arguments
+B) Creates a new mock
+C) Deletes a mock
+D) Returns the result of a mock call
+A
+
+How should test names be formatted for clarity?
+A) testX (e.g., testIncrement)
+B) Should do X when Y (e.g., ShouldIncrementWhenButtonPressed)
+C) Abbreviated like x (e.g., inc)
+D) Any format is acceptable
+B
+
+Why is the AAA (Arrange-Act-Assert) pattern important?
+A) It makes tests longer
+B) It structures tests clearly: setup, execute, verify
+C) It's required by Flutter
+D) It speeds up test execution
+B
+
+What does `expect()` do in a Dart test?
+A) Throws an exception
+B) Verifies that actual matches expected
+C) Skips the test
+D) Prints a message
+B
+
+In BDD, what does the "Given" step represent?
+A) The action being tested
+B) The assertion being checked
+C) The initial state or setup
+D) The cleanup after the test
+C
+
+Which testing pattern is better for communicating requirements to non-technical stakeholders?
+A) Imperative testing (testFeatureDoesX)
+B) BDD-style testing (FeatureShouldDoXWhen)
+C) Both are equally good
+D) Neither
+B
+
+How should you organize multiple related tests?
+A) Write them all in one large test
+B) Use `group()` to organize tests logically
+C) Create separate test files for each test
+D) Tests don't need organization
+B
+
+What is the relationship between test coverage and code quality?
+A) Higher coverage always means better code
+B) Coverage helps ensure critical code is tested, but doesn't guarantee quality
+C) Coverage doesn't matter
+D) 100% coverage is impossible
+B
+
+Why should tests be independent of each other?
+A) So they run faster in parallel
+B) So tests don't affect each other's results
+C) To reduce the total number of tests
+D) Tests don't need to be independent
+B
+
+What is the test pyramid?
+A) A list of test types
+B) A distribution guideline: many unit tests, fewer widget tests, few integration tests
+C) A tool for writing tests
+D) A requirement for all apps
+B
+
+When should you write integration tests?
+A) For every line of code
+B) For critical end-to-end user workflows
+C) Never—they're too slow
+D) Only for bug fixes
+B
+
+What does `flutter test` command do?
+A) Uploads tests to the cloud
+B) Runs all tests in the test/ directory
+C) Creates a new test file
+D) Compiles the app for testing
+B
+
+How do you mock a Future in mockito?
+A) `when(mock.method()).thenAnswer((_) => Future.value(data))`
+B) `when(mock.method()).thenReturn(data)`
+C) `when(mock.method()).then(data)`
+D) Mock cannot handle Futures
+A
+
+What is the purpose of `setUp()` in a test group?
+A) Creates a test
+B) Runs code before each test in the group
+C) Skips tests
+D) Removes a test
+B
+
+Why might imperative test naming lead to weaker tests?
+A) It's harder to read
+B) It encourages testing implementation details rather than behavior
+C) It makes tests slower
+D) It's not a concern
+B
+
+When using BDD Gherkin syntax, which keyword is used for verification?
+A) Given
+B) When
+C) Then
+D) And
+C
+
+What is the key insight about naming conventions and test quality?
+A) The name doesn't matter
+B) Your naming convention subtly influences what and how you test
+C) All naming conventions are equal
+D) Only team size affects naming
+B
+
+What is the primary goal of Best Practices in development?
+A) To make code look professional
+B) To prevent common mistakes and improve maintainability
+C) To speed up compilation
+D) To reduce team size
+B
+
+What are the six pain points covered in the Best Practices chapter?
+A) Speed, size, memory, naming, colors, fonts
+B) Memory leaks, setState misuse, poor architecture, unhandled errors, responsive design, dependency management
+C) Testing, debugging, performance, security, accessibility, documentation
+D) Widgets, providers, routes, databases, animations, effects
+B
+
+Why is disposing AnimationControllers important?
+A) It makes them run faster
+B) It prevents memory leaks
+C) It changes their behavior
+D) It's optional
+B
+
+What is the consequence of not disposing resources properly?
+A) The app runs slower
+B) Memory leaks that accumulate and eventually crash the app
+C) The code won't compile
+D) There are no consequences
+B
+
+When should you use the `const` keyword for widgets?
+A) Never—it's not necessary
+B) Always—it's always correct
+C) When the widget's properties won't change, for performance
+D) Only for built-in widgets
+C
+
+Why should side effects never occur in the `build()` method?
+A) It's a style preference
+B) The build method can be called multiple times, and side effects would run unexpectedly
+C) It makes the app slower
+D) It's not a concern
+B
+
+What does poor architecture look like in Flutter apps?
+A) Code is well-organized
+B) All code mixed into main.dart or screens, no separation of concerns
+C) Using too many files
+D) Using too few widgets
+B
+
+How do you handle errors gracefully in a Flutter app?
+A) Let them crash the app
+B) Catch exceptions, log them, and show user-friendly error messages
+C) Ignore them
+D) Errors can't be handled
+B
+
+What is a consequence of hardcoding values like sizes and padding?
+A) Code becomes easier to read
+B) App won't adapt to different screen sizes (lacks responsiveness)
+C) Code runs faster
+D) There are no consequences
+B
+
+Why is responsive design important in Flutter?
+A) It makes the app look pretty
+B) Apps must work on different screen sizes and orientations
+C) It's only necessary for web apps
+D) Responsive design is optional
+B
+
+How can you analyze your code to catch potential issues?
+A) Manual code review only
+B) Use tools like `dart analyze` and DCM (Dart Code Metrics)
+C) Issues can't be caught automatically
+D) Wait for user complaints
+B
+
+What is a StatelessWidget?
+A) A widget that never changes
+B) A widget whose properties are immutable (don't change after creation)
+C) A widget without a build method
+D) A widget that doesn't use state
+B
+
+What is a StatefulWidget?
+A) A widget that can change over time
+B) A widget that extends State<T>
+C) A widget with a mutable state that can be updated
+D) All widgets are stateful
+C
+
+When should you create a custom StatelessWidget?
+A) When you need to save code
+B) When you have a reusable UI component
+C) When you need performance
+D) Never—use built-in widgets
+B
+
+How do you update the UI in a StatefulWidget?
+A) Reassign variables directly
+B) Call `setState(() => {...})` to trigger rebuild
+C) Create a new widget
+D) Flutter automatically detects changes
+B
+
+What does the `build()` method return?
+A) A Widget that describes the UI
+B) A rendered image
+C) State data
+D) A string
+A
+
+Why is the underscore prefix used for private State classes?
+A) It's a style preference
+B) It marks the class as private by convention
+C) It makes the class run faster
+D) It's required by Flutter
+B
+
+What is CustomPaint used for?
+A) Styling widgets
+B) Drawing custom graphics
+C) Creating layouts
+D) Managing state
+B
+
+When should you use CustomPaint instead of widget composition?
+A) Always
+B) Never
+C) When you need to draw graphics that don't fit existing widgets
+D) Only for animations
+C
+
+How do you implement custom painting?
+A) Extend CustomPaint directly
+B) Create a class extending CustomPainter and override paint()
+C) Use the paint property of any widget
+D) Flutter handles all painting automatically
+B
+
+What does the `shouldRepaint()` method in CustomPainter do?
+A) Validates the paint operation
+B) Determines whether the widget needs to redraw
+C) Clears the canvas
+D) Moves painted content
+B
+
+What is the primary advantage of widget composition?
+A) It's faster than custom painting
+B) It handles responsiveness, theming, and accessibility automatically
+C) It requires less code
+D) Composition and painting are the same
+B
+
+When extracting widgets from a large build() method, how long should it be before extracting?
+A) 100+ lines
+B) 200+ lines
+C) 50+ lines or deeply nested
+D) Extraction is optional
+C
+
+Why should you prefer simple widgets over complex nesting?
+A) Simple widgets are faster
+B) Complex nesting is harder to test and debug
+C) Simple widgets use less memory
+D) There's no difference
+B
+
+What does AspectRatio do?
+A) Changes color
+B) Constrains a child to a specific aspect ratio
+C) Rotates a widget
+D) Animates size changes
+B
+
+When should you use Spacer instead of SizedBox?
+A) Always use Spacer
+B) Spacer fills available space proportionally in Row/Column; SizedBox has fixed size
+C) SizedBox is always better
+D) They're identical
+B
+
+What is FutureBuilder used for?
+A) Building futures
+B) Building a widget based on the state of a Future
+C) Creating asynchronous code
+D) Handling errors only
+B
+
+What does Transform do?
+A) Changes widget size
+B) Applies transformations (rotate, scale, translate) to a child
+C) Animates changes
+D) Handles input
+B
+
+What widget creates a modal dialog?
+A) Dialog
+B) AlertDialog or showDialog()
+C) PopupMenu
+D) BottomSheet
+B
+
+What is the purpose of ClipRRect?
+A) Adds a border
+B) Clips a child to rounded corners
+C) Creates a circle
+D) Animates clipping
+B
+
+How do you access database data in a Flutter app?
+A) By connecting directly to the database server
+B) Through a repository pattern that abstracts the database implementation
+C) Using global variables
+D) Database access isn't recommended
+B
+
+What are the advantages of SQLite for local storage?
+A) It requires a server
+B) It's lightweight, requires no setup, and works offline
+C) It's only for large apps
+D) It's slower than alternatives
+B
+
+When should you use the repository pattern with databases?
+A) Never—it's unnecessary abstraction
+B) Always—it allows swapping database implementations without changing other code
+C) Only for enterprise apps
+D) Only for SQLite
+B
+
+What does the DatabaseHelper singleton pattern prevent?
+A) Database corruption
+B) Multiple database instances from being created
+C) Data loss
+D) Performance issues
+B
+
+How do you structure SQLite for scalability?
+A) Mix all code with UI widgets
+B) Use repository pattern, separate data layer from UI
+C) Avoid using databases
+D) SQLite can't scale
+B
+
+What is a Hive database?
+A) A server-based database
+B) A lightweight, high-performance local NoSQL database written in Dart
+C) A cloud database
+D) A SQL database
+B
+
+When should you choose Hive over SQLite?
+A) Always—Hive is better
+B) When you want simpler key-value storage and high performance for local data
+C) Never—SQLite is always better
+D) Depends on database size only
+B
+
+What is Firebase Firestore?
+A) A local database
+B) A cloud NoSQL database with real-time sync and offline support
+C) A SQL server
+D) A testing tool
+B
+
+How does Firestore differ from SQLite?
+A) Firestore is local, SQLite is cloud
+B) SQLite is local and single-device; Firestore is cloud with multi-device sync
+C) They're identical
+D) Firestore is only for web
+B
+
+What is the key advantage of Firestore streams?
+A) They're fast
+B) They provide real-time updates as data changes
+C) They replace databases
+D) Streams are optional
+B
+
+What is an enterprise database?
+A) A database only for large companies
+B) A database like MySQL, PostgreSQL, Oracle that requires a backend server
+C) A database in the cloud
+D) A database that costs money
+B
+
+Why can't Flutter apps connect directly to MySQL?
+A) Flutter doesn't support MySQL
+B) Security: credentials would be in app code, and most databases aren't HTTP-accessible
+C) MySQL is too slow
+D) There's no technical reason
+B
+
+What architecture does Flutter use with enterprise databases?
+A) Direct connection: App → Database
+B) REST/API architecture: App → Backend API → Database
+C) Middleware architecture: App → Middleware → Backend → Database
+D) Database embedded in the app
+B
+
+How do you fetch data from a REST API in Flutter?
+A) Using direct database connection
+B) Using the `http` package to make GET requests
+C) Using `package:database`
+D) Automatic through widgets
+B
+
+Why is error handling important with enterprise databases?
+A) Errors don't happen in enterprise systems
+B) Network failures and timeouts must be caught and communicated to users
+C) Errors are ignored
+D) Error handling is optional
+B
+
+When comparing databases, what should determine your choice?
+A) Always use the newest database
+B) Your app's requirements: offline capability, multi-user, consistency needs, cost
+C) Database size
+D) Team preference only
+B
+
+How does the repository pattern help with database flexibility?
+A) It doesn't—it's just extra code
+B) It abstracts database implementation, allowing swaps without changing UI/state code
+C) It slows down queries
+D) It's only for SQL databases
+B
+
+What is the progression when choosing a database for a new app?
+A) Start with enterprise, move to SQLite
+B) Start with SQLite (simple), add Hive/Firestore (cloud), consider enterprise (multi-user)
+C) Choose randomly
+D) Database choice doesn't matter
+B
+
+What is ACID compliance in databases?
+A) A type of database
+B) Atomicity, Consistency, Isolation, Durability—guarantees data integrity
+C) A testing standard
+D) An error type
+B
+
+Why is offline-first capability important in mobile apps?
+A) It's not important
+B) Users lose connectivity frequently; apps should work offline and sync when possible
+C) It's only for specific app types
+D) Offline functionality is optional
+B
+
+Which database supports built-in real-time synchronization?
+A) SQLite
+B) Firestore (Firebase)
+C) MySQL
+D) All databases
+B
+What is the purpose of automated static analysis tools?
+A) To replace manual testing
+B) To detect code issues before runtime
+C) To compile code
+D) To generate documentation
+B
+
+How do you handle async operations in tests?
+A) Ignore them
+B) Use `async`/`await` and properly wait for Futures
+C) Skip testing async code
+D) Test is always synchronous
+B
+
+What makes a good unit test?
+A) It tests multiple things at once
+B) It's independent, focused, and deterministic
+C) It's as complex as the code it tests
+D) It doesn't need documentation
+B
+
+Why should you test edge cases?
+A) They're not important
+B) They test boundary conditions that often break code
+C) Only happy path matters
+D) Tests don't need edge cases
+B
+
+What is regression testing?
+A) Moving backwards in development
+B) Testing that previously fixed bugs don't reoccur
+C) Testing regression algorithms
+D) Testing complex math
+B
+
+When should you refactor code?
+A) Never—original code is always best
+B) After tests pass and you want to improve design
+C) Before writing tests
+D) Refactoring isn't necessary
+B
+
+What is a common anti-pattern in custom widgets?
+A) Using inheritance wisely
+B) Creating overly complex single widgets instead of composing simpler ones
+C) Using const constructors
+D) Following best practices
+B
+
+How should you name widget parameters?
+A) Use single letters
+B) Use descriptive names that explain their purpose
+C) Any name is fine
+D) Names don't matter
+B
+
+What is InkWell used for?
+A) Creating wells
+B) Adding Material ripple effects to interactive widgets
+C) Drawing shapes
+D) Managing state
+B
+
+When should you use PageView?
+A) Never
+B) For carousel-like, page-swiping interfaces
+C) For static lists
+D) For navigation only
+B
+
+What does GestureDetector detect?
+A) Only taps
+B) User gestures like taps, drags, long presses
+C) Keyboard input
+D) Only finger presence
+B
+
+What is the purpose of Dismissible?
+A) Hide widgets
+B) Allow users to swipe/drag to dismiss items
+C) Delete widgets
+D) Collapse content
+B
+
+How do you test a widget that uses Provider?
+A) Don't test Provider-dependent widgets
+B) Wrap in Consumer and verify rebuilds occur
+C) Test without Provider
+D) Widgets with Provider can't be tested
+B
+
+What determines database performance?
+A) Database type only
+B) Query structure, indexing, and network latency all matter
+C) Size only
+D) Performance doesn't vary
+B
+
+When should you denormalize database schemas?
+A) Always denormalize
+B) Never denormalize
+C) When query performance requires it, accepting some redundancy
+D) Denormalization doesn't exist
+B
+
+What is the difference between eventual and strong consistency?
+A) Strong is always better
+B) Strong guarantees immediate consistency; eventual takes time
+C) They're identical
+D) Consistency doesn't matter
+B
+
+How do you prevent SQL injection in your app?
+A) Use string concatenation for queries
+B) Use parameterized queries and prepared statements
+C) Injection can't be prevented
+D) It's not a concern in mobile apps
+B
+
+What is a database transaction?
+A) A payment
+B) A group of operations that succeed or fail together
+C) A single query
+D) A backup
+B
+
+Why is database indexing important?
+A) It doesn't help
+B) It speeds up queries by organizing data structure
+C) It slows everything down
+D) Indexes are optional
+B
+
+When should you cache data locally?
+A) Never cache
+B) When network is slow or frequent API calls are unnecessary
+C) Always cache everything
+D) Caching causes problems
+B
+
+What does eventually consistent mean?
+A) Something that's never consistent
+B) Data becomes consistent across systems over time, not immediately
+C) It's always consistent
+D) Consistency is not guaranteed
+B
+
+Which is faster for small datasets?
+A) Always use enterprise databases
+B) Local storage (SQLite/Hive) is faster with no network latency
+C) Remote databases are always faster
+D) Speed is identical
+B
+
+What should you do if a database query hangs?
+A) Restart the app
+B) Add timeouts and handle gracefully
+C) Ignore it
+D) Nothing can be done
+B
+
+How do you debug database queries?
+A) You can't debug queries
+B) Use logging, query inspection tools, and test queries independently
+C) Wait for production errors
+D) Debugging databases is impossible
+B
+
+What is data migration and why does it matter?
+A) Moving user accounts
+B) Changing database schemas while preserving data
+C) Server relocation
+D) Migration doesn't apply to mobile
+B

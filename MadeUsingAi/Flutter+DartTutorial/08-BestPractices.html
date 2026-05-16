@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>08-BestPractices</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Best Practices</h1>
+<p>Building a Flutter app that works is one thing. Building one that scales, remains maintainable, and doesn't degrade over time requires discipline about best practices. This chapter identifies the patterns and anti-patterns that separate production-quality apps from prototypes.</p>
+<p>Throughout this tutorial, we've covered practices in context—using <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> constructors, separating concerns with state management, centralizing routing. This chapter distils the most critical practices and highlights the pain points that cause real-world projects to struggle.</p>
+<h2>Test-Driven Development: The Foundation</h2>
+<p>Before diving into specific patterns, we need to address the practice that underpins everything else: testing.</p>
+<p>Many developers approach testing as an afterthought—something to do after the code is written, if there's time. Research consistently shows this is backwards. Test-Driven Development (TDD), where tests are written before implementation, reduces the number of defects introduced during development and leads to more maintainable code. Empirical studies show that TDD can reduce defects and lead to more maintainable code, with mature programmers who have used both test-first and test-last approaches preferring test-first.</p>
+<p>The mechanism is straightforward: when you write tests first, you clarify what you're building before you build it. The test becomes your specification. You can't write good tests for poorly designed code, so writing tests first naturally pushes you toward better design. More importantly, TDD results show significant improvements in code coverage and maintainability for TDD groups, with the approach offering a consistent framework across controlled and naturalistic studies.</p>
+<p>The payoff compounds. Early defect detection is cheaper than late detection. Refactoring with tests is safe—if your tests still pass, you haven't broken anything. Maintenance is easier because tests document how code should behave.</p>
+<p>This doesn't mean writing tests for everything or achieving 100% coverage. It means starting with tests for critical logic, building the habit, and gradually expanding. If you're not practicing TDD now, make it your next learning goal. The Testing chapter (Chapter 7) covers practical approaches.</p>
+<h2>The Pain Points: What Actually Breaks Projects</h2>
+<p>Research into real-world Flutter and Dart projects reveals consistent failure patterns. These aren't advanced edge cases—they're foundational mistakes that happen repeatedly because they're easy to make.</p>
+<h3>Memory Leaks and Resource Disposal</h3>
+<p>This is the most frequent issue seen in many projects: some classes in Flutter allocate resources that Dart's garbage collector doesn't automatically clean up, including AnimationController, TextEditingController, ScrollController, FocusNode, and StreamSubscription.</p>
+<p><strong>Symptom</strong></p>
+<p>Your app gets laggy over time. Users navigate between screens dozens of times and notice performance degradation. Memory use climbs. Eventually, the app crashes.</p>
+<p><strong>Cause</strong></p>
+<p>You forgot to dispose of a controller or subscription. In <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">initState()</code> you created it; in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">dispose()</code> you should have cleaned it up. It's trivial but easy to miss, especially when you have several resources.</p>
+<p><strong>Fix</strong></p>
+<p>Adopt a checklist. Every <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">initState()</code> needs a matching <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">dispose()</code>. Static analysis tools can catch this. Make it habit: allocate in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">initState()</code>, dispose in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">dispose()</code>.</p>
+<h3>setState() Misuse</h3>
+<p>Calling setState() unnecessarily or outside the widget lifecycle is a common mistake that leads to poor performance issues, unnecessary widget rebuilds, or runtime errors. Placing logic-heavy code or API calls inside the build() method is incorrect—the build() method should be pure and light, with logic delegated to initState() or separate controllers.</p>
+<p><strong>Symptom</strong></p>
+<p>Your UI rebuilds constantly. Network requests happen every frame. The app feels janky or unresponsive.</p>
+<p><strong>Cause</strong></p>
+<p>You're putting side effects in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">build()</code> or calling <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> too often or in the wrong place.</p>
+<p><strong>Fix</strong></p>
+<p>Keep <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">build()</code> pure. It should only construct UI from current state, never cause side effects. Move API calls to <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">initState()</code>. For app-wide state, use your state manager (Provider). For local state that updates frequently, consider <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ChangeNotifier</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ValueNotifier</code> to decouple state changes from rebuilds.</p>
+<h3>Poor Architecture: Code in main.dart</h3>
+<p>Dumping all code into main.dart makes the app impossible to scale and maintain. The solution is to adopt MVC, MVVM, or Clean Architecture—separating UI, business logic, and services.</p>
+<p><strong>Symptom</strong></p>
+<p>As your app grows, main.dart becomes thousands of lines. Adding a new feature requires editing five files you didn't expect to touch. Tests become impossible to write.</p>
+<p><strong>Cause</strong></p>
+<p>No architecture decision early. Code grows organically without structure.</p>
+<p><strong>Fix</strong></p>
+<p>Adopt a structure from the start. This tutorial's architecture (models, providers, screens, widgets) is a good baseline. As your app grows, refine it. Some teams use MVVM or Clean Architecture. The key is consistency: every feature follows the same structure.</p>
+<h3>Unhandled Errors and Poor Error Handling</h3>
+<p>A common mistake is using just print(e) instead of proper error handling, which causes apps to silently crash in production. The solution is using try-catch blocks, adding FlutterError.onError and PlatformDispatcher.instance.onError, and integrating Firebase Crashlytics for real-time crash reporting.</p>
+<p><strong>Symptom</strong></p>
+<p>Users report that features don't work, but you have no logs. API calls fail silently. Forms disappear without explanation.</p>
+<p><strong>Cause</strong></p>
+<p>You catch exceptions but don't log them or show the user. Production builds have no visibility into errors.</p>
+<p><strong>Fix</strong></p>
+<p>Set up error handling globally. Add <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">FlutterError.onError</code> in your <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">main()</code> to catch Flutter framework errors. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">PlatformDispatcher.instance.onError</code> for Dart errors. For production, integrate crash reporting (Firebase Crashlytics is standard). Always show users something when things break—a message, a retry button, guidance on next steps.</p>
+<h3>Responsive Design Oversights</h3>
+<p>Only testing on your own phone or a single emulator causes UI to break on other devices. The solution is testing on different screen sizes and orientations, using both Android and iOS emulators, and leveraging MediaQuery and LayoutBuilder for responsive UIs.</p>
+<p><strong>Symptom</strong></p>
+<p>Your app looks beautiful on your phone but is unreadable on tablets. Text overflows. Buttons are too small. Landscape mode is broken.</p>
+<p><strong>Cause</strong></p>
+<p>Hardcoded values. You built for one screen size and didn't test others.</p>
+<p><strong>Fix</strong></p>
+<p>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MediaQuery</code> to check screen dimensions. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">LayoutBuilder</code> for responsive layouts. Test on multiple devices from the start—it's easier to build right than to fix later. The Flutter DevTools include device emulation.</p>
+<h3>Dependency Management</h3>
+<p>Installing a package for every little feature bloats apps with outdated dependencies and maintenance issues. The solution is preferring core Flutter features first and checking a package's maintenance status, GitHub activity, and last update before adding it.</p>
+<p><strong>Symptom</strong></p>
+<p>Your <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">pubspec.yaml</code> has 50 dependencies. A critical security issue in an obscure package affects you. Upgrading one package breaks three others.</p>
+<p><strong>Cause</strong></p>
+<p>Every problem looks like a nail when you have a package manager. You add a package for toast notifications, another for HTTP, another for logging—when Flutter core or simpler solutions exist.</p>
+<p><strong>Fix</strong></p>
+<p>Ask "does Flutter already do this?" before reaching for a package. Evaluate packages by maintenance, GitHub activity, and community use. Prefer packages with clear ownership and regular updates. Keep dependencies minimal.</p>
+<h2>Practices We&#39;ve Already Covered</h2>
+<p>Throughout this tutorial, we've introduced practices in their appropriate context. These remain foundational:</p>
+<p><strong>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">const</span></code> constructors</strong> when possible. This prevents unnecessary rebuilds and is one of the highest-impact optimizations available.</p>
+<p><strong>Break large widgets into smaller ones.</strong> If your <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">build()</code> method exceeds 50 lines, extract sections into separate widget classes. This improves readability and testability.</p>
+<p><strong>Prefer immutability.</strong> When updating state, create new objects instead of mutating existing ones. This makes state changes explicit and prevents subtle bugs.</p>
+<p><strong>Centralize navigation.</strong> Define all routes in one place. This makes your app's structure visible and enables features like deep linking.</p>
+<p><strong>Separate routing from data.</strong> Routes move users between screens. Providers manage data. Don't conflate them.</p>
+<p><strong>Validate early and often.</strong> Validate user input before performing operations. Prevent bad data from entering your system.</p>
+<p><strong>Handle null explicitly.</strong> Dart's null safety is powerful but requires thought. Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44">?</span></code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44">?</span><span style="color: #ffff44">?</span></code> intentionally. Avoid silently treating null as "no error."</p>
+<h2>The Meta-Practice: Code Review</h2>
+<p>The common thread through all these practices is that they're easy to miss alone but hard to miss in code review. Most common mistakes can be detected with static analysis tools such as DCM (Dart Code Metrics).</p>
+<p>Whether you're a solo developer or on a team, treat code review as non-negotiable. If you're building alone, reviewing your own code after a day or two provides fresh eyes. If you're on a team, review each other's code. Code review catches mistakes early, spreads knowledge, and enforces standards.</p>
+<p>Use linting tools. Configure your <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">analysis_options.yaml</code> to enforce rules. Let the tools catch the easy stuff so humans can focus on logic and design.</p>
+<h2>Continuous Growth</h2>
+<p>These practices aren't rules carved in stone. They're patterns that work in the real world. As you build more apps, you'll discover what works for your team and your domain. The key is being deliberate: make conscious choices about architecture, testing, and standards rather than letting code grow organically.</p>
+<p>Software engineering is young compared to other disciplines. We're still learning what works. TDD is more established now than it was ten years ago because evidence accumulated. The practices in this chapter reflect current knowledge, but stay curious. Read about others' experiences. Experiment. Share what you learn.</p>
+<hr>
+<h2>Next Steps</h2>
+<p>You now have the core knowledge to build real Flutter apps. The remaining chapters cover specialized topics—testing techniques, advanced widgets, persistence, and external data sources. But everything you need for production-quality apps is here.</p>
+<p>Start small. Build an app using these practices. You'll discover which ones matter most to you. Then keep learning.</p>
+</body>
+<script src="common.js"></script>
+</html>

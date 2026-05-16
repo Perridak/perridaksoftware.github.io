@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-Databases</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Databases</h1>
+<p>Building useful software requires persisting data. This chapter teaches how to work with databases in Flutter, starting with the simplest local option (SQLite), then showing how NoSQL offers a modern alternative for both local and cloud use, and finally demonstrating how to connect to enterprise databases.</p>
+<p>The progression is intentional: master local storage first, then scale your thinking to cloud alternatives and enterprise backends. The architecture lesson is the same everywhere—you'll see that pattern repeated across all database types.</p>
+<h2>Part 1: SQLite for Local Storage</h2>
+<p>SQLite is the most widely used database in mobile development. It's lightweight, requires no server setup, stores data directly on the device, and works on every platform Flutter supports.</p>
+<h3>Why SQLite?</h3>
+<p>SQLite gives you:</p>
+<ul><li><strong>Offline-first capability:</strong> Your app works without internet. Sync data when connectivity returns.</li><li><strong>Fast queries:</strong> Data lives on the device. No network latency.</li><li><strong>Simple setup:</strong> No server to manage. The database is a file on the device.</li><li><strong>SQL familiarity:</strong> If you know SQL, you know SQLite.</li></ul>
+<p>SQLite is ideal for apps where the device is the primary data store: note-taking apps, to-do lists, offline-capable news readers, or any app where each user has their own local data.</p>
+<h3>Setting Up SQLite</h3>
+<p>Flutter accesses SQLite through the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">sqflite</code> package:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>dependencies<span style="color: #ffff44">:</span>
+  sqflite<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">2.3.0</span>
+  path_provider<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">2.1.0</span>
+  path<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">1.8.0</span></code></pre>
+<p>The <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">path_provider</code> package helps locate where to store the database file on the device.</p>
+<h3>The Architecture Pattern</h3>
+<p>Regardless of database type, a sound architecture separates concerns:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>UI Layer (Widgets)
+    ↓
+State Management (Provider, BLoC, etc.)
+    ↓
+Repository (hides database implementation)
+    ↓
+Database Helper <span style="color: #ffff44">/</span> Data Layer
+    ↓
+SQLite</code></pre>
+<p>This matters because if you ever migrate from SQLite to a cloud database, only the repository implementation changes. Everything else stays the same.</p>
+<h3>Creating a Database</h3>
+<p>Define your data model first:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> Note {
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">int</span><span style="color: #ffff44">?</span> id; <span style="color: #888888">// null until saved</span>
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> title;
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> content;
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> folder;
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span> tags;
+
+  <span style="color: #87ceeb">const</span> Note({
+    <span style="color: #87ceeb">this</span>.id,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.title,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.content,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.folder,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.tags,
+  });
+
+  <span style="color: #888888">// Convert to/from database map</span>
+  <span style="color: #ff4444">Map</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span>, <span style="color: #87ceeb">dynamic</span><span style="color: #ffff44">></span> toMap() {
+    <span style="color: #87ceeb">return</span> {
+      <span style="color: #44ff44">&#39;id&#39;</span><span style="color: #ffff44">:</span> id,
+      <span style="color: #44ff44">&#39;title&#39;</span><span style="color: #ffff44">:</span> title,
+      <span style="color: #44ff44">&#39;content&#39;</span><span style="color: #ffff44">:</span> content,
+      <span style="color: #44ff44">&#39;folder&#39;</span><span style="color: #ffff44">:</span> folder,
+      <span style="color: #44ff44">&#39;tags&#39;</span><span style="color: #ffff44">:</span> tags.join(<span style="color: #44ff44">&#39;,&#39;</span>), <span style="color: #888888">// Store as comma-separated string</span>
+    };
+  }
+
+  <span style="color: #87ceeb">static</span> Note fromMap(<span style="color: #ff4444">Map</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span>, <span style="color: #87ceeb">dynamic</span><span style="color: #ffff44">></span> map) {
+    <span style="color: #87ceeb">return</span> Note(
+      id<span style="color: #ffff44">:</span> map[<span style="color: #44ff44">&#39;id&#39;</span>],
+      title<span style="color: #ffff44">:</span> map[<span style="color: #44ff44">&#39;title&#39;</span>],
+      content<span style="color: #ffff44">:</span> map[<span style="color: #44ff44">&#39;content&#39;</span>],
+      folder<span style="color: #ffff44">:</span> map[<span style="color: #44ff44">&#39;folder&#39;</span>],
+      tags<span style="color: #ffff44">:</span> (map[<span style="color: #44ff44">&#39;tags&#39;</span>] <span style="color: #87ceeb">as</span> <span style="color: #ff4444">String</span>).split(<span style="color: #44ff44">&#39;,&#39;</span>),
+    );
+  }
+}</code></pre>
+<p>Now create a database helper to manage the connection and operations:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:sqflite/sqflite.dart&#39;</span>;
+<span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:path/path.dart&#39;</span>;
+
+<span style="color: #87ceeb">class</span> DatabaseHelper {
+  <span style="color: #87ceeb">static</span> <span style="color: #87ceeb">const</span> <span style="color: #ff4444">String</span> _databaseName <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;notes.db&#39;</span>;
+  <span style="color: #87ceeb">static</span> <span style="color: #87ceeb">const</span> <span style="color: #ff4444">int</span> _databaseVersion <span style="color: #ffff44">=</span> <span style="color: #bb86fc">1</span>;
+  <span style="color: #87ceeb">static</span> <span style="color: #87ceeb">const</span> <span style="color: #ff4444">String</span> _tableName <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;notes&#39;</span>;
+
+  <span style="color: #888888">// Singleton pattern: one database instance for the app</span>
+  <span style="color: #87ceeb">static</span> <span style="color: #87ceeb">final</span> DatabaseHelper _instance <span style="color: #ffff44">=</span> DatabaseHelper._internal();
+
+  <span style="color: #87ceeb">factory</span> DatabaseHelper() {
+    <span style="color: #87ceeb">return</span> _instance;
+  }
+
+  DatabaseHelper._internal();
+
+  Database<span style="color: #ffff44">?</span> _database;
+
+  <span style="color: #888888">// Lazy initialization: database is opened when first accessed</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span>Database<span style="color: #ffff44">></span> <span style="color: #87ceeb">get</span> database <span style="color: #87ceeb">async</span> {
+    _database <span style="color: #ffff44">?</span><span style="color: #ffff44">?</span><span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> _initializeDatabase();
+    <span style="color: #87ceeb">return</span> _database<span style="color: #ffff44">!</span>;
+  }
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span>Database<span style="color: #ffff44">></span> _initializeDatabase() <span style="color: #87ceeb">async</span> {
+    <span style="color: #888888">// Get the database location on the device</span>
+    <span style="color: #87ceeb">final</span> databasePath <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> getDatabasesPath();
+    <span style="color: #87ceeb">final</span> path <span style="color: #ffff44">=</span> join(databasePath, _databaseName);
+
+    <span style="color: #888888">// Open the database, creating it if it doesn&#39;t exist</span>
+    <span style="color: #87ceeb">return</span> openDatabase(
+      path,
+      version<span style="color: #ffff44">:</span> _databaseVersion,
+      onCreate<span style="color: #ffff44">:</span> _onCreate,
+      onUpgrade<span style="color: #ffff44">:</span> _onUpgrade,
+    );
+  }
+
+  <span style="color: #888888">// Called once when database is first created</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> _onCreate(Database db, <span style="color: #ff4444">int</span> version) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">await</span> db.execute(<span style="color: #44ff44">&#39;&#39;</span><span style="color: #44ff44">&#39;
+      CREATE TABLE $_tableName (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        folder TEXT NOT NULL,
+        tags TEXT NOT NULL
+      )
+    &#39;</span><span style="color: #44ff44">&#39;&#39;</span>);
+  }
+
+  <span style="color: #888888">// Called when database version changes</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> _onUpgrade(Database db, <span style="color: #ff4444">int</span> oldVersion, <span style="color: #ff4444">int</span> newVersion) <span style="color: #87ceeb">async</span> {
+    <span style="color: #888888">// Handle schema migrations when you add columns or tables</span>
+    <span style="color: #87ceeb">if</span> (oldVersion <span style="color: #ffff44"><</span> <span style="color: #bb86fc">2</span>) {
+      <span style="color: #888888">// Example: await db.execute(&#39;ALTER TABLE $_tableName ADD COLUMN new_column TEXT&#39;);</span>
+    }
+  }
+}</code></pre>
+<h3>CRUD Operations</h3>
+<p>Create a repository to encapsulate database operations:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteRepository {
+  <span style="color: #87ceeb">final</span> DatabaseHelper _dbHelper <span style="color: #ffff44">=</span> DatabaseHelper();
+
+  <span style="color: #888888">// Create (Insert)</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span> createNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> db <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> _dbHelper.database;
+    <span style="color: #87ceeb">return</span> <span style="color: #87ceeb">await</span> db.insert(<span style="color: #44ff44">&#39;notes&#39;</span>, note.toMap());
+  }
+
+  <span style="color: #888888">// Read (Query all)</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span> getAllNotes() <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> db <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> _dbHelper.database;
+    <span style="color: #87ceeb">final</span> maps <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> db.query(<span style="color: #44ff44">&#39;notes&#39;</span>);
+    <span style="color: #87ceeb">return</span> [<span style="color: #87ceeb">for</span> (<span style="color: #87ceeb">final</span> map <span style="color: #87ceeb">in</span> maps) Note.fromMap(map)];
+  }
+
+  <span style="color: #888888">// Read (Query one)</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">?</span><span style="color: #ffff44">></span> getNoteById(<span style="color: #ff4444">int</span> id) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> db <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> _dbHelper.database;
+    <span style="color: #87ceeb">final</span> maps <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> db.query(
+      <span style="color: #44ff44">&#39;notes&#39;</span>,
+      where<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;id = ?&#39;</span>,
+      whereArgs<span style="color: #ffff44">:</span> [id],
+    );
+    <span style="color: #87ceeb">return</span> maps.isNotEmpty <span style="color: #ffff44">?</span> Note.fromMap(maps.first) <span style="color: #ffff44">:</span> <span style="color: #87ceeb">null</span>;
+  }
+
+  <span style="color: #888888">// Update</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> updateNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> db <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> _dbHelper.database;
+    <span style="color: #87ceeb">await</span> db.update(
+      <span style="color: #44ff44">&#39;notes&#39;</span>,
+      note.toMap(),
+      where<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;id = ?&#39;</span>,
+      whereArgs<span style="color: #ffff44">:</span> [note.id],
+    );
+  }
+
+  <span style="color: #888888">// Delete</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> deleteNote(<span style="color: #ff4444">int</span> id) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> db <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> _dbHelper.database;
+    <span style="color: #87ceeb">await</span> db.delete(<span style="color: #44ff44">&#39;notes&#39;</span>, where<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;id = ?&#39;</span>, whereArgs<span style="color: #ffff44">:</span> [id]);
+  }
+}</code></pre>
+<h3>Using the Repository in Your App</h3>
+<p>With Provider for state management:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteProvider <span style="color: #87ceeb">extends</span> ChangeNotifier {
+  <span style="color: #87ceeb">final</span> NoteRepository _repository <span style="color: #ffff44">=</span> NoteRepository();
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> _notes <span style="color: #ffff44">=</span> [];
+
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> <span style="color: #87ceeb">get</span> notes <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _notes;
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> loadNotes() <span style="color: #87ceeb">async</span> {
+    _notes <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> _repository.getAllNotes();
+    notifyListeners();
+  }
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> addNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">await</span> _repository.createNote(note);
+    <span style="color: #87ceeb">await</span> loadNotes();
+  }
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> updateNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">await</span> _repository.updateNote(note);
+    <span style="color: #87ceeb">await</span> loadNotes();
+  }
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> deleteNote(<span style="color: #ff4444">int</span> id) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">await</span> _repository.deleteNote(id);
+    <span style="color: #87ceeb">await</span> loadNotes();
+  }
+}</code></pre>
+<p>In a widget, use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StreamBuilder</code> or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Consumer</code> to display notes:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteListScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>NoteListScreen<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _NoteListScreenState();
+}
+
+<span style="color: #87ceeb">class</span> _NoteListScreenState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>NoteListScreen<span style="color: #ffff44">></span> {
+  @override
+  <span style="color: #87ceeb">void</span> initState() {
+    <span style="color: #87ceeb">super</span>.initState();
+    <span style="color: #888888">// Load notes when screen opens</span>
+    context.read<span style="color: #ffff44"><</span>NoteProvider<span style="color: #ffff44">></span>().loadNotes();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Scaffold(
+      appBar<span style="color: #ffff44">:</span> AppBar(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Notes&#39;</span>)),
+      body<span style="color: #ffff44">:</span> Consumer<span style="color: #ffff44"><</span>NoteProvider<span style="color: #ffff44">></span>(
+        builder<span style="color: #ffff44">:</span> (context, provider, child) {
+          <span style="color: #87ceeb">return</span> ListView.builder(
+            itemCount<span style="color: #ffff44">:</span> provider.notes.length,
+            itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+              <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> provider.notes[index];
+              <span style="color: #87ceeb">return</span> ListTile(
+                title<span style="color: #ffff44">:</span> Text(note.title),
+                subtitle<span style="color: #ffff44">:</span> Text(note.content),
+                onTap<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Navigator.push(context, MaterialPageRoute(
+                  builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NoteDetailScreen(note<span style="color: #ffff44">:</span> note),
+                )),
+                trailing<span style="color: #ffff44">:</span> IconButton(
+                  icon<span style="color: #ffff44">:</span> Icon(Icons.delete),
+                  onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> provider.deleteNote(note.id<span style="color: #ffff44">!</span>),
+                ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton<span style="color: #ffff44">:</span> FloatingActionButton(
+        onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Navigator.push(context, MaterialPageRoute(
+          builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> CreateNoteScreen(),
+        )),
+        child<span style="color: #ffff44">:</span> Icon(Icons.add),
+      ),
+    );
+  }
+}</code></pre>
+<h3>SQLite Benefits and Drawbacks</h3>
+<p><strong>Benefits:</strong></p>
+<ul><li>No server required. Works offline. Data stays on the device.</li><li>ACID compliance ensures data integrity.</li><li>Fast queries—no network latency.</li><li>Widely tested and battle-hardened in production apps.</li></ul>
+<p><strong>Drawbacks:</strong></p>
+<ul><li>Single-device data. No built-in synchronization between devices.</li><li>Not suitable for massive datasets (SQLite is optimized for single-user, not high concurrency).</li><li>Schema changes require migrations.</li></ul>
+<p><strong>When to use:</strong> Apps with offline-first requirements, where each user's data lives on their device.</p>
+<hr>
+<h2>Part 2: NoSQL—A Modern Alternative</h2>
+<p>NoSQL databases challenge the relational model, offering flexibility at the cost of strict schemas. They excel at both local and cloud storage, making them a bridge between SQLite and enterprise databases.</p>
+<h3>Local NoSQL: Hive</h3>
+<p>Hive is a lightweight, high-performance NoSQL database written in Dart. It's simpler than SQLite for many use cases.</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>dependencies<span style="color: #ffff44">:</span>
+  hive<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">2.2.0</span>
+  hive_flutter<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">1.1.0</span></code></pre>
+<p><strong>Setup:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() <span style="color: #87ceeb">async</span> {
+  WidgetsFlutterBinding.ensureInitialized();
+  <span style="color: #87ceeb">await</span> Hive.initFlutter();
+  Hive.registerAdapter(NoteAdapter());
+  runApp(MyApp());
+}</code></pre>
+<p><strong>Define your model with annotations:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:hive/hive.dart&#39;</span>;
+
+@HiveType(typeId<span style="color: #ffff44">:</span> <span style="color: #bb86fc">0</span>)
+<span style="color: #87ceeb">class</span> Note {
+  @HiveField(<span style="color: #bb86fc">0</span>)
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">int</span> id;
+
+  @HiveField(<span style="color: #bb86fc">1</span>)
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> title;
+
+  @HiveField(<span style="color: #bb86fc">2</span>)
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> content;
+
+  @HiveField(<span style="color: #bb86fc">3</span>)
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> folder;
+
+  @HiveField(<span style="color: #bb86fc">4</span>)
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span> tags;
+
+  Note({
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.id,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.title,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.content,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.folder,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.tags,
+  });
+}</code></pre>
+<p>Generate the adapter with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter pub run build_runner build</code>.</p>
+<p><strong>Operations are simple:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteRepository {
+  <span style="color: #87ceeb">static</span> <span style="color: #87ceeb">const</span> <span style="color: #ff4444">String</span> _boxName <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;notes&#39;</span>;
+
+  <span style="color: #888888">// Create</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> createNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> box <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> Hive.openBox<span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span>(_boxName);
+    <span style="color: #87ceeb">await</span> box.put(note.id, note); <span style="color: #888888">// Key-value: id → Note</span>
+  }
+
+  <span style="color: #888888">// Read</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span> getAllNotes() <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> box <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> Hive.openBox<span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span>(_boxName);
+    <span style="color: #87ceeb">return</span> box.values.toList();
+  }
+
+  <span style="color: #888888">// Update</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> updateNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> box <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> Hive.openBox<span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span>(_boxName);
+    <span style="color: #87ceeb">await</span> box.put(note.id, note);
+  }
+
+  <span style="color: #888888">// Delete</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> deleteNote(<span style="color: #ff4444">int</span> id) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> box <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> Hive.openBox<span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span>(_boxName);
+    <span style="color: #87ceeb">await</span> box.delete(id);
+  }
+}</code></pre>
+<h3>Cloud NoSQL: Firebase Firestore</h3>
+<p>Firestore is Google's cloud NoSQL database. It's the bridge between local Hive and enterprise databases—you get cloud storage with offline support.</p>
+<p><strong>Setup:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>dependencies<span style="color: #ffff44">:</span>
+  firebase_core<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">3.0.0</span>
+  cloud_firestore<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">5.0.0</span></code></pre>
+<p>Initialize Firebase in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">main()</code>:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:firebase_core/firebase_core.dart&#39;</span>;
+
+<span style="color: #87ceeb">void</span> main() <span style="color: #87ceeb">async</span> {
+  WidgetsFlutterBinding.ensureInitialized();
+  <span style="color: #87ceeb">await</span> Firebase.initializeApp();
+  runApp(MyApp());
+}</code></pre>
+<p><strong>Use Firestore in your repository:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteRepository {
+  <span style="color: #87ceeb">final</span> FirebaseFirestore _firestore <span style="color: #ffff44">=</span> FirebaseFirestore.instance;
+  <span style="color: #87ceeb">static</span> <span style="color: #87ceeb">const</span> <span style="color: #ff4444">String</span> _collection <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;notes&#39;</span>;
+
+  <span style="color: #888888">// Create</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> createNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">await</span> _firestore.collection(_collection).doc(note.id.toString()).<span style="color: #87ceeb">set</span>({
+      <span style="color: #44ff44">&#39;title&#39;</span><span style="color: #ffff44">:</span> note.title,
+      <span style="color: #44ff44">&#39;content&#39;</span><span style="color: #ffff44">:</span> note.content,
+      <span style="color: #44ff44">&#39;folder&#39;</span><span style="color: #ffff44">:</span> note.folder,
+      <span style="color: #44ff44">&#39;tags&#39;</span><span style="color: #ffff44">:</span> note.tags,
+    });
+  }
+
+  <span style="color: #888888">// Read (with real-time updates)</span>
+  <span style="color: #ff4444">Stream</span><span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span> notesStream() {
+    <span style="color: #87ceeb">return</span> _firestore.collection(_collection).snapshots().map((snapshot) {
+      <span style="color: #87ceeb">return</span> [
+        <span style="color: #87ceeb">for</span> (<span style="color: #87ceeb">final</span> doc <span style="color: #87ceeb">in</span> snapshot.docs)
+          Note(
+            id<span style="color: #ffff44">:</span> <span style="color: #ff4444">int</span>.parse(doc.id),
+            title<span style="color: #ffff44">:</span> doc[<span style="color: #44ff44">&#39;title&#39;</span>],
+            content<span style="color: #ffff44">:</span> doc[<span style="color: #44ff44">&#39;content&#39;</span>],
+            folder<span style="color: #ffff44">:</span> doc[<span style="color: #44ff44">&#39;folder&#39;</span>],
+            tags<span style="color: #ffff44">:</span> <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span><span style="color: #ffff44">></span>.from(doc[<span style="color: #44ff44">&#39;tags&#39;</span>]),
+          )
+      ];
+    });
+  }
+
+  <span style="color: #888888">// Update</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> updateNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">await</span> _firestore.collection(_collection).doc(note.id.toString()).update({
+      <span style="color: #44ff44">&#39;title&#39;</span><span style="color: #ffff44">:</span> note.title,
+      <span style="color: #44ff44">&#39;content&#39;</span><span style="color: #ffff44">:</span> note.content,
+      <span style="color: #44ff44">&#39;folder&#39;</span><span style="color: #ffff44">:</span> note.folder,
+      <span style="color: #44ff44">&#39;tags&#39;</span><span style="color: #ffff44">:</span> note.tags,
+    });
+  }
+
+  <span style="color: #888888">// Delete</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> deleteNote(<span style="color: #ff4444">int</span> id) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">await</span> _firestore.collection(_collection).doc(id.toString()).delete();
+  }
+}</code></pre>
+<p><strong>Using Firestore in widgets with StreamBuilder:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteListScreen <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> NoteRepository _repository <span style="color: #ffff44">=</span> NoteRepository();
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Scaffold(
+      appBar<span style="color: #ffff44">:</span> AppBar(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Notes&#39;</span>)),
+      body<span style="color: #ffff44">:</span> StreamBuilder<span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span>(
+        stream<span style="color: #ffff44">:</span> _repository.notesStream(),
+        builder<span style="color: #ffff44">:</span> (context, snapshot) {
+          <span style="color: #87ceeb">if</span> (snapshot.connectionState <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> ConnectionState.waiting) {
+            <span style="color: #87ceeb">return</span> Center(child<span style="color: #ffff44">:</span> CircularProgressIndicator());
+          }
+          <span style="color: #87ceeb">if</span> (snapshot.hasError) {
+            <span style="color: #87ceeb">return</span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Error: ${snapshot.error}&#39;</span>));
+          }
+          <span style="color: #87ceeb">final</span> notes <span style="color: #ffff44">=</span> snapshot.data <span style="color: #ffff44">?</span><span style="color: #ffff44">?</span> [];
+          <span style="color: #87ceeb">return</span> ListView.builder(
+            itemCount<span style="color: #ffff44">:</span> notes.length,
+            itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+              <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> notes[index];
+              <span style="color: #87ceeb">return</span> ListTile(
+                title<span style="color: #ffff44">:</span> Text(note.title),
+                subtitle<span style="color: #ffff44">:</span> Text(note.content),
+                trailing<span style="color: #ffff44">:</span> IconButton(
+                  icon<span style="color: #ffff44">:</span> Icon(Icons.delete),
+                  onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _repository.deleteNote(note.id),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}</code></pre>
+<h3>NoSQL Benefits and Drawbacks</h3>
+<p><strong>Benefits:</strong></p>
+<ul><li><strong>Flexible schema:</strong> Add fields without migrations. Great for evolving requirements.</li><li><strong>Cloud + offline:</strong> Firestore syncs automatically. Works offline, syncs when connected.</li><li><strong>Real-time updates:</strong> Changes push to all clients instantly (Firestore).</li><li><strong>Simple for simple data:</strong> No complex joins. Great for document-oriented data.</li></ul>
+<p><strong>Drawbacks:</strong></p>
+<ul><li><strong>No strong consistency guarantees:</strong> Eventual consistency can surprise you (distributed systems trade-off).</li><li><strong>Cost at scale:</strong> Firebase charges per read/write. High-traffic apps get expensive.</li><li><strong>Limited querying:</strong> Can't do complex joins like SQL databases.</li><li><strong>Vendor lock-in:</strong> With Firebase, you're tied to Google Cloud.</li></ul>
+<p><strong>When to use:</strong> Real-time collaborative apps (Firebase), offline-first mobile apps (Hive), or when your data structure is hierarchical and doesn't require complex relationships.</p>
+<hr>
+<h2>Part 3: Enterprise Databases</h2>
+<p>Enterprise databases (MySQL, PostgreSQL, Oracle, SQL Server) live on servers. Your Flutter app can't connect directly—security requires a backend intermediary.</p>
+<h3>The Architecture Pattern</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Flutter App
+    ↓ (HTTP<span style="color: #ffff44">/</span>REST or GraphQL)
+Backend API (Node, Django, Java, Go, etc.)
+    ↓ (Database Driver)
+Enterprise Database</code></pre>
+<p>Your Flutter app sends requests to an API. The API queries the database and returns data. This separation ensures:</p>
+<ul><li>Database credentials stay server-side (secure)</li><li>You can scale the backend independently</li><li>Multiple clients can share the same database</li></ul>
+<h3>Connecting to MySQL</h3>
+<p>Example: Your backend is a REST API running on a server.</p>
+<p><strong>In Flutter, create an API service:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;package:http/http.dart&#39;</span> <span style="color: #87ceeb">as</span> http;
+<span style="color: #87ceeb">import</span> <span style="color: #44ff44">&#39;dart:convert&#39;</span>;
+
+<span style="color: #87ceeb">class</span> ApiService {
+  <span style="color: #87ceeb">static</span> <span style="color: #87ceeb">const</span> <span style="color: #ff4444">String</span> _baseUrl <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;https://api.example.com&#39;</span>;
+
+  <span style="color: #888888">// Fetch all notes</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span> getNotes() <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> response <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> http.<span style="color: #87ceeb">get</span>(
+      Uri.parse(<span style="color: #44ff44">&#39;$_baseUrl/notes&#39;</span>),
+      headers<span style="color: #ffff44">:</span> {<span style="color: #44ff44">&#39;Authorization&#39;</span><span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Bearer $token&#39;</span>},
+    );
+
+    <span style="color: #87ceeb">if</span> (response.statusCode <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #bb86fc">200</span>) {
+      <span style="color: #87ceeb">final</span> <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">dynamic</span><span style="color: #ffff44">></span> data <span style="color: #ffff44">=</span> jsonDecode(response.body);
+      <span style="color: #87ceeb">return</span> [<span style="color: #87ceeb">for</span> (<span style="color: #87ceeb">final</span> item <span style="color: #87ceeb">in</span> data) Note.fromJson(item)];
+    } <span style="color: #87ceeb">else</span> {
+      <span style="color: #87ceeb">throw</span> Exception(<span style="color: #44ff44">&#39;Failed to load notes&#39;</span>);
+    }
+  }
+
+  <span style="color: #888888">// Create a note</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> createNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> response <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> http.post(
+      Uri.parse(<span style="color: #44ff44">&#39;$_baseUrl/notes&#39;</span>),
+      headers<span style="color: #ffff44">:</span> {
+        <span style="color: #44ff44">&#39;Content-Type&#39;</span><span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;application/json&#39;</span>,
+        <span style="color: #44ff44">&#39;Authorization&#39;</span><span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Bearer $token&#39;</span>,
+      },
+      body<span style="color: #ffff44">:</span> jsonEncode(note.toJson()),
+    );
+
+    <span style="color: #87ceeb">if</span> (response.statusCode <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> <span style="color: #bb86fc">201</span>) {
+      <span style="color: #87ceeb">return</span> Note.fromJson(jsonDecode(response.body));
+    } <span style="color: #87ceeb">else</span> {
+      <span style="color: #87ceeb">throw</span> Exception(<span style="color: #44ff44">&#39;Failed to create note&#39;</span>);
+    }
+  }
+
+  <span style="color: #888888">// Update a note</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> updateNote(<span style="color: #ff4444">int</span> id, Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> response <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> http.put(
+      Uri.parse(<span style="color: #44ff44">&#39;$_baseUrl/notes/$id&#39;</span>),
+      headers<span style="color: #ffff44">:</span> {
+        <span style="color: #44ff44">&#39;Content-Type&#39;</span><span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;application/json&#39;</span>,
+        <span style="color: #44ff44">&#39;Authorization&#39;</span><span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Bearer $token&#39;</span>,
+      },
+      body<span style="color: #ffff44">:</span> jsonEncode(note.toJson()),
+    );
+
+    <span style="color: #87ceeb">if</span> (response.statusCode <span style="color: #ffff44">!</span><span style="color: #ffff44">=</span> <span style="color: #bb86fc">200</span>) {
+      <span style="color: #87ceeb">throw</span> Exception(<span style="color: #44ff44">&#39;Failed to update note&#39;</span>);
+    }
+  }
+
+  <span style="color: #888888">// Delete a note</span>
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> deleteNote(<span style="color: #ff4444">int</span> id) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">final</span> response <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> http.delete(
+      Uri.parse(<span style="color: #44ff44">&#39;$_baseUrl/notes/$id&#39;</span>),
+      headers<span style="color: #ffff44">:</span> {<span style="color: #44ff44">&#39;Authorization&#39;</span><span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Bearer $token&#39;</span>},
+    );
+
+    <span style="color: #87ceeb">if</span> (response.statusCode <span style="color: #ffff44">!</span><span style="color: #ffff44">=</span> <span style="color: #bb86fc">204</span>) {
+      <span style="color: #87ceeb">throw</span> Exception(<span style="color: #44ff44">&#39;Failed to delete note&#39;</span>);
+    }
+  }
+}</code></pre>
+<p><strong>Your repository abstracts the API:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteRepository {
+  <span style="color: #87ceeb">final</span> ApiService _apiService <span style="color: #ffff44">=</span> ApiService();
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span> getAllNotes() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _apiService.getNotes();
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> createNote(Note note) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _apiService.createNote(note);
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> updateNote(<span style="color: #ff4444">int</span> id, Note note) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _apiService.updateNote(id, note);
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> deleteNote(<span style="color: #ff4444">int</span> id) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _apiService.deleteNote(id);
+}</code></pre>
+<p><strong>Your state management uses the repository:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteProvider <span style="color: #87ceeb">extends</span> ChangeNotifier {
+  <span style="color: #87ceeb">final</span> NoteRepository _repository <span style="color: #ffff44">=</span> NoteRepository();
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> _notes <span style="color: #ffff44">=</span> [];
+  <span style="color: #ff4444">bool</span> _isLoading <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;
+
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> <span style="color: #87ceeb">get</span> notes <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _notes;
+  <span style="color: #ff4444">bool</span> <span style="color: #87ceeb">get</span> isLoading <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _isLoading;
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> loadNotes() <span style="color: #87ceeb">async</span> {
+    _isLoading <span style="color: #ffff44">=</span> <span style="color: #87ceeb">true</span>;
+    notifyListeners();
+    _notes <span style="color: #ffff44">=</span> <span style="color: #87ceeb">await</span> _repository.getAllNotes();
+    _isLoading <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;
+    notifyListeners();
+  }
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> addNote(Note note) <span style="color: #87ceeb">async</span> {
+    <span style="color: #87ceeb">await</span> _repository.createNote(note);
+    <span style="color: #87ceeb">await</span> loadNotes();
+  }
+}</code></pre>
+<p><strong>In widgets, use FutureBuilder for async operations:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NoteListScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>NoteListScreen<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _NoteListScreenState();
+}
+
+<span style="color: #87ceeb">class</span> _NoteListScreenState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>NoteListScreen<span style="color: #ffff44">></span> {
+  @override
+  <span style="color: #87ceeb">void</span> initState() {
+    <span style="color: #87ceeb">super</span>.initState();
+    context.read<span style="color: #ffff44"><</span>NoteProvider<span style="color: #ffff44">></span>().loadNotes();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Scaffold(
+      appBar<span style="color: #ffff44">:</span> AppBar(title<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Notes&#39;</span>)),
+      body<span style="color: #ffff44">:</span> Consumer<span style="color: #ffff44"><</span>NoteProvider<span style="color: #ffff44">></span>(
+        builder<span style="color: #ffff44">:</span> (context, provider, child) {
+          <span style="color: #87ceeb">if</span> (provider.isLoading) {
+            <span style="color: #87ceeb">return</span> Center(child<span style="color: #ffff44">:</span> CircularProgressIndicator());
+          }
+          <span style="color: #87ceeb">return</span> ListView.builder(
+            itemCount<span style="color: #ffff44">:</span> provider.notes.length,
+            itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+              <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> provider.notes[index];
+              <span style="color: #87ceeb">return</span> ListTile(
+                title<span style="color: #ffff44">:</span> Text(note.title),
+                subtitle<span style="color: #ffff44">:</span> Text(note.content),
+                trailing<span style="color: #ffff44">:</span> IconButton(
+                  icon<span style="color: #ffff44">:</span> Icon(Icons.delete),
+                  onPressed<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> provider.deleteNote(note.id<span style="color: #ffff44">!</span>),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}</code></pre>
+<h3>The Same Pattern Works for All Enterprise Databases</h3>
+<p>Whether your backend connects to MySQL, PostgreSQL, Oracle, or SQL Server, the Flutter code is identical. Only the backend changes. This is the power of the repository pattern.</p>
+<ul><li><strong>MySQL backend</strong> → Same Flutter code</li><li><strong>PostgreSQL backend</strong> → Same Flutter code</li><li><strong>SQL Server backend</strong> → Same Flutter code</li></ul>
+<h3>Enterprise Database Benefits and Drawbacks</h3>
+<p><strong>Benefits:</strong></p>
+<ul><li><strong>Centralized data:</strong> One source of truth. All clients see the same data.</li><li><strong>ACID compliance:</strong> Strong consistency and data integrity.</li><li><strong>Powerful querying:</strong> Complex joins, aggregations, transactions.</li><li><strong>Scalability:</strong> Designed for high concurrency and large datasets.</li></ul>
+<p><strong>Drawbacks:</strong></p>
+<ul><li><strong>Offline doesn't work:</strong> App requires internet for all operations.</li><li><strong>API is a bottleneck:</strong> Network latency adds to every operation.</li><li><strong>Server costs:</strong> You maintain and pay for server infrastructure.</li><li><strong>Complexity:</strong> Requires a backend developer and infrastructure knowledge.</li></ul>
+<p><strong>When to use:</strong> Multi-user apps where all users share the same data (CRM, collaboration tools, social networks). Apps with high consistency requirements (financial transactions).</p>
+<hr>
+<h2>Comparison: Choosing the Right Database</h2>
+<p>| Aspect | SQLite | Hive | Firestore | Enterprise DB |</p>
+<p>|--------|--------|------|-----------|---------------|</p>
+<p>| <strong>Storage</strong> | Local device | Local device | Cloud | Server |</p>
+<p>| <strong>Multi-user</strong> | No | No | Yes | Yes |</p>
+<p>| <strong>Offline</strong> | Yes | Yes | Yes (cached) | No |</p>
+<p>| <strong>Real-time sync</strong> | Manual | Manual | Automatic | Via API |</p>
+<p>| <strong>Setup complexity</strong> | Low | Low | Medium (Firebase setup) | High (backend required) |</p>
+<p>| <strong>Query power</strong> | SQL (strong) | Basic (key-value) | Document queries | SQL (very strong) |</p>
+<p>| <strong>Cost</strong> | Free | Free | Scales with usage | Infrastructure costs |</p>
+<p>| <strong>Best for</strong> | Offline apps, local notes | Simple local storage | Real-time collab | Multi-user, enterprise |</p>
+<hr>
+<h2>Architecture Principles</h2>
+<p>Regardless of which database you choose, follow these principles:</p>
+<ol><li><strong>Separate concerns:</strong> Database logic lives in repositories, not widgets.</li><li><strong>Swap implementations:</strong> Your app shouldn't care if you use SQLite or Firestore. Only the repository knows.</li><li><strong>Use the same state management:</strong> Provider, BLoC, or Riverpod manages data the same way regardless of database.</li><li><strong>Handle errors:</strong> Network failures (enterprise), sync conflicts (cloud), or schema mismatches (local).</li></ol>
+<p>By building with this architecture from the start, migrating from one database to another becomes straightforward.</p>
+<hr>
+<h2>Hands-On Next Steps</h2>
+<p>In the project guides, we'll implement the Markdown Notes app with SQLite first. This teaches you the foundation. Later, you can explore swapping in Hive or Firestore by changing only the repository—the rest of your app stays unchanged.</p>
+<p>Start local. Master the patterns. Scale when needed.</p>
+</body>
+<script src="common.js"></script>
+</html>

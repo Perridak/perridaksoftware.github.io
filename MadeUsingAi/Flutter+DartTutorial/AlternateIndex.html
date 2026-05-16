@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter & Dart Tutorial for Experienced Developers</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: linear-gradient(135deg, #F9F7F3 0%, #E8F0E6 100%);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1B5A56 0%, #2A7A70 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            border: none;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+        }
+        
+        .intro-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .intro-section h2 {
+            color: #1B5A56;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .intro-section p {
+            margin-bottom: 1rem;
+            color: #5A7A72;
+        }
+        
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chapter-card {
+            background: white;
+            border: 2px solid #E8F0E6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: #3D4A52;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chapter-card:hover {
+            border-color: #7BA857;
+            box-shadow: 0 6px 16px rgba(123, 168, 87, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .chapter-number {
+            display: inline-block;
+            background: #1B5A56;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .chapter-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1B5A56;
+            margin-bottom: 0.5rem;
+        }
+        
+        .chapter-description {
+            color: #5A7A72;
+            font-size: 0.95rem;
+            flex-grow: 1;
+        }
+        
+        .chapter-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #7BA857;
+            font-weight: 500;
+            border-bottom: 2px solid #7BA857;
+            transition: all 0.2s ease;
+        }
+        
+        .chapter-card:hover .chapter-link {
+            color: #6B9647;
+            border-bottom-color: #6B9647;
+        }
+        
+        .section-header {
+            font-size: 1.8rem;
+            color: #1B5A56;
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #7BA857;
+        }
+        
+        .special-resources {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .resource-link {
+            display: inline-block;
+            background: #1B5A56;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .resource-link:hover {
+            background: #154A47;
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            background: #1B5A56;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .footer p {
+            margin: 0.5rem 0;
+        }
+        
+        .footer a {
+            color: #7BA857;
+            text-decoration: none;
+            border-bottom: 1px solid #7BA857;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Flutter & Dart Tutorial</h1>
+        <p>For experienced developers making the leap to Dart and Flutter</p>
+    </div>
+    
+    <div class="container">
+        <div class="intro-section">
+            <h2>Welcome</h2>
+            <p>This tutorial is designed for developers with experience in other languages who want to learn Dart and Flutter without starting from square one. We skip the basics and focus on how to accomplish things the Dart and Flutter way.</p>
+            <p>Work through the chapters in order. Each builds on the previous one, but feel free to skip sections if you're already familiar with a concept.</p>
+        </div>
+        
+        <h2 class="section-header">Core Chapters</h2>
+        <div class="chapters-grid">
+            <a href="01-Welcome.html" class="chapter-card">
+                <div class="chapter-number">01</div>
+                <div class="chapter-title">Welcome</div>
+                <div class="chapter-description">Introduction to the tutorial and what you'll learn</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="02-GettingStarted.html" class="chapter-card">
+                <div class="chapter-number">02</div>
+                <div class="chapter-title">Getting Started</div>
+                <div class="chapter-description">Environment setup for Windows and macOS</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="03-DartBasics.html" class="chapter-card">
+                <div class="chapter-number">03</div>
+                <div class="chapter-title">Dart Basics</div>
+                <div class="chapter-description">Language fundamentals, type system, and unique features</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="04-FlutterWidgets.html" class="chapter-card">
+                <div class="chapter-number">04</div>
+                <div class="chapter-title">Flutter Widgets</div>
+                <div class="chapter-description">Widget-based architecture and Material Design</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="05-StateManagement.html" class="chapter-card">
+                <div class="chapter-number">05</div>
+                <div class="chapter-title">State Management</div>
+                <div class="chapter-description">Provider pattern and reactive state management</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="06-RoutingNavigation.html" class="chapter-card">
+                <div class="chapter-number">06</div>
+                <div class="chapter-title">Routing & Navigation</div>
+                <div class="chapter-description">Named routes, navigation stack, and deep linking</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="07-Testing.html" class="chapter-card">
+                <div class="chapter-number">07</div>
+                <div class="chapter-title">Testing</div>
+                <div class="chapter-description">Unit, widget, and BDD testing strategies</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="08-BestPractices.html" class="chapter-card">
+                <div class="chapter-number">08</div>
+                <div class="chapter-title">Best Practices</div>
+                <div class="chapter-description">Architecture, memory management, and responsiveness</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="09-MoreWidgets.html" class="chapter-card">
+                <div class="chapter-number">09</div>
+                <div class="chapter-title">More Widgets</div>
+                <div class="chapter-description">Custom widgets and advanced UI patterns</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="10-Databases.html" class="chapter-card">
+                <div class="chapter-number">10</div>
+                <div class="chapter-title">Databases</div>
+                <div class="chapter-description">SQLite, Hive, Firestore, and enterprise databases</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="11-OtherLearningResources.html" class="chapter-card">
+                <div class="chapter-number">11</div>
+                <div class="chapter-title">Other Learning Resources</div>
+                <div class="chapter-description">Curated external resources and community links</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+            
+            <a href="13-Acknowledgements.html" class="chapter-card">
+                <div class="chapter-number">13</div>
+                <div class="chapter-title">Acknowledgements</div>
+                <div class="chapter-description">Credits and license information</div>
+                <span class="chapter-link">Read →</span>
+            </a>
+        </div>
+        
+        <h2 class="section-header">Knowledge Check</h2>
+        <div class="special-resources">
+            <h3 style="color: #1B5A56; margin-bottom: 1rem;">Test Your Knowledge</h3>
+            <p style="color: #5A7A72; margin-bottom: 1.5rem;">After working through the chapters, test your understanding with our 200-question knowledge check quiz covering all major topics.</p>
+            <a href="12-KnowledgeCheck.html" class="resource-link">Take the Quiz</a>
+        </div>
+        
+        <h2 class="section-header">Development Tools</h2>
+        <div class="special-resources">
+            <h3 style="color: #1B5A56; margin-bottom: 1rem;">Build Scripts</h3>
+            <p style="color: #5A7A72; margin-bottom: 1rem;">
+                <strong>build_chapters.py</strong> - Converts markdown chapters to standalone HTML files with syntax highlighting<br>
+                <strong>quiz_generator_v2.py</strong> - Generates interactive HTML quiz pages from the question bank
+            </p>
+            <p style="color: #5A7A72;">All tools are included in the outputs directory and configured to work with the tutorial structure.</p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p><strong>Flutter & Dart Tutorial</strong></p>
+        <p>Designed for experienced developers • <a href="13-Acknowledgements.html">Licence & Credits</a></p>
+        <p style="margin-top: 1rem; opacity: 0.8;">Created with <span style="color: #7BA857;">♥</span> for the developer community</p>
+    </div>
+    
+    <script src="common.js"></script>
+</body>
+</html>

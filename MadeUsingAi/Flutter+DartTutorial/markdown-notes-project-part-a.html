@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>markdown-notes-project-part-a</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Markdown Note-Taking App — Dart Basics Project</h1>
+<h2>Overview</h2>
+<p>This is your hands-on project for the <strong>Dart Basics</strong> chapter. You'll build a command-line note-taking application that demonstrates core Dart concepts including classes, collections, functions, and file I/O.</p>
+<p>The app stores notes in memory with the ability to save and load sessions from disk. In later chapters, you'll evolve this into a full Flutter application with persistent storage and a rich UI.</p>
+<h2>Learning Objectives</h2>
+<p>By completing this project, you will:</p>
+<ol><li><strong>Design classes</strong> that represent domain objects (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Note</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">NoteFolder</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">NoteApp</code>)</li><li><strong>Use collections</strong> (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span></code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">Map</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span>, T<span style="color: #ffff44">></span></code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">Set</span><span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span></code>) to organize data</li><li><strong>Implement methods</strong> that search, filter, and manipulate data</li><li><strong>Handle nullable types</strong> safely with Dart's null safety</li><li><strong>Perform file I/O</strong> to save and load sessions</li><li><strong>Build a simple CLI interface</strong> using string commands and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">stdin</code>/<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">stdout</code></li><li><strong>Apply OOP principles</strong> like encapsulation and separation of concerns</li></ol>
+<h2>Project Structure</h2>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>markdown_notes_app.dart
+├── Note <span style="color: #87ceeb">class</span>              <span style="color: #888888">// Represents a single note</span>
+├── NoteFolder <span style="color: #87ceeb">class</span>        <span style="color: #888888">// Represents a folder containing notes</span>
+├── NoteApp <span style="color: #87ceeb">class</span>           <span style="color: #888888">// Main app logic and command handling</span>
+└── main() function         <span style="color: #888888">// CLI loop and user interaction</span></code></pre>
+<h2>Key Classes</h2>
+<h3>Note</h3>
+<p>Represents a single note with title, content, folder, creation date, and tags.</p>
+<p><strong>Responsibilities:</strong></p>
+<ul><li>Store note metadata</li><li>Convert note to Markdown format</li><li>Provide string representation</li></ul>
+<p><strong>Concepts covered:</strong></p>
+<ul><li>Required named parameters</li><li>Initialization with default values (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">DateTime</span>.now()</code>)</li><li>String interpolation</li><li>Collections (List of tags)</li></ul>
+<h3>NoteFolder</h3>
+<p>Represents a folder containing multiple notes. Provides methods to add, remove, and search notes.</p>
+<p><strong>Responsibilities:</strong></p>
+<ul><li>Manage a collection of notes</li><li>Search notes by title, content, or tag</li><li>Report folder statistics</li></ul>
+<p><strong>Concepts covered:</strong></p>
+<ul><li>Collections (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span></code>)</li><li>Methods that filter and search (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">where()</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">firstWhere()</code>)</li><li>Nullable return types (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Note<span style="color: #ffff44">?</span></code>)</li></ul>
+<h3>NoteApp</h3>
+<p>The main application controller. Manages folders, handles commands, and maintains app state.</p>
+<p><strong>Responsibilities:</strong></p>
+<ul><li>Create and switch between folders</li><li>Create, delete, and view notes</li><li>Search across the entire app</li><li>Save and load sessions</li><li>Provide help and statistics</li></ul>
+<p><strong>Concepts covered:</strong></p>
+<ul><li>Maps (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ff4444">Map</span><span style="color: #ffff44"><</span><span style="color: #ff4444">String</span>, NoteFolder<span style="color: #ffff44">></span></code>)</li><li>Method organization (CRUD operations)</li><li>State management (current folder, unsaved changes)</li><li>File I/O for save/load</li><li>Control flow and error handling</li></ul>
+<h2>Implementation Steps</h2>
+<h3>Step 1: Define the Note Class (15 mins)</h3>
+<p>Create a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Note</code> class with:</p>
+<ul><li>Properties: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">title</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">content</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">folder</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">created</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">tags</code></li><li>Constructor with required named parameters</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">toMarkdown()</code> method that formats the note</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">toString()</code> method for display</li></ul>
+<p><strong>Key concepts:</strong> Classes, named parameters, DateTime, List<String></p>
+<h3>Step 2: Define the NoteFolder Class (15 mins)</h3>
+<p>Create a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">NoteFolder</code> class with:</p>
+<ul><li>Properties: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">name</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">notes</code> (List<Note>)</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">addNote()</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">removeNote()</code> methods</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">getNote()</code> method that returns <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Note<span style="color: #ffff44">?</span></code> (nullable)</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">searchByTag()</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">searchByContent()</code> methods using <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.where()</code></li></ul>
+<p><strong>Key concepts:</strong> Collections, generics, filtering, null safety</p>
+<h3>Step 3: Build the NoteApp Class (20 mins)</h3>
+<p>Create a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">NoteApp</code> class with:</p>
+<ul><li>Properties: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">folders</code> (Map<String, NoteFolder>), <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">currentFolder</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">unsavedChanges</code></li><li>Methods for folder management: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">createFolder()</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">switchFolder()</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">listFolders()</code></li><li>Methods for note operations: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">createNote()</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">deleteNote()</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">listNotes()</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">viewNote()</code></li><li>Search methods: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">searchNotes()</code>, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">searchByTag()</code></li></ul>
+<p><strong>Key concepts:</strong> Maps, OOP design, state management, control flow</p>
+<h3>Step 4: Add File I/O (10 mins)</h3>
+<p>Add methods for:</p>
+<ul><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">saveSession(filename)</code> — Save all notes to a text file</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">exportNote(title, filename)</code> — Export a single note</li></ul>
+<p><strong>Key concepts:</strong> File I/O, exception handling, string building</p>
+<h3>Step 5: Build the CLI Loop (10 mins)</h3>
+<p>In <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">main()</code>:</p>
+<ul><li>Create a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">NoteApp</code> instance</li><li>Implement a loop that reads user input</li><li>Parse commands and call appropriate methods</li><li>Display results to the user</li><li>Handle the "exit" command with unsaved changes check</li></ul>
+<p><strong>Key concepts:</strong> stdin/stdout, string parsing, control flow, exception handling</p>
+<h2>Commands to Implement</h2>
+<p>| Command | Purpose | Example |</p>
+<p>|---------|---------|---------|</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">new</span> <span style="color: #ffff44"><</span>title<span style="color: #ffff44">></span> <span style="color: #ffff44"><</span>content<span style="color: #ffff44">></span> [tags]</code> | Create a note | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">new</span> <span style="color: #44ff44">&quot;Ideas&quot;</span> <span style="color: #44ff44">&quot;Great app concept&quot;</span> <span style="color: #44ff44">&quot;flutter,ideas&quot;</span></code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">list</code> | Show notes in current folder | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">list</code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">view <span style="color: #ffff44"><</span>title<span style="color: #ffff44">></span></code> | Display full note | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">view <span style="color: #44ff44">&quot;Ideas&quot;</span></code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">delete <span style="color: #ffff44"><</span>title<span style="color: #ffff44">></span></code> | Remove a note | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">delete <span style="color: #44ff44">&quot;Ideas&quot;</span></code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">search <span style="color: #ffff44"><</span>query<span style="color: #ffff44">></span></code> | Find notes by content | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">search <span style="color: #44ff44">&quot;flutter&quot;</span></code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">tag <span style="color: #ffff44"><</span>tagname<span style="color: #ffff44">></span></code> | Find notes by tag | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">tag <span style="color: #44ff44">&quot;flutter&quot;</span></code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">export</span> <span style="color: #ffff44"><</span>title<span style="color: #ffff44">></span> <span style="color: #ffff44"><</span>file<span style="color: #ffff44">></span></code> | Save note to file | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #87ceeb">export</span> <span style="color: #44ff44">&quot;Ideas&quot;</span> notes.md</code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">folders</code> | List all folders | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">folders</code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">folder <span style="color: #ffff44"><</span>name<span style="color: #ffff44">></span></code> | Create new folder | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">folder <span style="color: #44ff44">&quot;Archive&quot;</span></code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">use <span style="color: #ffff44"><</span>name<span style="color: #ffff44">></span></code> | Switch folder | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">use <span style="color: #44ff44">&quot;Work&quot;</span></code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">save <span style="color: #ffff44"><</span>file<span style="color: #ffff44">></span></code> | Save session | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">save session.txt</code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">stats</code> | Show statistics | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">stats</code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">help</code> | Show help | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">help</code> |</p>
+<p>| <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">exit</code> | Quit the app | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">exit</code> |</p>
+<h2>Development Checklist</h2>
+<ul><li>[ ] Note class created with all properties</li><li>[ ] NoteFolder class with add, remove, get methods</li><li>[ ] NoteFolder search methods implemented</li><li>[ ] NoteApp class structure set up</li><li>[ ] Folder management methods work</li><li>[ ] Note CRUD operations work</li><li>[ ] Search functionality across folders works</li><li>[ ] File I/O (save/export) implemented</li><li>[ ] CLI loop processes commands</li><li>[ ] Error handling for invalid commands</li><li>[ ] Help text displays correctly</li><li>[ ] Unsaved changes tracking works</li><li>[ ] All commands tested and working</li></ul>
+<h2>Testing Scenarios</h2>
+<ol><li><strong>Create and list</strong>: Create 3 notes, list them</li><li><strong>Search</strong>: Search by content keyword, verify results</li><li><strong>Tag search</strong>: Add tags to notes, search by tag across folders</li><li><strong>Folder switching</strong>: Create a new folder, switch to it, add notes, verify they're separate</li><li><strong>Export</strong>: Export a note to a file, view the file contents</li><li><strong>Save session</strong>: Save all notes, verify the file is readable</li><li><strong>Exit with changes</strong>: Modify notes and exit without saving, verify the warning appears</li></ol>
+<h2>Stretch Goals (Optional)</h2>
+<ul><li>[ ] Edit existing notes</li><li>[ ] Backlinks between notes (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">[[@title]]</code> syntax)</li><li>[ ] Date-based queries ("notes from last week")</li><li>[ ] Markdown rendering/preview</li><li>[ ] Import notes from external files</li><li>[ ] Note categories or hierarchies</li></ul>
+<h2>How This Evolves</h2>
+<p>In future chapters, you'll transform this app:</p>
+<ol><li><strong>Flutter Widgets</strong> — Convert CLI to graphical UI with text input fields and buttons</li><li><strong>State Management</strong> — Use Provider or Riverpod instead of in-memory storage</li><li><strong>Routing & Navigation</strong> — Add multiple screens (notes list, note detail, search results)</li><li><strong>Best Practices</strong> — Add SQLite storage, error handling, testing, and documentation</li></ol>
+<p>The core logic you build here will form the foundation of your Flutter app.</p>
+<h2>Common Mistakes to Avoid</h2>
+<ol><li><strong>Forgetting null safety</strong>: Remember that <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Note<span style="color: #ffff44">?</span></code> means nullable; check before using <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44">?</span>.</code></li><li><strong>Not tracking unsaved changes</strong>: The app should warn before exiting with modifications</li><li><strong>Case-sensitive commands</strong>: Be consistent with command parsing (consider <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.toLowerCase()</code>)</li><li><strong>Not validating input</strong>: Check that required parameters exist before using them</li><li><strong>Silent failures</strong>: Always provide feedback to the user (success/error messages)</li></ol>
+<h2>Helpful Tips</h2>
+<ul><li>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">print()</code> liberally for debugging and user feedback</li><li>Leverage <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.where()</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.firstWhere()</code> on lists for filtering</li><li>Null coalescing (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44">?</span><span style="color: #ffff44">?</span></code>) helps with default values</li><li>String interpolation (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #44ff44">&#39;$variable&#39;</span></code>) makes output cleaner</li><li>The cascade operator (<code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">..</code>) can chain multiple operations on an object</li></ul>
+<h2>Estimated Time</h2>
+<ul><li>Understanding the project: 10 minutes</li><li>Implementing Note class: 15 minutes</li><li>Implementing NoteFolder class: 20 minutes</li><li>Implementing NoteApp class: 25 minutes</li><li>Building CLI loop: 15 minutes</li><li>Testing and debugging: 15 minutes</li></ul>
+<p><strong>Total: 60 minutes of hands-on coding practice</strong></p>
+<p>This aligns with the chapter's goal of reinforcing concepts through practical application.</p>
+</body>
+<script src="common.js"></script>
+</html>

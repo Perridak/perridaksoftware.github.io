@@ -1,0 +1,23 @@
+/* Common CSS for all chapter pages */
+
+/* Platform-specific visibility */
+.platform-windows,
+.platform-macos {
+    display: none;
+}
+
+body.user-os-windows .platform-windows {
+    display: block;
+}
+
+body.user-os-windows .platform-macos {
+    display: none;
+}
+
+body.user-os-macos .platform-windows {
+    display: none;
+}
+
+body.user-os-macos .platform-macos {
+    display: block;
+}

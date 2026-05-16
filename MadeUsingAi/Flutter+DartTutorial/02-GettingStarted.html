@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02-GettingStarted</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Getting Started</h1>
+<p>Welcome! This chapter will guide you through setting up Flutter on your system. We'll cover a minimal installation—just what you need to develop and run Flutter apps without unnecessary bloat.</p>
+<p>Choose your platform below to see platform-specific instructions.</p>
+<div class="platform-selector">
+<p><button class="platform-btn" onclick="togglePlatform('windows')">🪟 Windows</button></p>
+<p><button class="platform-btn" onclick="togglePlatform('macos')">🍎 macOS</button></p>
+</div>
+<hr>
+<h2>System Overview</h2>
+<p>Before we dive into platform-specific steps, here's what you'll be installing:</p>
+<ol><li><strong>Flutter SDK</strong> – The framework and development tools</li><li><strong>Dart SDK</strong> – Included with Flutter; the programming language</li><li><strong>Git</strong> – Version control (required by Flutter)</li><li><strong>Platform-specific tools</strong> – Android SDK, Xcode Command Line Tools, etc.</li><li><strong>An editor</strong> – We'll assume Visual Studio Code, but you can use any editor</li></ol>
+<p>The good news: you don't need the full Android Studio or Visual Studio IDEs. We'll show you how to install just the essential components.</p>
+<hr>
+<div class="platform-windows">
+<h2>Windows Setup</h2>
+<h3>Requirements Check</h3>
+<p>Ensure your system meets these requirements:</p>
+<ul><li><strong>OS:</strong> Windows 10 or later (64-bit)</li><li><strong>Disk Space:</strong> ~2.5 GB total (400 MB for Flutter SDK, the rest for Android SDK and tools)</li><li><strong>Internet:</strong> A stable connection for downloading ~2 GB of files</li></ul>
+<h3>Step 1: Install Git</h3>
+<p>Flutter requires Git for version control.</p>
+<ol><li>Visit <a href="https://git-scm.com/download/win" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">https://git-scm.com/download/win</a></li><li>Download the latest 64-bit installer</li><li>Run the installer and use default settings (important: keep "Git Bash" selected)</li><li>After installation, open PowerShell and verify:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>git <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>version</code></pre>
+<p>Expected output: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">git version X.X.X...</code></p>
+<h3>Step 2: Download Flutter SDK</h3>
+<ol><li>Visit <a href="https://flutter.dev/docs/release/archive" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">https://flutter.dev/docs/release/archive</a> (or flutter.dev, then look for Download)</li><li>Download the latest stable Windows release (look for the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.zip</code> file, NOT the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.tar.gz</code>)</li><li>Extract the downloaded <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter<span style="color: #ffff44"><</span>em<span style="color: #ffff44">></span>windows<span style="color: #ffff44"><</span><span style="color: #ffff44">/</span>em<span style="color: #ffff44">></span>X.X.X<span style="color: #ffff44">-</span>stable.zip</code> to a permanent location. We recommend:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>C<span style="color: #ffff44">:</span>\src\flutter</code></pre>
+<p>Do NOT extract to <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Program Files</code> (it requires admin permissions for updates). Create the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">C<span style="color: #ffff44">:</span>\src</code> folder first if needed.</p>
+<h3>Step 3: Add Flutter to Your PATH</h3>
+<p>This lets you run Flutter commands from any PowerShell window.</p>
+<ol><li>Press <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Win <span style="color: #ffff44">+</span> X</code> and select "System" (or right-click "This PC" → Properties)</li><li>Click "Advanced system settings" on the right</li><li>Click "Environment Variables" button at the bottom</li><li>Under "User variables", click "New"</li><li>Variable name: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">PATH</code></li><li>Variable value: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">C<span style="color: #ffff44">:</span>\src\flutter\bin</code> (adjust if you extracted elsewhere)</li><li>Click OK, then OK again to close all windows</li><li><strong>Restart PowerShell completely</strong> (close and reopen)</li></ol>
+<p>Verify it worked:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>version</code></pre>
+<p>Expected output: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Flutter X.X.X • channel stable • ...</code></p>
+<h3>Step 4: Install Android SDK</h3>
+<p>Flutter needs the Android SDK to build Android apps. You don't need Android Studio—we'll install just the SDK.</p>
+<p>#### Option A: Minimal Setup (Recommended)</p>
+<ol><li>Download <strong>Android Command Line Tools</strong> from:</li></ol>
+<p><a href="https://developer.android.com/studio#command-tools" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">https://developer.android.com/studio#command-tools</a></p>
+<p>Look for "Command line tools only" section, download the Windows version.</p>
+<ol><li>Create a folder structure:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>C<span style="color: #ffff44">:</span>\Android\cmdline<span style="color: #ffff44">-</span>tools</code></pre>
+<ol><li>Extract the downloaded <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">cmdline<span style="color: #ffff44">-</span>tools<span style="color: #ffff44">-</span>windows<span style="color: #ffff44">-</span>XXXXX.zip</code> into that folder. After extraction, you should have:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>C<span style="color: #ffff44">:</span>\Android\cmdline<span style="color: #ffff44">-</span>tools\
+  └── cmdline<span style="color: #ffff44">-</span>tools\
+      ├── bin\
+      ├── lib\
+      └── (other files)</code></pre>
+<ol><li>In PowerShell, set environment variables:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>[Environment]<span style="color: #ffff44">:</span><span style="color: #ffff44">:</span>SetEnvironmentVariable(<span style="color: #44ff44">&quot;ANDROID_HOME&quot;</span>, <span style="color: #44ff44">&quot;C:\Android&quot;</span>, <span style="color: #44ff44">&quot;User&quot;</span>)
+[Environment]<span style="color: #ffff44">:</span><span style="color: #ffff44">:</span>SetEnvironmentVariable(<span style="color: #44ff44">&quot;ANDROID_SDK_ROOT&quot;</span>, <span style="color: #44ff44">&quot;C:\Android&quot;</span>, <span style="color: #44ff44">&quot;User&quot;</span>)</code></pre>
+<ol><li>Close and reopen PowerShell, then run:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>sdkmanager <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>sdk_root<span style="color: #ffff44">=</span>C<span style="color: #ffff44">:</span>\Android <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>list</code></pre>
+<p>This should display available SDK packages.</p>
+<ol><li>Install required components:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>sdkmanager <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>sdk_root<span style="color: #ffff44">=</span>C<span style="color: #ffff44">:</span>\Android <span style="color: #44ff44">&quot;build-tools;latest&quot;</span>
+sdkmanager <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>sdk_root<span style="color: #ffff44">=</span>C<span style="color: #ffff44">:</span>\Android <span style="color: #44ff44">&quot;platforms;android-34&quot;</span>
+sdkmanager <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>sdk_root<span style="color: #ffff44">=</span>C<span style="color: #ffff44">:</span>\Android <span style="color: #44ff44">&quot;platform-tools&quot;</span></code></pre>
+<p>#### Option B: If You Prefer Android Studio UI</p>
+<p>If you find command-line tools confusing, download and install Android Studio from <a href="https://developer.android.com/studio" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">https://developer.android.com/studio</a>. During setup, it will guide you to install the SDK. Then proceed with Step 5 below.</p>
+<h3>Step 5: Accept Android Licenses</h3>
+<p>Run this command to accept the required licenses:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter doctor <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>android<span style="color: #ffff44">-</span>licenses</code></pre>
+<p>When prompted, type <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">y</code> and press Enter for each license.</p>
+<h3>Step 6: Verify Your Setup</h3>
+<p>Run the diagnostic tool:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter doctor</code></pre>
+<p>Expected output (checkmarks indicate success):</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Doctor summary (to see all details, run flutter doctor <span style="color: #ffff44">-</span>v)<span style="color: #ffff44">:</span>
+
+[✓] Flutter (Channel stable, X.X.X)
+[✓] Windows Version (Windows <span style="color: #bb86fc">10</span>)
+[✓] Android toolchain <span style="color: #ffff44">-</span> develop <span style="color: #87ceeb">for</span> Android devices (Android SDK X.X)
+[✓] Android Studio (version X.X) [optional <span style="color: #ffff44">-</span> you don<span style="color: #44ff44">&#39;t need this]
+[✓] VS Code (version X.X.X)
+[✓] Connected device (optional - only if a device is plugged in)</span></code></pre>
+<p><strong>Red X marks indicate missing components.</strong> See the troubleshooting section if you encounter errors.</p>
+<h3>Step 7: Create Your First App</h3>
+<p>Create a test project to verify everything works:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter create my_first_app
+cd my_first_app
+flutter run</code></pre>
+<p>The first run takes time (2-3 minutes) as it builds the Android app. You should see output ending with "Built and skipped checking for root certificate" or similar, indicating success.</p>
+<p>If no Android device is connected, you'll see an error about available devices. That's okay for now—we'll cover device setup in the next section.</p>
+<hr>
+<h3>Optional: Target Windows or Web Apps</h3>
+<p>Windows developers can also build Windows desktop apps. After completing the Android setup above:</p>
+<p><strong>For Windows desktop apps:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter config <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>enable<span style="color: #ffff44">-</span>windows<span style="color: #ffff44">-</span>desktop
+flutter doctor</code></pre>
+<p>Run <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter doctor</code> again and look for a green checkmark next to "Windows Version".</p>
+<p><strong>For web apps:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter config <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>enable<span style="color: #ffff44">-</span>web
+flutter doctor</code></pre>
+<p>Then <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter create <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>platforms<span style="color: #ffff44">=</span>web my<span style="color: #ffff44"><</span>em<span style="color: #ffff44">></span>web<span style="color: #ffff44"><</span><span style="color: #ffff44">/</span>em<span style="color: #ffff44">></span>app</code> will create a web project.</p>
+</div>
+<div class="platform-macos">
+<h2>macOS Setup</h2>
+<h3>Requirements Check</h3>
+<p>Ensure your system meets these requirements:</p>
+<ul><li><strong>OS:</strong> macOS 11 (Big Sur) or later</li><li><strong>Chip:</strong> Intel or Apple Silicon (M1/M2/M3)</li><li><strong>Disk Space:</strong> ~3 GB total (400 MB for Flutter SDK, rest for Xcode Command Line Tools, Android SDK, and optional Xcode)</li><li><strong>Internet:</strong> A stable connection for downloading ~3 GB of files</li></ul>
+<h3>Step 1: Install Xcode Command Line Tools</h3>
+<p>macOS requires these tools for development. Install them:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>xcode<span style="color: #ffff44">-</span>select <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>install</code></pre>
+<p>A dialog will appear. Click "Install" and wait (5-15 minutes depending on connection speed).</p>
+<p>Verify installation:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>xcode<span style="color: #ffff44">-</span>select <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>print<span style="color: #ffff44">-</span>path</code></pre>
+<p>Expected output: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44">/</span>Applications<span style="color: #ffff44">/</span>Xcode.app<span style="color: #ffff44">/</span>Contents<span style="color: #ffff44">/</span>Developer</code> or similar.</p>
+<h3>Step 2: Download Flutter SDK</h3>
+<ol><li>Visit <a href="https://flutter.dev/docs/release/archive" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">https://flutter.dev/docs/release/archive</a></li><li>Download the latest stable macOS release (look for <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.tar.xz</code> file, NOT the Windows <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">.zip</code>)</li><li>Extract to your development directory. We recommend:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>mkdir <span style="color: #ffff44">-</span>p ~<span style="color: #ffff44">/</span>development
+cd ~<span style="color: #ffff44">/</span>development
+tar xf ~<span style="color: #ffff44">/</span>Downloads<span style="color: #ffff44">/</span>flutter_macos_X.X.X<span style="color: #ffff44">-</span>stable.tar.xz</code></pre>
+<p>This creates <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">~<span style="color: #ffff44">/</span>development<span style="color: #ffff44">/</span>flutter</code>.</p>
+<h3>Step 3: Add Flutter to Your PATH</h3>
+<p>Open Terminal and edit your shell configuration file. Modern macOS uses <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">zsh</code> by default:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>nano ~<span style="color: #ffff44">/</span>.zshrc</code></pre>
+<p>Add this line at the end:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">export</span> PATH<span style="color: #ffff44">=</span><span style="color: #44ff44">&quot;$PATH:$HOME/development/flutter/bin&quot;</span></code></pre>
+<p>Press <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Ctrl <span style="color: #ffff44">+</span> O</code>, then Enter to save, then <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Ctrl <span style="color: #ffff44">+</span> X</code> to exit.</p>
+<p>Reload your profile:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>source ~<span style="color: #ffff44">/</span>.zshrc</code></pre>
+<p>Verify it worked:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>version</code></pre>
+<p>Expected output: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Flutter X.X.X • channel stable • ...</code></p>
+<h3>Step 3B: Install CocoaPods (Required for plugins)</h3>
+<p>Flutter plugins that use native macOS code require CocoaPods. Install it if you haven't already:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>sudo gem install cocoapods</code></pre>
+<p>Verify installation:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>pod <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>version</code></pre>
+<h3>Step 5: Install Android SDK (for Android development)</h3>
+<p>Flutter needs the Android SDK to build Android apps on macOS.</p>
+<p>#### Option A: Minimal Setup (Recommended)</p>
+<ol><li>Create SDK directory:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>mkdir <span style="color: #ffff44">-</span>p ~<span style="color: #ffff44">/</span>Library<span style="color: #ffff44">/</span>Android<span style="color: #ffff44">/</span>sdk</code></pre>
+<ol><li>Download Android Command Line Tools from:</li></ol>
+<p><a href="https://developer.android.com/studio#command-tools" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">https://developer.android.com/studio#command-tools</a></p>
+<p>Download the macOS version.</p>
+<ol><li>Extract into the SDK folder:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>cd ~<span style="color: #ffff44">/</span>Downloads
+unzip cmdline<span style="color: #ffff44">-</span>tools<span style="color: #ffff44">-</span>mac<span style="color: #ffff44">-</span>XXXXX.zip
+mkdir <span style="color: #ffff44">-</span>p ~<span style="color: #ffff44">/</span>Library<span style="color: #ffff44">/</span>Android<span style="color: #ffff44">/</span>sdk<span style="color: #ffff44">/</span>cmdline<span style="color: #ffff44">-</span>tools<span style="color: #ffff44">/</span>latest
+mv cmdline<span style="color: #ffff44">-</span>tools<span style="color: #888888">/* ~/Library/Android/sdk/cmdline-tools/latest/</span></code></pre>
+<ol><li>Set environment variables. Edit <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">~<span style="color: #ffff44">/</span>.zshrc</code> again:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>nano ~<span style="color: #ffff44">/</span>.zshrc</code></pre>
+<p>Add these lines:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">export</span> ANDROID_SDK_ROOT<span style="color: #ffff44">=</span>$HOME<span style="color: #ffff44">/</span>Library<span style="color: #ffff44">/</span>Android<span style="color: #ffff44">/</span>sdk
+<span style="color: #87ceeb">export</span> ANDROID_HOME<span style="color: #ffff44">=</span>$HOME<span style="color: #ffff44">/</span>Library<span style="color: #ffff44">/</span>Android<span style="color: #ffff44">/</span>sdk
+<span style="color: #87ceeb">export</span> PATH<span style="color: #ffff44">=</span><span style="color: #44ff44">&quot;$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin&quot;</span></code></pre>
+<p>Reload:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>source ~<span style="color: #ffff44">/</span>.zshrc</code></pre>
+<ol><li>Install required components:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>sdkmanager <span style="color: #44ff44">&quot;build-tools;latest&quot;</span>
+sdkmanager <span style="color: #44ff44">&quot;platforms;android-34&quot;</span>
+sdkmanager <span style="color: #44ff44">&quot;platform-tools&quot;</span></code></pre>
+<p>#### Option B: If You Prefer GUI</p>
+<p>Download Android Studio from <a href="https://developer.android.com/studio" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">https://developer.android.com/studio</a>. During setup, it will install the SDK automatically.</p>
+<h3>Step 6: Accept Android Licenses</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter doctor <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>android<span style="color: #ffff44">-</span>licenses</code></pre>
+<p>Type <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">y</code> for each license prompt.</p>
+<h3>Step 7: Verify Your Setup</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter doctor</code></pre>
+<p>Expected output:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Doctor summary (to see all details, run flutter doctor <span style="color: #ffff44">-</span>v)<span style="color: #ffff44">:</span>
+
+[✓] Flutter (Channel stable, X.X.X)
+[✓] Xcode <span style="color: #ffff44">-</span> develop <span style="color: #87ceeb">for</span> iOS and macOS (Xcode X.X)
+[✓] CocoaPods (version X.X.X)
+[✓] Android toolchain <span style="color: #ffff44">-</span> develop <span style="color: #87ceeb">for</span> Android devices (Android SDK X.X)
+[✓] VS Code (version X.X.X)</code></pre>
+<p><strong>If you see red X marks, see the troubleshooting section below.</strong></p>
+<h3>Step 8: Create Your First App</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter create my_first_app
+cd my_first_app
+flutter run</code></pre>
+<p>On first run, Flutter builds a debug app, which takes 2-3 minutes. If successful, you'll see output indicating the build completed.</p>
+<p>If no simulator or device is connected, you'll get a "no connected devices" error. That's fine—we'll cover device setup next.</p>
+<hr>
+<h3>Optional: Target iOS, macOS, or Web</h3>
+<p>macOS developers have three additional platform options:</p>
+<p><strong>For iOS apps (requires Xcode or Simulator):</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter config <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>enable<span style="color: #ffff44">-</span>ios
+flutter doctor</code></pre>
+<p>Then <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter create <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>platforms<span style="color: #ffff44">=</span>ios my<span style="color: #ffff44"><</span>em<span style="color: #ffff44">></span>ios<span style="color: #ffff44"><</span><span style="color: #ffff44">/</span>em<span style="color: #ffff44">></span>app</code>.</p>
+<p>Note: Building iOS apps requires Xcode (the full IDE), not just Command Line Tools. Download from the App Store if needed (~12 GB).</p>
+<p><strong>For macOS desktop apps:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter config <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>enable<span style="color: #ffff44">-</span>macos
+flutter doctor</code></pre>
+<p>Then <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter create <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>platforms<span style="color: #ffff44">=</span>macos my<span style="color: #ffff44"><</span>em<span style="color: #ffff44">></span>desktop<span style="color: #ffff44"><</span><span style="color: #ffff44">/</span>em<span style="color: #ffff44">></span>app</code>.</p>
+<p><strong>For web apps:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter config <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>enable<span style="color: #ffff44">-</span>web
+flutter doctor</code></pre>
+<p>Then <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter create <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>platforms<span style="color: #ffff44">=</span>web my<span style="color: #ffff44"><</span>em<span style="color: #ffff44">></span>web<span style="color: #ffff44"><</span><span style="color: #ffff44">/</span>em<span style="color: #ffff44">></span>app</code>.</p>
+</div>
+<hr>
+<h2>Next: Running on Devices or Simulators</h2>
+<p>Now that your environment is set up, you can:</p>
+<ul><li><strong>Android:</strong> Connect an Android phone via USB and run <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter run</code></li><li><strong>iOS (macOS only):</strong> Launch the iOS Simulator and run <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter run</code></li><li><strong>Web:</strong> Run <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter run <span style="color: #ffff44">-</span>d chrome</code> or any web browser</li><li><strong>Windows/macOS desktop:</strong> Run <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter run</code> targeting your desktop</li></ul>
+<p>Each platform's device setup is covered in dedicated chapters.</p>
+<hr>
+<h2>Troubleshooting</h2>
+<h3>&quot;Command not found: flutter&quot;</h3>
+<p><strong>Problem:</strong> PowerShell/Terminal doesn't recognize the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter</code> command.</p>
+<p><strong>Solution:</strong></p>
+<ul><li>Verify Flutter is in your PATH: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">echo $env<span style="color: #ffff44">:</span>PATH</code> (Windows) or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">echo $PATH</code> (macOS)</li><li>Make sure you restarted PowerShell/Terminal after adding to PATH</li><li>On macOS, run <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">source ~<span style="color: #ffff44">/</span>.zshrc</code> to reload your shell profile</li></ul>
+<h3>&quot;Android SDK not found&quot;</h3>
+<p><strong>Problem:</strong> <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter doctor</code> shows red X for Android toolchain.</p>
+<p><strong>Solution:</strong></p>
+<ul><li>Verify <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ANDROID<span style="color: #ffff44"><</span>em<span style="color: #ffff44">></span>HOME</code> is set: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">echo $env<span style="color: #ffff44">:</span>ANDROID<span style="color: #ffff44"><</span><span style="color: #ffff44">/</span>em<span style="color: #ffff44">></span>HOME</code> (Windows) or <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">echo $ANDROID_HOME</code> (macOS)</li><li>Ensure you ran the <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">sdkmanager</code> commands to install build-tools and platforms</li><li>On Windows, try running from a fresh PowerShell window</li></ul>
+<h3>&quot;Xcode Command Line Tools not installed&quot; (macOS)</h3>
+<p><strong>Problem:</strong> Flutter can't find development tools.</p>
+<p><strong>Solution:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>xcode<span style="color: #ffff44">-</span>select <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>install</code></pre>
+<p>Then wait for installation to complete and run <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter doctor</code> again.</p>
+<h3>&quot;License not accepted&quot; (Android)</h3>
+<p><strong>Problem:</strong> <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter doctor</code> shows "Android SDK licenses not accepted".</p>
+<p><strong>Solution:</strong></p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>flutter doctor <span style="color: #ffff44">-</span><span style="color: #ffff44">-</span>android<span style="color: #ffff44">-</span>licenses</code></pre>
+<p>Type <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">y</code> for each prompt.</p>
+<h3>App build fails with &quot;No connected devices&quot;</h3>
+<p><strong>Problem:</strong> <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter run</code> says no devices found.</p>
+<p><strong>Solution:</strong> This is normal if you haven't set up a device or emulator yet.</p>
+<ul><li>To use an Android Emulator, install Android Studio and create a virtual device, then run <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter run</code>.</li><li>Alternatively, connect a physical Android phone via USB (enable Developer Mode first).</li><li>On macOS, launch the iOS Simulator: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">open <span style="color: #ffff44">-</span>a Simulator</code>, then <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter run</code>.</li></ul>
+<h3>&quot;Gradle build failed&quot; or similar Android errors</h3>
+<p><strong>Problem:</strong> App build crashes during the Android build process.</p>
+<p><strong>Solution:</strong></p>
+<ol><li>Clean the project: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter clean</code></li><li>Get dependencies: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter pub <span style="color: #87ceeb">get</span></code></li><li>Try building again: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter build apk</code> (Android) to see full error messages</li><li>Check that all <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">sdkmanager</code> packages are installed (build-tools, platforms)</li></ol>
+<h3>Unable to connect to simulator or emulator</h3>
+<p><strong>Problem:</strong> Device/emulator not showing in <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter devices</code>.</p>
+<p><strong>Solution:</strong></p>
+<ul><li>Make sure the device/emulator is running</li><li>On Android: Emulator must be started before running <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter run</code></li><li>On iOS: Simulator must be running (or start it with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">open <span style="color: #ffff44">-</span>a Simulator</code>)</li><li>Try: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter clean</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter pub <span style="color: #87ceeb">get</span></code>, then <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter run</code> again</li></ul>
+<hr>
+<p><strong>Still stuck?</strong> Run <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">flutter doctor <span style="color: #ffff44">-</span>v</code> for verbose output showing exactly what's missing, and refer to the official docs at <a href="https://flutter.dev/docs/get-started/install" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">https://flutter.dev/docs/get-started/install</a>.</p>
+</body>
+<script src="common.js"></script>
+</html>

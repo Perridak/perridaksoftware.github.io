@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Check Quiz - 200 Questions</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 2rem;
+        }
+        
+        .quiz-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .quiz-header h1 {
+            color: #1B5A56;
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-header p {
+            color: #5A7A72;
+            font-size: 1.1rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #E8F0E6;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #7BA857;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #5A7A72;
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-question {
+            margin-bottom: 2rem;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            color: #1B5A56;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .option {
+            padding: 1rem;
+            border: 2px solid #D4DED7;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            border-color: #7BA857;
+            background: #F9F7F3;
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .option.selected {
+            background: #E8F0E6;
+            border-color: #7BA857;
+        }
+        
+        .option.correct {
+            background: #D4E5D0;
+            border-color: #7BA857;
+        }
+        
+        .option.incorrect {
+            background: #F5D5D5;
+            border-color: #D66767;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        button {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-next {
+            background-color: #7BA857;
+            color: white;
+        }
+        
+        .btn-next:hover:not(:disabled) {
+            background-color: #6B9647;
+        }
+        
+        .btn-next:disabled {
+            background-color: #B0C8A8;
+            cursor: not-allowed;
+        }
+        
+        #quizContent {
+            display: block;
+        }
+        
+        #resultsContent {
+            display: none;
+        }
+        
+        #resultsContent.show {
+            display: block;
+        }
+        
+        .results {
+            text-align: center;
+        }
+        
+        .results h2 {
+            color: #1B5A56;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .score {
+            font-size: 3rem;
+            color: #7BA857;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        
+        .score-details {
+            color: #5A7A72;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-restart {
+            background-color: #1B5A56;
+            color: white;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-restart:hover {
+            background-color: #154A47;
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1>Knowledge Check Quiz</h1>
+        <p>Test your understanding of Flutter and Dart fundamentals</p>
+    </div>
+    
+    <div id="quizContent">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">0/15</div>
+        
+        <div id="questionContainer" class="quiz-question"></div>
+        
+        <div class="button-group">
+            <button id="nextBtn" class="btn-next" disabled>Next Question</button>
+        </div>
+    </div>
+    
+    <div id="resultsContent" class="results">
+        <h2>Quiz Complete!</h2>
+        <p>Your score:</p>
+        <div class="score" id="scoreDisplay">0%</div>
+        <p class="score-details" id="scoreDetails">0 out of 15 correct</p>
+        <button id="restartBtn" class="btn-restart">Take Another Quiz</button>
+    </div>
+</div>
+
+<script>
+    const questionPool = [
+        { question: "What is the primary advantage of Dart's null safety feature?", options: ["It prevents null errors at compile time rather than runtime", "It makes variables faster", "It eliminates the need for type checking", "It reduces memory usage"], correctIndex: 0 },
+        { question: "What does the `var` keyword do in Dart?", options: ["Creates a dynamic variable that can hold any type", "Infers the type at declaration and locks it for the variable's lifetime", "Creates a constant variable", "Declares a variable with automatic null safety"], correctIndex: 1 },
+        { question: "When should you use `final` instead of `const` in Dart?", options: ["When the value is known at compile time only", "When you need deep immutability of collections", "When initializing a value at runtime that shouldn't be reassigned", "When creating global constants"], correctIndex: 2 },
+        { question: "What is the difference between `String?` and `String` in Dart?", options: ["`String?` is faster", "`String` cannot be null, while `String?` can be", "`String?` is used for shorter strings", "There is no difference"], correctIndex: 1 },
+        { question: "Which collection type in Dart removes duplicate values automatically?", options: ["List", "Map", "Set", "Array"], correctIndex: 2 },
+        { question: "What does the arrow syntax `=>` do in Dart?", options: ["It creates a loop", "It's used for single-expression functions", "It declares a constant", "It creates a nullable type"], correctIndex: 1 },
+        { question: "In Dart, what is a `dynamic` type used for?", options: ["It's the preferred way to declare variables", "It disables type checking and allows any type", "It's equivalent to `var`", "It automatically handles null safety"], correctIndex: 1 },
+        { question: "What is the correct way to declare a required named parameter in Dart?", options: ["`function({String name})`", "`function({required String name})`", "`function(required String name)`", "`function([String name])`"], correctIndex: 1 },
+        { question: "What does the null-coalescing operator `??` do?", options: ["It checks if a value is null", "It returns the left operand if it's not null, otherwise the right operand", "It combines two strings", "It creates a nullable variable"], correctIndex: 1 },
+        { question: "Which of the following best describes a mixin in Dart?", options: ["A way to inherit from multiple classes", "A way to share code across unrelated classes without multiple inheritance", "A type of interface", "A method that mixes two data types"], correctIndex: 1 },
+        { question: "What happens when you use `implements` instead of `extends` in Dart?", options: ["You inherit all methods from the parent class", "You must implement all abstract members, even if they have default implementations", "The class becomes abstract", "You gain access to private members"], correctIndex: 1 },
+        { question: "What is the primary purpose of the `@override` annotation in Dart?", options: ["It forces a subclass to override a method", "It signals intent and helps catch typos in method names", "It prevents a method from being overridden", "It makes a method abstract"], correctIndex: 1 },
+        { question: "In Dart, what does type erasure mean for generics?", options: ["Type parameters are removed at compile time", "At runtime, `List<String>` and `List<int>` are the same object", "Generic types cannot store data", "Type erasure is a feature that improves performance"], correctIndex: 1 },
+        { question: "How do extension methods behave with `dynamic` variables?", options: ["They work the same as with typed variables", "They are not accessible on `dynamic` variables because type is unknown at compile time", "They automatically convert `dynamic` to the correct type", "They throw a runtime error"], correctIndex: 1 },
+        { question: "What is the main difference between `await` and `.then()` for handling Futures?", options: ["`await` is synchronous, `.then()` is asynchronous", "`await` pauses execution and returns the value, `.then()` uses callbacks", "`.then()` is more efficient", "There is no difference"], correctIndex: 1 },
+        { question: "What does the `async*` syntax indicate in Dart?", options: ["An asynchronous function that returns a Future", "A synchronous generator function", "An asynchronous generator function that returns a Stream", "A function that handles multiple errors"], correctIndex: 2 },
+        { question: "Why are Streams considered lazy in Dart?", options: ["They process data slowly", "Nothing happens until you listen to them", "They automatically cache results", "They require explicit typing"], correctIndex: 1 },
+        { question: "What is the cascade operator `..` used for in Dart?", options: ["It creates a list of values", "It allows calling multiple methods on the same object sequentially", "It combines two strings", "It checks for null values"], correctIndex: 1 },
+        { question: "In Dart's type system, what does it mean when a generic has a bound like `<T extends Object>`?", options: ["T must be a subclass of Object", "T cannot be Object", "T is limited to primitive types", "T must implement Object's methods"], correctIndex: 0 },
+        { question: "What is the purpose of the spread operator `...` in Dart?", options: ["It spreads a string across multiple lines", "It unpacks elements from a collection into another collection", "It creates a range of numbers", "It handles null values"], correctIndex: 1 },
+        { question: "How does Dart's `firstWhere()` method differ from accessing an index directly?", options: ["`firstWhere()` is faster", "`firstWhere()` allows you to find an element based on a condition, not just by position", "`firstWhere()` returns null instead of throwing an error", "`firstWhere()` modifies the list"], correctIndex: 1 },
+        { question: "What is the key difference between a class and an abstract class in Dart?", options: ["Abstract classes have no fields", "Abstract classes cannot be instantiated directly", "Classes are always faster", "There is no difference"], correctIndex: 1 },
+        { question: "When you declare a variable as `late`, what does it mean in Dart?", options: ["The variable will be initialized eventually before first use", "The variable is lazily evaluated", "The variable can be reassigned multiple times", "The variable has delayed garbage collection"], correctIndex: 0 },
+        { question: "What does the null-aware operator `?.` do in Dart?", options: ["It always returns null", "It checks if a value is null and safely accesses members or returns null", "It assigns null to a variable", "It compares two values for nullness"], correctIndex: 1 },
+        { question: "Which of these is NOT a valid way to declare a function in Dart?", options: ["`int add(int a, int b) => a + b;`", "`int add(int a, int b) { return a + b; }`", "`add(int a, int b) => a + b;`", "`function add(int a, int b) { return a + b; }`"], correctIndex: 3 },
+        { question: "What is the primary purpose of MaterialApp in a Flutter app?", options: ["Configure theme, title, and root widget of the app", "Create Material Design buttons only", "Handle all user input events", "Manage database connections"], correctIndex: 0 },
+        { question: "What does Scaffold provide in Flutter?", options: ["A template for creating custom widgets", "Basic Material Design visual structure with AppBar, body, and FAB", "A widget for displaying lists only", "A tool for code compilation"], correctIndex: 1 },
+        { question: "Which widget displays content at the top of a screen and typically contains the app title?", options: ["BottomNavigationBar", "Drawer", "AppBar", "FloatingActionButton"], correctIndex: 2 },
+        { question: "What is the purpose of a Drawer widget?", options: ["Display images in a grid", "Provide navigation menu that slides in from the side", "Create animated transitions between screens", "Handle form input validation"], correctIndex: 1 },
+        { question: "Which widget arranges children horizontally in a single row?", options: ["Column", "Stack", "Row", "ListView"], correctIndex: 2 },
+        { question: "Which widget arranges children vertically in a single column?", options: ["Row", "Column", "Wrap", "GridView"], correctIndex: 1 },
+        { question: "What does the Expanded widget do?", options: ["Makes a widget larger than its parent", "Fills available space proportionally in Row or Column", "Makes a widget transparent", "Adds a border around a widget"], correctIndex: 1 },
+        { question: "Which widget is used to create a scrollable list of items?", options: ["Row", "Column", "ListView", "Container"], correctIndex: 2 },
+        { question: "What is SizedBox primarily used for?", options: ["Display text with styling", "Create a box with specific size or add fixed spacing", "Handle user input", "Manage app state"], correctIndex: 1 },
+        { question: "Which widget layers widgets on top of each other?", options: ["Row", "Column", "Stack", "Wrap"], correctIndex: 2 },
+        { question: "What does the Positioned widget do inside a Stack?", options: ["Positions a widget at specific coordinates", "Centers a widget on screen", "Makes a widget scrollable", "Changes a widget's size"], correctIndex: 0 },
+        { question: "Which button widget is used for primary actions like Submit or Save?", options: ["TextButton", "OutlinedButton", "ElevatedButton", "IconButton"], correctIndex: 2 },
+        { question: "What is the purpose of TextField?", options: ["Display static text", "Capture user input from keyboard", "Create navigation tabs", "Display images from assets"], correctIndex: 1 },
+        { question: "Which widget provides Material Design ripple feedback on tap?", options: ["GestureDetector", "InkWell", "Container", "Card"], correctIndex: 1 },
+        { question: "What does const constructor do for widget performance?", options: ["Makes the app run faster overall", "Allows Flutter to reuse widget instances and avoid rebuilds", "Automatically saves memory", "Reduces app size significantly"], correctIndex: 1 },
+        { question: "Which widget displays content in a grid with rows and columns?", options: ["ListView", "Column", "GridView", "Wrap"], correctIndex: 2 },
+        { question: "What is the purpose of Padding widget?", options: ["Add space outside a widget", "Add space inside a widget or container", "Create borders around widgets", "Make widgets transparent"], correctIndex: 1 },
+        { question: "Which widget wraps to the next line when space runs out?", options: ["Row", "Column", "ListView", "Wrap"], correctIndex: 3 },
+        { question: "What does FutureBuilder do?", options: ["Builds widgets based on a Future's state (loading, complete, error)", "Creates a list of futures", "Manages app navigation", "Handles database queries"], correctIndex: 0 },
+        { question: "What is Card widget primarily used for?", options: ["Display credit card information only", "Group related content with elevation and styling", "Create navigation menus", "Handle user input"], correctIndex: 1 },
+        { question: "Which widget conditionally shows or hides other widgets?", options: ["Opacity", "Container", "Visibility", "SizedBox"], correctIndex: 2 },
+        { question: "What does the Theme widget do?", options: ["Changes the background color only", "Applies consistent styling and colors throughout the app", "Creates animated transitions", "Manages user preferences"], correctIndex: 1 },
+        { question: "Which design system implements Apple's Human Interface Guidelines?", options: ["Material Design", "Cupertino", "Flat Design", "Bootstrap"], correctIndex: 1 },
+        { question: "What is StatelessWidget used for?", options: ["Widgets that manage mutable state", "Widgets that are immutable and don't change", "Creating animation effects", "Handling database operations"], correctIndex: 1 },
+        { question: "What is the correct order of layout in Flutter's constraint system?", options: ["Parent passes constraints → Child chooses size → Parent positions child", "Child passes constraints → Parent chooses size → Child positions parent", "Both decide size simultaneously", "Constraints don't affect layout"], correctIndex: 0 },
+        { question: "What is the key difference between local state and app-wide state?", options: ["Local state is faster", "Local state belongs to a single widget, app-wide state is needed by multiple widgets", "App-wide state must use Provider, local state uses setState()", "There is no meaningful difference"], correctIndex: 1 },
+        { question: "What is the primary problem with using setState() for app-wide state?", options: ["It's too slow", "It leads to prop-drilling through intermediate widgets", "It prevents rebuilds", "It doesn't work across screens"], correctIndex: 1 },
+        { question: "What does notifyListeners() do in a ChangeNotifier?", options: ["Sends a notification to the user's phone", "Tells Flutter to rebuild widgets listening to this notifier", "Logs a message to the console", "Pauses the app temporarily"], correctIndex: 1 },
+        { question: "Which of the following is an example of local state?", options: ["Current user login information", "List of all notes in an app", "Whether a text input field is focused", "App theme preference"], correctIndex: 2 },
+        { question: "In Provider, when should you use Consumer instead of context.read()?", options: ["When you want to call a method", "When you want to display data and rebuild when it changes", "When you need context", "They are interchangeable"], correctIndex: 1 },
+        { question: "What is prop-drilling?", options: ["A technique for faster drilling in Flutter", "Passing state through multiple widget constructors even though intermediate widgets don't use it", "Storing props in a database", "A Flutter design pattern"], correctIndex: 1 },
+        { question: "Which class do you extend to create a state holder in Provider?", options: ["StatefulWidget", "State", "ChangeNotifier", "BuildContext"], correctIndex: 2 },
+        { question: "What happens when you call notifyListeners() in a ChangeNotifier?", options: ["Only the parent widget rebuilds", "All widgets in the app rebuild", "All widgets listening to this notifier rebuild", "Nothing happens until the next frame"], correctIndex: 2 },
+        { question: "How do you access a provider without causing a rebuild?", options: ["context.watch()", "context.read()", "Consumer", "ref.read()"], correctIndex: 1 },
+        { question: "In what order should MultiProvider providers be listed?", options: ["Alphabetical order", "The order doesn't matter", "Dependencies first (if one depends on another)", "Most complex first"], correctIndex: 2 },
+        { question: "What is the purpose of dependency injection?", options: ["Making apps run faster", "Providing dependencies from outside instead of widgets creating their own", "Injecting code into the app", "Managing animations"], correctIndex: 1 },
+        { question: "When should you use setState() for state management?", options: ["Never, always use Provider", "For local state only (checkbox, text input)", "For all state in your app", "Only for animations"], correctIndex: 1 },
+        { question: "What is an AsyncState pattern used for?", options: ["Making async operations synchronous", "Encapsulating loading, success, and error states in one variable", "Cancelling async operations", "Speeding up async operations"], correctIndex: 1 },
+        { question: "In Riverpod, which widget type should you use instead of StatelessWidget?", options: ["StatefulWidget", "ConsumerWidget", "ProviderWidget", "AsyncWidget"], correctIndex: 1 },
+        { question: "What does the FutureProvider in Riverpod handle automatically?", options: ["Only loading state", "Loading, success, and error states", "Database connections", "User authentication"], correctIndex: 1 },
+        { question: "Why is immutability important when updating state?", options: ["It makes code run faster", "It's a Flutter requirement", "It makes state changes explicit and prevents accidental mutations", "It doesn't matter"], correctIndex: 2 },
+        { question: "When should you trigger an async operation like fetchNotes()?", options: ["In the build method", "In the state's initState() after the frame builds", "In the widget's constructor", "Whenever the user taps a button only"], correctIndex: 1 },
+        { question: "What is the difference between watch() and read() in Riverpod?", options: ["watch() requires context, read() doesn't", "watch() listens and rebuilds, read() accesses without rebuild", "They are the same", "read() is faster"], correctIndex: 1 },
+        { question: "Which pattern encapsulates async state more safely?", options: ["Using separate isLoading, isError, and data variables", "Using a single AsyncState class with subclasses", "Using null values to indicate state", "They are equally safe"], correctIndex: 1 },
+        { question: "How does Provider prevent prop-drilling?", options: ["It doesn't, you still have to pass data through constructors", "It makes data available through the widget tree without explicit passing", "It automatically converts widgets to StatelessWidgets", "It stores all state in a global variable"], correctIndex: 1 },
+        { question: "What should you do if you need state that depends on another state?", options: ["Just read both providers and combine them manually", "Create a computed provider that depends on the other provider", "Use two separate widgets", "Combine them in a single large provider"], correctIndex: 1 },
+        { question: "When using Consumer, what parameters does the builder function receive?", options: ["Only the state", "Context, provider state, and optional child widget", "Just context and state", "Only the notifier"], correctIndex: 1 },
+        { question: "What is the main advantage of Riverpod over Provider?", options: ["It's faster", "It doesn't require context and has better composability", "It uses less memory", "It's easier to learn"], correctIndex: 1 },
+        { question: "How do you initialize sample data when using Provider?", options: ["In the provider's constructor or initialization method", "In the app's main() function", "In the widget's initState()", "It cannot be done"], correctIndex: 0 },
+        { question: "What should you do if a provider has an error during initialization?", options: ["Ignore it and hope it fixes itself", "Handle it gracefully, perhaps with a default value or error state", "Let the app crash so you know there's a problem", "Log it but continue anyway"], correctIndex: 1 },
+        { question: "What is the primary advantage of named routes over anonymous routes?", options: ["Named routes are faster", "Routes are centralized and decoupled from screen construction", "Named routes work on all platforms", "They require less code"], correctIndex: 1 },
+        { question: "What does the Navigator stack represent in Flutter?", options: ["The order of providers in your app", "The history of screens that have been navigated to", "The widgets waiting to be rendered", "A list of all routes in your app"], correctIndex: 1 },
+        { question: "Which Navigator method adds a new screen to the top of the stack?", options: ["Navigator.pop()", "Navigator.pushReplacementNamed()", "Navigator.push()", "Navigator.popAndPushNamed()"], correctIndex: 2 },
+        { question: "What does Navigator.pop() do?", options: ["Adds a new screen to the stack", "Removes the top screen from the stack", "Clears the entire stack", "Pauses navigation temporarily"], correctIndex: 1 },
+        { question: "When should you use Navigator.pushReplacementNamed() instead of Navigator.pushNamed()?", options: ["When navigating to a screen that shouldn't be returned to", "When you want faster navigation", "When navigating between tabs", "They are functionally the same"], correctIndex: 0 },
+        { question: "What must a BuildContext have to enable navigation?", options: ["It must be from a widget under MaterialApp", "It must be from the home screen only", "It must have explicit permissions", "Any BuildContext can navigate"], correctIndex: 0 },
+        { question: "How do you pass data to a named route?", options: ["Add it as a property of the route name", "Use the arguments parameter in pushNamed()", "Store it in a global variable", "Pass it through MaterialApp configuration"], correctIndex: 1 },
+        { question: "How does a screen retrieve arguments from a named route?", options: ["From its constructor parameters", "Using ModalRoute.of(context).settings.arguments", "From the Provider", "From the Navigator directly"], correctIndex: 1 },
+        { question: "In the CRUD context, what should a route pass to a detail screen when using named routes?", options: ["The entire data object", "A minimal identifier (ID or title)", "Nothing—let the screen construct the data itself", "A copy of the data"], correctIndex: 1 },
+        { question: "Why should screens fetch data from the provider instead of receiving it as route arguments?", options: ["Route arguments are always null", "It decouples routing from data, making navigation cleaner", "Providers are faster than route arguments", "It's a Flutter requirement"], correctIndex: 1 },
+        { question: "What is the purpose of a route table in MaterialApp?", options: ["Store user-created routes", "Map route names to screen builders", "Manage the navigation stack", "Cache screen widgets"], correctIndex: 1 },
+        { question: "When navigating with named routes, where should the route table be defined?", options: ["In each screen class", "In a centralized location (main.dart or a separate file)", "In the provider", "It doesn't matter"], correctIndex: 1 },
+        { question: "What does IndexedStack do in tab navigation?", options: ["Manages the navigation stack", "Keeps all tab screens alive while switching between them", "Replaces the Navigator", "Prevents navigation"], correctIndex: 1 },
+        { question: "How do you handle the case where a screen receives invalid arguments via a named route?", options: ["Ignore them", "Throw an exception immediately", "Provide safe casting and show an error screen if arguments are missing", "Return to the home screen"], correctIndex: 2 },
+        { question: "What is deep linking?", options: ["Nesting routes within other routes", "Opening a specific screen via a URL or link", "Creating multiple navigation stacks", "Using the back button multiple times"], correctIndex: 1 },
+        { question: "In the CRUD context, after CREATE operation via a named route, what should happen?", options: ["Pop the create screen and let the provider notify listeners", "Push the list screen on top", "Use pushReplacement to ensure the create screen can't be returned to", "It depends on the app's requirements"], correctIndex: 0 },
+        { question: "How does GoRouter differ from the default Flutter Navigator?", options: ["GoRouter is slower", "GoRouter provides URL-based routing with more powerful features", "GoRouter doesn't support state management", "There is no difference"], correctIndex: 1 },
+        { question: "What is the relationship between routing and state management in a well-designed app?", options: ["They are the same thing", "Routes depend on state; state doesn't depend on routes", "They are separate concerns that work together cleanly", "Only one of them is necessary"], correctIndex: 2 },
+        { question: "In named route navigation, where should you pass the entire data object?", options: ["Always pass the entire object as arguments", "Only pass minimal identifiers; screens fetch full data from the provider", "Never pass data via routes", "Only when using GoRouter"], correctIndex: 1 },
+        { question: "What does ModalRoute.of(context) return?", options: ["The currently open modal dialog", "The route settings of the current route", "The previous route in the stack", "The home route"], correctIndex: 1 },
+        { question: "When should you use Navigator.pushNamed() versus Navigator.push()?", options: ["pushNamed is always better", "Use pushNamed for larger apps with centralized routes; push for simple cases", "push is always more efficient", "They are interchangeable"], correctIndex: 1 },
+        { question: "How do you return data from a popped screen in a named route architecture?", options: ["Pass it as arguments to pushNamed()", "Return it via Navigator.pop(context, data)", "Use the provider to manage shared state", "Store it in a global variable"], correctIndex: 2 },
+        { question: "What is the purpose of navigation context when using named routes?", options: ["To store navigation history", "To provide access to the Navigator for the current widget", "To manage route arguments", "To create new routes dynamically"], correctIndex: 1 },
+        { question: "In the CRUD context, what happens to the detail screen when the note is deleted on another screen?", options: ["The detail screen crashes", "If the screen watches the provider, it detects the note is gone and handles it gracefully", "The detail screen continues showing the old note", "The app automatically navigates back"], correctIndex: 1 },
+        { question: "What is a common pattern for organizing routes in a larger app?", options: ["Store route names as magic strings throughout the code", "Define routes hierarchically in a centralized route table", "Create routes dynamically at runtime", "Use a different NavigationStack for each screen"], correctIndex: 1 },
+        { question: "What is the primary purpose of Test-Driven Development (TDD)?", options: ["To document your code", "To write tests before implementation, ensuring code is designed to be testable", "To catch bugs after release", "To make debugging faster"], correctIndex: 1 },
+        { question: "Which test type verifies the smallest piece of testable software?", options: ["Widget tests", "Integration tests", "Unit tests", "System tests"], correctIndex: 2 },
+        { question: "What does the `test()` function in Dart's test package do?", options: ["Defines a unit test", "Runs a test immediately", "Creates a test group", "Skips a test"], correctIndex: 0 },
+        { question: "In TDD, what does the \"Green\" phase represent?", options: ["Writing code that fails the test", "Writing the minimal code to make the test pass", "Refactoring code", "Deleting failing tests"], correctIndex: 1 },
+        { question: "What is the primary advantage of using mocking in tests?", options: ["Tests run faster", "Mocks isolate the code under test from external dependencies", "Mocks eliminate the need for real data", "Mocks make tests easier to read"], correctIndex: 1 },
+        { question: "Which package is the standard mocking library for Dart?", options: ["test_builder", "mockito", "mock_flutter", "test_mock"], correctIndex: 1 },
+        { question: "What does `when(mock.method()).thenAnswer(...)` do?", options: ["Verifies the mock was called", "Defines what the mock should return", "Deletes the mock", "Asserts the mock's behavior"], correctIndex: 1 },
+        { question: "What is the purpose of `verify()` in mockito?", options: ["Confirms that a mocked method was called with expected arguments", "Creates a new mock", "Deletes a mock", "Returns the result of a mock call"], correctIndex: 0 },
+        { question: "How should test names be formatted for clarity?", options: ["testX (e.g., testIncrement)", "Should do X when Y (e.g., ShouldIncrementWhenButtonPressed)", "Abbreviated like x (e.g., inc)", "Any format is acceptable"], correctIndex: 1 },
+        { question: "Why is the AAA (Arrange-Act-Assert) pattern important?", options: ["It makes tests longer", "It structures tests clearly: setup, execute, verify", "It's required by Flutter", "It speeds up test execution"], correctIndex: 1 },
+        { question: "What does `expect()` do in a Dart test?", options: ["Throws an exception", "Verifies that actual matches expected", "Skips the test", "Prints a message"], correctIndex: 1 },
+        { question: "In BDD, what does the \"Given\" step represent?", options: ["The action being tested", "The assertion being checked", "The initial state or setup", "The cleanup after the test"], correctIndex: 2 },
+        { question: "Which testing pattern is better for communicating requirements to non-technical stakeholders?", options: ["Imperative testing (testFeatureDoesX)", "BDD-style testing (FeatureShouldDoXWhen)", "Both are equally good", "Neither"], correctIndex: 1 },
+        { question: "How should you organize multiple related tests?", options: ["Write them all in one large test", "Use `group()` to organize tests logically", "Create separate test files for each test", "Tests don't need organization"], correctIndex: 1 },
+        { question: "What is the relationship between test coverage and code quality?", options: ["Higher coverage always means better code", "Coverage helps ensure critical code is tested, but doesn't guarantee quality", "Coverage doesn't matter", "100% coverage is impossible"], correctIndex: 1 },
+        { question: "Why should tests be independent of each other?", options: ["So they run faster in parallel", "So tests don't affect each other's results", "To reduce the total number of tests", "Tests don't need to be independent"], correctIndex: 1 },
+        { question: "What is the test pyramid?", options: ["A list of test types", "A distribution guideline: many unit tests, fewer widget tests, few integration tests", "A tool for writing tests", "A requirement for all apps"], correctIndex: 1 },
+        { question: "When should you write integration tests?", options: ["For every line of code", "For critical end-to-end user workflows", "Never—they're too slow", "Only for bug fixes"], correctIndex: 1 },
+        { question: "What does `flutter test` command do?", options: ["Uploads tests to the cloud", "Runs all tests in the test/ directory", "Creates a new test file", "Compiles the app for testing"], correctIndex: 1 },
+        { question: "How do you mock a Future in mockito?", options: ["`when(mock.method()).thenAnswer((_) => Future.value(data))`", "`when(mock.method()).thenReturn(data)`", "`when(mock.method()).then(data)`", "Mock cannot handle Futures"], correctIndex: 0 },
+        { question: "What is the purpose of `setUp()` in a test group?", options: ["Creates a test", "Runs code before each test in the group", "Skips tests", "Removes a test"], correctIndex: 1 },
+        { question: "Why might imperative test naming lead to weaker tests?", options: ["It's harder to read", "It encourages testing implementation details rather than behavior", "It makes tests slower", "It's not a concern"], correctIndex: 1 },
+        { question: "When using BDD Gherkin syntax, which keyword is used for verification?", options: ["Given", "When", "Then", "And"], correctIndex: 2 },
+        { question: "What is the key insight about naming conventions and test quality?", options: ["The name doesn't matter", "Your naming convention subtly influences what and how you test", "All naming conventions are equal", "Only team size affects naming"], correctIndex: 1 },
+        { question: "What is the primary goal of Best Practices in development?", options: ["To make code look professional", "To prevent common mistakes and improve maintainability", "To speed up compilation", "To reduce team size"], correctIndex: 1 },
+        { question: "What are the six pain points covered in the Best Practices chapter?", options: ["Speed, size, memory, naming, colors, fonts", "Memory leaks, setState misuse, poor architecture, unhandled errors, responsive design, dependency management", "Testing, debugging, performance, security, accessibility, documentation", "Widgets, providers, routes, databases, animations, effects"], correctIndex: 1 },
+        { question: "Why is disposing AnimationControllers important?", options: ["It makes them run faster", "It prevents memory leaks", "It changes their behavior", "It's optional"], correctIndex: 1 },
+        { question: "What is the consequence of not disposing resources properly?", options: ["The app runs slower", "Memory leaks that accumulate and eventually crash the app", "The code won't compile", "There are no consequences"], correctIndex: 1 },
+        { question: "When should you use the `const` keyword for widgets?", options: ["Never—it's not necessary", "Always—it's always correct", "When the widget's properties won't change, for performance", "Only for built-in widgets"], correctIndex: 2 },
+        { question: "Why should side effects never occur in the `build()` method?", options: ["It's a style preference", "The build method can be called multiple times, and side effects would run unexpectedly", "It makes the app slower", "It's not a concern"], correctIndex: 1 },
+        { question: "What does poor architecture look like in Flutter apps?", options: ["Code is well-organized", "All code mixed into main.dart or screens, no separation of concerns", "Using too many files", "Using too few widgets"], correctIndex: 1 },
+        { question: "How do you handle errors gracefully in a Flutter app?", options: ["Let them crash the app", "Catch exceptions, log them, and show user-friendly error messages", "Ignore them", "Errors can't be handled"], correctIndex: 1 },
+        { question: "What is a consequence of hardcoding values like sizes and padding?", options: ["Code becomes easier to read", "App won't adapt to different screen sizes (lacks responsiveness)", "Code runs faster", "There are no consequences"], correctIndex: 1 },
+        { question: "Why is responsive design important in Flutter?", options: ["It makes the app look pretty", "Apps must work on different screen sizes and orientations", "It's only necessary for web apps", "Responsive design is optional"], correctIndex: 1 },
+        { question: "How can you analyze your code to catch potential issues?", options: ["Manual code review only", "Use tools like `dart analyze` and DCM (Dart Code Metrics)", "Issues can't be caught automatically", "Wait for user complaints"], correctIndex: 1 },
+        { question: "What is a StatelessWidget?", options: ["A widget that never changes", "A widget whose properties are immutable (don't change after creation)", "A widget without a build method", "A widget that doesn't use state"], correctIndex: 1 },
+        { question: "What is a StatefulWidget?", options: ["A widget that can change over time", "A widget that extends State<T>", "A widget with a mutable state that can be updated", "All widgets are stateful"], correctIndex: 2 },
+        { question: "When should you create a custom StatelessWidget?", options: ["When you need to save code", "When you have a reusable UI component", "When you need performance", "Never—use built-in widgets"], correctIndex: 1 },
+        { question: "How do you update the UI in a StatefulWidget?", options: ["Reassign variables directly", "Call `setState(() => {...})` to trigger rebuild", "Create a new widget", "Flutter automatically detects changes"], correctIndex: 1 },
+        { question: "What does the `build()` method return?", options: ["A Widget that describes the UI", "A rendered image", "State data", "A string"], correctIndex: 0 },
+        { question: "Why is the underscore prefix used for private State classes?", options: ["It's a style preference", "It marks the class as private by convention", "It makes the class run faster", "It's required by Flutter"], correctIndex: 1 },
+        { question: "What is CustomPaint used for?", options: ["Styling widgets", "Drawing custom graphics", "Creating layouts", "Managing state"], correctIndex: 1 },
+        { question: "When should you use CustomPaint instead of widget composition?", options: ["Always", "Never", "When you need to draw graphics that don't fit existing widgets", "Only for animations"], correctIndex: 2 },
+        { question: "How do you implement custom painting?", options: ["Extend CustomPaint directly", "Create a class extending CustomPainter and override paint()", "Use the paint property of any widget", "Flutter handles all painting automatically"], correctIndex: 1 },
+        { question: "What does the `shouldRepaint()` method in CustomPainter do?", options: ["Validates the paint operation", "Determines whether the widget needs to redraw", "Clears the canvas", "Moves painted content"], correctIndex: 1 },
+        { question: "What is the primary advantage of widget composition?", options: ["It's faster than custom painting", "It handles responsiveness, theming, and accessibility automatically", "It requires less code", "Composition and painting are the same"], correctIndex: 1 },
+        { question: "When extracting widgets from a large build() method, how long should it be before extracting?", options: ["100+ lines", "200+ lines", "50+ lines or deeply nested", "Extraction is optional"], correctIndex: 2 },
+        { question: "Why should you prefer simple widgets over complex nesting?", options: ["Simple widgets are faster", "Complex nesting is harder to test and debug", "Simple widgets use less memory", "There's no difference"], correctIndex: 1 },
+        { question: "What does AspectRatio do?", options: ["Changes color", "Constrains a child to a specific aspect ratio", "Rotates a widget", "Animates size changes"], correctIndex: 1 },
+        { question: "When should you use Spacer instead of SizedBox?", options: ["Always use Spacer", "Spacer fills available space proportionally in Row/Column; SizedBox has fixed size", "SizedBox is always better", "They're identical"], correctIndex: 1 },
+        { question: "What is FutureBuilder used for?", options: ["Building futures", "Building a widget based on the state of a Future", "Creating asynchronous code", "Handling errors only"], correctIndex: 1 },
+        { question: "What does Transform do?", options: ["Changes widget size", "Applies transformations (rotate, scale, translate) to a child", "Animates changes", "Handles input"], correctIndex: 1 },
+        { question: "What widget creates a modal dialog?", options: ["Dialog", "AlertDialog or showDialog()", "PopupMenu", "BottomSheet"], correctIndex: 1 },
+        { question: "What is the purpose of ClipRRect?", options: ["Adds a border", "Clips a child to rounded corners", "Creates a circle", "Animates clipping"], correctIndex: 1 },
+        { question: "How do you access database data in a Flutter app?", options: ["By connecting directly to the database server", "Through a repository pattern that abstracts the database implementation", "Using global variables", "Database access isn't recommended"], correctIndex: 1 },
+        { question: "What are the advantages of SQLite for local storage?", options: ["It requires a server", "It's lightweight, requires no setup, and works offline", "It's only for large apps", "It's slower than alternatives"], correctIndex: 1 },
+        { question: "When should you use the repository pattern with databases?", options: ["Never—it's unnecessary abstraction", "Always—it allows swapping database implementations without changing other code", "Only for enterprise apps", "Only for SQLite"], correctIndex: 1 },
+        { question: "What does the DatabaseHelper singleton pattern prevent?", options: ["Database corruption", "Multiple database instances from being created", "Data loss", "Performance issues"], correctIndex: 1 },
+        { question: "How do you structure SQLite for scalability?", options: ["Mix all code with UI widgets", "Use repository pattern, separate data layer from UI", "Avoid using databases", "SQLite can't scale"], correctIndex: 1 },
+        { question: "What is a Hive database?", options: ["A server-based database", "A lightweight, high-performance local NoSQL database written in Dart", "A cloud database", "A SQL database"], correctIndex: 1 },
+        { question: "When should you choose Hive over SQLite?", options: ["Always—Hive is better", "When you want simpler key-value storage and high performance for local data", "Never—SQLite is always better", "Depends on database size only"], correctIndex: 1 },
+        { question: "What is Firebase Firestore?", options: ["A local database", "A cloud NoSQL database with real-time sync and offline support", "A SQL server", "A testing tool"], correctIndex: 1 },
+        { question: "How does Firestore differ from SQLite?", options: ["Firestore is local, SQLite is cloud", "SQLite is local and single-device; Firestore is cloud with multi-device sync", "They're identical", "Firestore is only for web"], correctIndex: 1 },
+        { question: "What is the key advantage of Firestore streams?", options: ["They're fast", "They provide real-time updates as data changes", "They replace databases", "Streams are optional"], correctIndex: 1 },
+        { question: "What is an enterprise database?", options: ["A database only for large companies", "A database like MySQL, PostgreSQL, Oracle that requires a backend server", "A database in the cloud", "A database that costs money"], correctIndex: 1 },
+        { question: "Why can't Flutter apps connect directly to MySQL?", options: ["Flutter doesn't support MySQL", "Security: credentials would be in app code, and most databases aren't HTTP-accessible", "MySQL is too slow", "There's no technical reason"], correctIndex: 1 },
+        { question: "What architecture does Flutter use with enterprise databases?", options: ["Direct connection: App → Database", "REST/API architecture: App → Backend API → Database", "Middleware architecture: App → Middleware → Backend → Database", "Database embedded in the app"], correctIndex: 1 },
+        { question: "How do you fetch data from a REST API in Flutter?", options: ["Using direct database connection", "Using the `http` package to make GET requests", "Using `package:database`", "Automatic through widgets"], correctIndex: 1 },
+        { question: "Why is error handling important with enterprise databases?", options: ["Errors don't happen in enterprise systems", "Network failures and timeouts must be caught and communicated to users", "Errors are ignored", "Error handling is optional"], correctIndex: 1 },
+        { question: "When comparing databases, what should determine your choice?", options: ["Always use the newest database", "Your app's requirements: offline capability, multi-user, consistency needs, cost", "Database size", "Team preference only"], correctIndex: 1 },
+        { question: "How does the repository pattern help with database flexibility?", options: ["It doesn't—it's just extra code", "It abstracts database implementation, allowing swaps without changing UI/state code", "It slows down queries", "It's only for SQL databases"], correctIndex: 1 },
+        { question: "What is the progression when choosing a database for a new app?", options: ["Start with enterprise, move to SQLite", "Start with SQLite (simple), add Hive/Firestore (cloud), consider enterprise (multi-user)", "Choose randomly", "Database choice doesn't matter"], correctIndex: 1 },
+        { question: "What is ACID compliance in databases?", options: ["A type of database", "Atomicity, Consistency, Isolation, Durability—guarantees data integrity", "A testing standard", "An error type"], correctIndex: 1 },
+        { question: "Why is offline-first capability important in mobile apps?", options: ["It's not important", "Users lose connectivity frequently; apps should work offline and sync when possible", "It's only for specific app types", "Offline functionality is optional"], correctIndex: 1 },
+        { question: "Which database supports built-in real-time synchronization?", options: ["SQLite", "Firestore (Firebase)", "MySQL", "All databases"], correctIndex: 1 },
+        { question: "How do you handle async operations in tests?", options: ["Ignore them", "Use `async`/`await` and properly wait for Futures", "Skip testing async code", "Test is always synchronous"], correctIndex: 1 },
+        { question: "What makes a good unit test?", options: ["It tests multiple things at once", "It's independent, focused, and deterministic", "It's as complex as the code it tests", "It doesn't need documentation"], correctIndex: 1 },
+        { question: "Why should you test edge cases?", options: ["They're not important", "They test boundary conditions that often break code", "Only happy path matters", "Tests don't need edge cases"], correctIndex: 1 },
+        { question: "What is regression testing?", options: ["Moving backwards in development", "Testing that previously fixed bugs don't reoccur", "Testing regression algorithms", "Testing complex math"], correctIndex: 1 },
+        { question: "When should you refactor code?", options: ["Never—original code is always best", "After tests pass and you want to improve design", "Before writing tests", "Refactoring isn't necessary"], correctIndex: 1 },
+        { question: "What is a common anti-pattern in custom widgets?", options: ["Using inheritance wisely", "Creating overly complex single widgets instead of composing simpler ones", "Using const constructors", "Following best practices"], correctIndex: 1 },
+        { question: "How should you name widget parameters?", options: ["Use single letters", "Use descriptive names that explain their purpose", "Any name is fine", "Names don't matter"], correctIndex: 1 },
+        { question: "What is InkWell used for?", options: ["Creating wells", "Adding Material ripple effects to interactive widgets", "Drawing shapes", "Managing state"], correctIndex: 1 },
+        { question: "When should you use PageView?", options: ["Never", "For carousel-like, page-swiping interfaces", "For static lists", "For navigation only"], correctIndex: 1 },
+        { question: "What does GestureDetector detect?", options: ["Only taps", "User gestures like taps, drags, long presses", "Keyboard input", "Only finger presence"], correctIndex: 1 },
+        { question: "What is the purpose of Dismissible?", options: ["Hide widgets", "Allow users to swipe/drag to dismiss items", "Delete widgets", "Collapse content"], correctIndex: 1 },
+        { question: "How do you test a widget that uses Provider?", options: ["Don't test Provider-dependent widgets", "Wrap in Consumer and verify rebuilds occur", "Test without Provider", "Widgets with Provider can't be tested"], correctIndex: 1 },
+        { question: "What determines database performance?", options: ["Database type only", "Query structure, indexing, and network latency all matter", "Size only", "Performance doesn't vary"], correctIndex: 1 },
+        { question: "When should you denormalize database schemas?", options: ["Always denormalize", "Never denormalize", "When query performance requires it, accepting some redundancy", "Denormalization doesn't exist"], correctIndex: 1 },
+        { question: "What is the difference between eventual and strong consistency?", options: ["Strong is always better", "Strong guarantees immediate consistency; eventual takes time", "They're identical", "Consistency doesn't matter"], correctIndex: 1 },
+        { question: "How do you prevent SQL injection in your app?", options: ["Use string concatenation for queries", "Use parameterized queries and prepared statements", "Injection can't be prevented", "It's not a concern in mobile apps"], correctIndex: 1 },
+        { question: "What is a database transaction?", options: ["A payment", "A group of operations that succeed or fail together", "A single query", "A backup"], correctIndex: 1 },
+        { question: "Why is database indexing important?", options: ["It doesn't help", "It speeds up queries by organizing data structure", "It slows everything down", "Indexes are optional"], correctIndex: 1 },
+        { question: "When should you cache data locally?", options: ["Never cache", "When network is slow or frequent API calls are unnecessary", "Always cache everything", "Caching causes problems"], correctIndex: 1 },
+        { question: "What does eventually consistent mean?", options: ["Something that's never consistent", "Data becomes consistent across systems over time, not immediately", "It's always consistent", "Consistency is not guaranteed"], correctIndex: 1 },
+        { question: "Which is faster for small datasets?", options: ["Always use enterprise databases", "Local storage (SQLite/Hive) is faster with no network latency", "Remote databases are always faster", "Speed is identical"], correctIndex: 1 },
+        { question: "What should you do if a database query hangs?", options: ["Restart the app", "Add timeouts and handle gracefully", "Ignore it", "Nothing can be done"], correctIndex: 1 },
+        { question: "How do you debug database queries?", options: ["You can't debug queries", "Use logging, query inspection tools, and test queries independently", "Wait for production errors", "Debugging databases is impossible"], correctIndex: 1 },
+        { question: "What is data migration and why does it matter?", options: ["Moving user accounts", "Changing database schemas while preserving data", "Server relocation", "Migration doesn't apply to mobile"], correctIndex: 1 },
+    ];
+
+    const questionsPerSession = 15;
+    
+    function getRandomQuestions() {
+        const shuffled = [...questionPool].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, questionsPerSession);
+    }
+    
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    
+    function init() {
+        currentQuestions = getRandomQuestions();
+        currentIndex = 0;
+        score = 0;
+        document.getElementById('quizContent').style.display = 'block';
+        document.getElementById('resultsContent').classList.remove('show');
+        showQuestion();
+    }
+    
+    function showQuestion() {
+        const question = currentQuestions[currentIndex];
+        const container = document.getElementById('questionContainer');
+        
+        let html = `<div class="question-text">${currentIndex + 1}. ${question.question}</div>`;
+        html += '<div class="options">';
+        
+        question.options.forEach((option, idx) => {
+            const id = `option${idx}`;
+            html += `
+                <label class="option" onclick="selectOption(this, ${idx})">
+                    <input type="radio" id="${id}" name="answer" value="${idx}" />
+                    ${option}
+                </label>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+        
+        updateProgress();
+    }
+    
+    function selectOption(element, index) {
+        document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+        element.classList.add('selected');
+        document.getElementById('nextBtn').disabled = false;
+    }
+    
+    function nextQuestion() {
+        const selected = document.querySelector('.option.selected input');
+        if (!selected) return;
+        
+        const userAnswer = parseInt(selected.value);
+        const correctAnswer = currentQuestions[currentIndex].correctIndex;
+        
+        if (userAnswer === correctAnswer) {
+            score++;
+        }
+        
+        currentIndex++;
+        
+        if (currentIndex < currentQuestions.length) {
+            document.getElementById('nextBtn').disabled = true;
+            showQuestion();
+        } else {
+            showResults();
+        }
+    }
+    
+    function updateProgress() {
+        const progress = ((currentIndex) / currentQuestions.length) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+        document.getElementById('progressText').textContent = `${currentIndex}/${currentQuestions.length}`;
+    }
+    
+    function showResults() {
+        document.getElementById('quizContent').style.display = 'none';
+        document.getElementById('resultsContent').classList.add('show');
+        
+        const percentage = Math.round((score / currentQuestions.length) * 100);
+        document.getElementById('scoreDisplay').textContent = percentage + '%';
+        document.getElementById('scoreDetails').textContent = `${score} out of ${currentQuestions.length} correct`;
+    }
+    
+    document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+    document.getElementById('restartBtn').addEventListener('click', init);
+    
+    // Initialize on page load
+    window.addEventListener('load', init);
+</script>
+</body>
+</html>

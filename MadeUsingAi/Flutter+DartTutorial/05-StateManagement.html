@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05-StateManagement</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #3D4A52;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1B5A56;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #7BA857;
+            padding-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        blockquote {
+            background-color: #F5E6D3;
+            border-left: 4px solid #7BA857;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        pre {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        a {
+            color: #5A7A72;
+            text-decoration: none;
+            border-bottom: 1px solid #5A7A72;
+        }
+        
+        a:hover {
+            color: #1B5A56;
+            border-bottom-color: #1B5A56;
+        }
+        
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+        
+        .platform-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E8F0E6;
+            background-color: white;
+            color: #3D4A52;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .platform-btn:hover {
+            border-color: #7BA857;
+            background-color: #F9F7F3;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #E8F0E6;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<h1>State Management</h1>
+<p>State is data that changes during your app's runtime and affects what the UI displays. Managing state well separates prototypes from production software. This chapter builds your understanding step by step, from the simplest approach to the patterns used in professional Flutter apps.</p>
+<p>We'll start with how <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> works, understand why it breaks down as apps grow, then explore two major solutions—Provider and Riverpod. We'll pay special attention to async operations, because managing side effects (API calls, file I/O, timers) is where most complexity lives. Throughout, we'll use CRUD operations (Create, Read, Update, Delete) as our lens for understanding how state management enables real app functionality.</p>
+<h2>Understanding State: Two Categories</h2>
+<p>Before learning how to manage state, you need to distinguish two types of state, because they require different solutions.</p>
+<h3>Local State</h3>
+<p>Local state belongs to a single widget and doesn't need to be shared. Examples: whether a checkbox is ticked, text in an input field, whether an accordion is expanded.</p>
+<p>Local state lives in a <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">StatefulWidget</code>'s <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">State</code> class. It's appropriate for local state because no other widget needs to react to changes:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> ToggleButton <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>ToggleButton<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _ToggleButtonState();
+}
+
+<span style="color: #87ceeb">class</span> _ToggleButtonState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>ToggleButton<span style="color: #ffff44">></span> {
+  <span style="color: #ff4444">bool</span> _isOn <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;  <span style="color: #888888">// Local state</span>
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Switch(
+      value<span style="color: #ffff44">:</span> _isOn,
+      onChanged<span style="color: #ffff44">:</span> (newValue) {
+        setState(() {
+          _isOn <span style="color: #ffff44">=</span> newValue;  <span style="color: #888888">// Update and rebuild</span>
+        });
+      },
+    );
+  }
+}</code></pre>
+<p>When <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44"><</span>em<span style="color: #ffff44">></span>isOn</code> changes, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> triggers a rebuild of this widget only. The parent doesn't know or care about <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;"><span style="color: #ffff44"><</span><span style="color: #ffff44">/</span>em<span style="color: #ffff44">></span>isOn</code>—it's truly local.</p>
+<h3>App-Wide State</h3>
+<p>App-wide state is needed by multiple widgets across your app. Examples: the current user's login info, a list of all notes, the app's theme setting. This is the state that powers CRUD operations—the data that your app creates, reads, updates, and deletes.</p>
+<p>If you try to manage app-wide state with local <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> in individual widgets, you create problems:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// DON&#39;T DO THIS - antipattern demonstrating the problem</span>
+
+<span style="color: #87ceeb">class</span> NoteListScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>NoteListScreen<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _NoteListScreenState();
+}
+
+<span style="color: #87ceeb">class</span> _NoteListScreenState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>NoteListScreen<span style="color: #ffff44">></span> {
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> notes <span style="color: #ffff44">=</span> [];  <span style="color: #888888">// App-wide data in one screen</span>
+  
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> ListView(
+      children<span style="color: #ffff44">:</span> notes.map((note) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Text(note.title)).toList(),
+    );
+  }
+}
+
+<span style="color: #87ceeb">class</span> NoteDetailScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  <span style="color: #888888">// This screen also needs the notes list to update it (READ operation)</span>
+  <span style="color: #888888">// The detail screen might also update a note (UPDATE operation)</span>
+  <span style="color: #888888">// But how do we get the list? We&#39;d have to pass it through the constructor</span>
+  <span style="color: #888888">// If there are 5 screens between them, every one has to accept and pass it through.</span>
+  <span style="color: #888888">// This is called &quot;prop drilling&quot; and it becomes unmaintainable.</span>
+}</code></pre>
+<p>The core problem: when data belongs to multiple widgets, using local <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> forces you to pass that state through every widget in between, cluttering constructors and making code fragile. This is especially painful for CRUD operations, where multiple screens need to read the data and trigger updates.</p>
+<h2>CRUD: The Framework for Understanding App State</h2>
+<p>CRUD stands for Create, Read, Update, Delete—the four fundamental operations on any collection of data. Understanding CRUD helps clarify what state management needs to do:</p>
+<ul><li><strong>Create:</strong> Add new data to the collection. A "Create Note" form creates a new note.</li><li><strong>Read:</strong> Retrieve and display existing data. A note list reads all notes; a detail screen reads one note.</li><li><strong>Update:</strong> Modify existing data. Editing a note's content updates it.</li><li><strong>Delete:</strong> Remove data from the collection. Swiping to delete removes a note.</li></ul>
+<p>When you're managing app-wide state, you're building a system that handles CRUD operations cleanly across multiple screens. Poor state management makes CRUD painful (passing data through constructors everywhere). Good state management makes CRUD transparent (any widget can access and modify data).</p>
+<h2>setState(): The Built-In Mechanism</h2>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> is Flutter's primitive state management tool. It works by marking a widget as "dirty" and scheduling a rebuild. Understanding how it works is essential to understanding why better solutions exist.</p>
+<h3>How setState() Works Internally</h3>
+<p>When you call <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState(() { ... })</code>:</p>
+<ol><li>Flutter executes the code inside the lambda</li><li>Flutter marks the widget as needing rebuild</li><li>Flutter schedules a rebuild on the next frame</li><li><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">build()</code> is called again with the new state values</li><li>The widget tree is compared to the old tree (diffing)</li><li>Only the parts that changed are updated on screen</li></ol>
+<p>Here's a concrete example with a CRUD context (creating a note):</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> CreateNoteForm <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>CreateNoteForm<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _CreateNoteFormState();
+}
+
+<span style="color: #87ceeb">class</span> _CreateNoteFormState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>CreateNoteForm<span style="color: #ffff44">></span> {
+  <span style="color: #ff4444">String</span> title <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;&#39;</span>;
+  <span style="color: #ff4444">String</span> content <span style="color: #ffff44">=</span> <span style="color: #44ff44">&#39;&#39;</span>;
+
+  <span style="color: #87ceeb">void</span> _saveNote() {
+    <span style="color: #888888">// CREATE operation: add new note</span>
+    <span style="color: #888888">// But who holds the list of notes? This widget doesn&#39;t.</span>
+    <span style="color: #888888">// Problem: we can&#39;t actually create a note here without prop-drilling</span>
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Column(
+      children<span style="color: #ffff44">:</span> [
+        TextField(onChanged<span style="color: #ffff44">:</span> (value) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> title <span style="color: #ffff44">=</span> value)),
+        TextField(onChanged<span style="color: #ffff44">:</span> (value) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> content <span style="color: #ffff44">=</span> value)),
+        ElevatedButton(onPressed<span style="color: #ffff44">:</span> _saveNote, child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Save&#39;</span>)),
+      ],
+    );
+  }
+}</code></pre>
+<p>This illustrates the problem: local form state works fine, but where does the created note go? You'd have to pass a callback through constructors.</p>
+<h3>Why setState() Breaks Down for CRUD</h3>
+<p>As your app grows with CRUD operations, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> becomes problematic:</p>
+<p><strong>Scenario:</strong> You have a NoteListScreen displaying all notes (READ), a NoteDetailScreen displaying one note (READ), a CreateNoteScreen for adding notes (CREATE), and edit functionality for updating (UPDATE) and delete buttons (DELETE).</p>
+<p>With <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code>, managing these CRUD operations across screens requires prop drilling:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> HomeScreen <span style="color: #87ceeb">extends</span> StatefulWidget {
+  @override
+  State<span style="color: #ffff44"><</span>HomeScreen<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _HomeScreenState();
+}
+
+<span style="color: #87ceeb">class</span> _HomeScreenState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>HomeScreen<span style="color: #ffff44">></span> {
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> notes <span style="color: #ffff44">=</span> [];  <span style="color: #888888">// Holds all the data</span>
+
+  <span style="color: #87ceeb">void</span> addNote(Note note) {  <span style="color: #888888">// CREATE</span>
+    setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> notes.add(note));
+  }
+
+  <span style="color: #87ceeb">void</span> updateNote(<span style="color: #ff4444">String</span> title, Note updated) {  <span style="color: #888888">// UPDATE</span>
+    setState(() {
+      <span style="color: #87ceeb">final</span> index <span style="color: #ffff44">=</span> notes.indexWhere((n) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> n.title <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> title);
+      <span style="color: #87ceeb">if</span> (index <span style="color: #ffff44">!</span><span style="color: #ffff44">=</span> <span style="color: #ffff44">-</span><span style="color: #bb86fc">1</span>) notes[index] <span style="color: #ffff44">=</span> updated;
+    });
+  }
+
+  <span style="color: #87ceeb">void</span> deleteNote(<span style="color: #ff4444">String</span> title) {  <span style="color: #888888">// DELETE</span>
+    setState(() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> notes.removeWhere((n) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> n.title <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> title));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Column(
+      children<span style="color: #ffff44">:</span> [
+        <span style="color: #888888">// READ: display notes</span>
+        NoteList(notes<span style="color: #ffff44">:</span> notes, onCreateNote<span style="color: #ffff44">:</span> addNote, onUpdateNote<span style="color: #ffff44">:</span> updateNote, onDeleteNote<span style="color: #ffff44">:</span> deleteNote),
+      ],
+    );
+  }
+}
+
+<span style="color: #87ceeb">class</span> NoteList <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> notes;
+  <span style="color: #87ceeb">final</span> <span style="color: #87ceeb">Function</span>(Note) onCreateNote;
+  <span style="color: #87ceeb">final</span> <span style="color: #87ceeb">Function</span>(<span style="color: #ff4444">String</span>, Note) onUpdateNote;
+  <span style="color: #87ceeb">final</span> <span style="color: #87ceeb">Function</span>(<span style="color: #ff4444">String</span>) onDeleteNote;
+
+  <span style="color: #87ceeb">const</span> NoteList({
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.notes,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onCreateNote,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onUpdateNote,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onDeleteNote,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> ListView.builder(
+      itemCount<span style="color: #ffff44">:</span> notes.length,
+      itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+        <span style="color: #87ceeb">final</span> note <span style="color: #ffff44">=</span> notes[index];
+        <span style="color: #87ceeb">return</span> NoteCard(
+          note<span style="color: #ffff44">:</span> note,
+          onTap<span style="color: #ffff44">:</span> () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NoteDetailScreen(
+                  note<span style="color: #ffff44">:</span> note,
+                  onUpdateNote<span style="color: #ffff44">:</span> onUpdateNote,
+                  onDeleteNote<span style="color: #ffff44">:</span> onDeleteNote,
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+<span style="color: #87ceeb">class</span> NoteDetailScreen <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> Note note;
+  <span style="color: #87ceeb">final</span> <span style="color: #87ceeb">Function</span>(<span style="color: #ff4444">String</span>, Note) onUpdateNote;
+  <span style="color: #87ceeb">final</span> <span style="color: #87ceeb">Function</span>(<span style="color: #ff4444">String</span>) onDeleteNote;
+
+  <span style="color: #87ceeb">const</span> NoteDetailScreen({
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.note,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onUpdateNote,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onDeleteNote,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> NoteEditWidget(
+      note<span style="color: #ffff44">:</span> note,
+      onUpdateNote<span style="color: #ffff44">:</span> onUpdateNote,
+      onDeleteNote<span style="color: #ffff44">:</span> onDeleteNote,
+    );
+  }
+}
+
+<span style="color: #87ceeb">class</span> NoteEditWidget <span style="color: #87ceeb">extends</span> StatefulWidget {
+  <span style="color: #87ceeb">final</span> Note note;
+  <span style="color: #87ceeb">final</span> <span style="color: #87ceeb">Function</span>(<span style="color: #ff4444">String</span>, Note) onUpdateNote;
+  <span style="color: #87ceeb">final</span> <span style="color: #87ceeb">Function</span>(<span style="color: #ff4444">String</span>) onDeleteNote;
+
+  <span style="color: #87ceeb">const</span> NoteEditWidget({
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.note,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onUpdateNote,
+    <span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.onDeleteNote,
+  });
+
+  @override
+  State<span style="color: #ffff44"><</span>NoteEditWidget<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _NoteEditWidgetState();
+}
+
+<span style="color: #87ceeb">class</span> _NoteEditWidgetState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>NoteEditWidget<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">late</span> TextEditingController contentController;
+
+  @override
+  <span style="color: #87ceeb">void</span> initState() {
+    <span style="color: #87ceeb">super</span>.initState();
+    contentController <span style="color: #ffff44">=</span> TextEditingController(text<span style="color: #ffff44">:</span> widget.note.content);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Column(
+      children<span style="color: #ffff44">:</span> [
+        TextField(controller<span style="color: #ffff44">:</span> contentController),
+        ElevatedButton(
+          onPressed<span style="color: #ffff44">:</span> () {
+            <span style="color: #888888">// UPDATE operation via callback</span>
+            widget.onUpdateNote(
+              widget.note.title,
+              Note(title<span style="color: #ffff44">:</span> widget.note.title, content<span style="color: #ffff44">:</span> contentController.text),
+            );
+          },
+          child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Save&#39;</span>),
+        ),
+        ElevatedButton(
+          onPressed<span style="color: #ffff44">:</span> () {
+            <span style="color: #888888">// DELETE operation via callback</span>
+            widget.onDeleteNote(widget.note.title);
+          },
+          child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Delete&#39;</span>),
+        ),
+      ],
+    );
+  }
+}</code></pre>
+<p>Notice how CRUD callbacks are threaded through NoteList → NoteDetailScreen → NoteEditWidget. Every widget in the middle has to accept and pass them through, even though most don't use them. This is prop drilling.</p>
+<p>As you add more screens and more CRUD operations, this becomes unmaintainable. The solution is to move CRUD operations to a centralized state manager that any widget can access without passing callbacks through constructors.</p>
+<h2>Introducing Dependency Injection: A Better Approach</h2>
+<p>Before learning Provider and Riverpod, understand the underlying principle they're built on: <strong>dependency injection</strong>. Instead of each widget creating or managing its own dependencies, dependencies are provided from outside.</p>
+<p>The traditional problem:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> MyScreen <span style="color: #87ceeb">extends</span> StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #888888">// Create the state manager ourselves - tightly coupled</span>
+    <span style="color: #87ceeb">final</span> notesManager <span style="color: #ffff44">=</span> NotesManager();
+    <span style="color: #87ceeb">return</span> NotesList(notesManager<span style="color: #ffff44">:</span> notesManager);
+  }
+}</code></pre>
+<p>The injection approach:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> MyScreen <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">final</span> NotesManager notesManager;  <span style="color: #888888">// Injected - loosely coupled</span>
+
+  <span style="color: #87ceeb">const</span> MyScreen({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.notesManager});
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> NotesList(notesManager<span style="color: #ffff44">:</span> notesManager);
+  }
+}</code></pre>
+<p>This is still prop drilling if you have deep widget trees. The next step is using an <strong>inherited widget</strong> to provide dependencies through the widget tree without passing them through every constructor.</p>
+<p>Flutter has a built-in inherited widget pattern, but it's verbose. Provider and Riverpod are wrappers that make it simple.</p>
+<h2>Provider: The Industry Standard Solution</h2>
+<p>Provider is the most-used state management solution in Flutter because it solves the real problems without adding unnecessary complexity. It makes CRUD operations clean and maintainable.</p>
+<h3>Core Concept: The Provider</h3>
+<p>A <strong>provider</strong> is an object that:</p>
+<ol><li>Holds state (data)</li><li>Provides operations to modify that state (CRUD methods)</li><li>Notifies listeners when state changes</li><li>Is accessible to any widget in the tree without prop drilling</li></ol>
+<h3>How Provider Solves CRUD</h3>
+<p>With Provider, you define a state manager that holds your data and all CRUD operations:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NotesManager <span style="color: #87ceeb">extends</span> ChangeNotifier {
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> _notes <span style="color: #ffff44">=</span> [];
+
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> <span style="color: #87ceeb">get</span> notes <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _notes;  <span style="color: #888888">// READ operation</span>
+
+  <span style="color: #87ceeb">void</span> addNote(Note note) {  <span style="color: #888888">// CREATE operation</span>
+    _notes.add(note);
+    notifyListeners();  <span style="color: #888888">// Tell all listeners to rebuild</span>
+  }
+
+  <span style="color: #87ceeb">void</span> updateNote(<span style="color: #ff4444">String</span> title, Note updated) {  <span style="color: #888888">// UPDATE operation</span>
+    <span style="color: #87ceeb">final</span> index <span style="color: #ffff44">=</span> _notes.indexWhere((n) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> n.title <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> title);
+    <span style="color: #87ceeb">if</span> (index <span style="color: #ffff44">!</span><span style="color: #ffff44">=</span> <span style="color: #ffff44">-</span><span style="color: #bb86fc">1</span>) {
+      _notes[index] <span style="color: #ffff44">=</span> updated;
+      notifyListeners();
+    }
+  }
+
+  <span style="color: #87ceeb">void</span> deleteNote(<span style="color: #ff4444">String</span> title) {  <span style="color: #888888">// DELETE operation</span>
+    _notes.removeWhere((n) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> n.title <span style="color: #ffff44">=</span><span style="color: #ffff44">=</span> title);
+    notifyListeners();
+  }
+}</code></pre>
+<p>Now any widget can access these CRUD operations without prop drilling:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// In NoteEditWidget, no callbacks passed through constructors</span>
+<span style="color: #87ceeb">class</span> NoteEditWidget <span style="color: #87ceeb">extends</span> StatefulWidget {
+  <span style="color: #87ceeb">final</span> Note note;
+
+  <span style="color: #87ceeb">const</span> NoteEditWidget({<span style="color: #87ceeb">required</span> <span style="color: #87ceeb">this</span>.note});
+
+  @override
+  State<span style="color: #ffff44"><</span>NoteEditWidget<span style="color: #ffff44">></span> createState() <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _NoteEditWidgetState();
+}
+
+<span style="color: #87ceeb">class</span> _NoteEditWidgetState <span style="color: #87ceeb">extends</span> State<span style="color: #ffff44"><</span>NoteEditWidget<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">late</span> TextEditingController contentController;
+
+  @override
+  <span style="color: #87ceeb">void</span> initState() {
+    <span style="color: #87ceeb">super</span>.initState();
+    contentController <span style="color: #ffff44">=</span> TextEditingController(text<span style="color: #ffff44">:</span> widget.note.content);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> Column(
+      children<span style="color: #ffff44">:</span> [
+        TextField(controller<span style="color: #ffff44">:</span> contentController),
+        ElevatedButton(
+          onPressed<span style="color: #ffff44">:</span> () {
+            <span style="color: #888888">// UPDATE operation - access manager directly, no prop drilling</span>
+            context.read<span style="color: #ffff44"><</span>NotesManager<span style="color: #ffff44">></span>().updateNote(
+              widget.note.title,
+              Note(title<span style="color: #ffff44">:</span> widget.note.title, content<span style="color: #ffff44">:</span> contentController.text),
+            );
+          },
+          child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Save&#39;</span>),
+        ),
+        ElevatedButton(
+          onPressed<span style="color: #ffff44">:</span> () {
+            <span style="color: #888888">// DELETE operation - access manager directly</span>
+            context.read<span style="color: #ffff44"><</span>NotesManager<span style="color: #ffff44">></span>().deleteNote(widget.note.title);
+          },
+          child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Delete&#39;</span>),
+        ),
+      ],
+    );
+  }
+}</code></pre>
+<p>The breakthrough: any widget can call <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">context.read<span style="color: #ffff44"><</span>NotesManager<span style="color: #ffff44">></span>()</code> to access the CRUD operations, no matter how deeply nested. No prop drilling required.</p>
+<h3>Understanding `ChangeNotifier`</h3>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ChangeNotifier</code> is a class that holds mutable state and notifies listeners when it changes. When you call <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">notifyListeners()</code>, Flutter tells every widget listening to this notifier to rebuild.</p>
+<p>This is the mechanism that makes CRUD transparent: when you CREATE, UPDATE, or DELETE, the notifier notifies all listeners, and the UI automatically reflects the new state.</p>
+<h3>Two Ways to Access a Provider</h3>
+<p><strong>1. Consumer (for READ operations and display):</strong></p>
+<p>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Consumer</code> when you need to display data from a provider and rebuild when it changes:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Consumer<span style="color: #ffff44"><</span>NotesManager<span style="color: #ffff44">></span>(
+  builder<span style="color: #ffff44">:</span> (context, notesManager, child) {
+    <span style="color: #87ceeb">return</span> ListView.builder(
+      itemCount<span style="color: #ffff44">:</span> notesManager.notes.length,  <span style="color: #888888">// READ operation</span>
+      itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+        <span style="color: #87ceeb">return</span> ListTile(title<span style="color: #ffff44">:</span> Text(notesManager.notes[index].title));
+      },
+    );
+  },
+)</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Consumer</code> rebuilds whenever the provider calls <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">notifyListeners()</code> (i.e., when CREATE, UPDATE, or DELETE operations happen).</p>
+<p><strong>2. context.read() (for triggering CREATE, UPDATE, DELETE):</strong></p>
+<p>Use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">context.read()</code> when you want to call a CRUD method without causing a rebuild:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>ElevatedButton(
+  onPressed<span style="color: #ffff44">:</span> () {
+    <span style="color: #888888">// CREATE, UPDATE, or DELETE operation</span>
+    context.read<span style="color: #ffff44"><</span>NotesManager<span style="color: #ffff44">></span>().deleteNote(noteTitle);
+  },
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Delete&#39;</span>),
+)</code></pre>
+<p>When the button is pressed, <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">deleteNote()</code> is called. The button doesn't rebuild—but any <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Consumer</code> watching the notes will rebuild to reflect the deletion.</p>
+<h3>Understanding the Distinction</h3>
+<p>This distinction is crucial:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Use Consumer when you want to DISPLAY state (READ)</span>
+Consumer<span style="color: #ffff44"><</span>NotesManager<span style="color: #ffff44">></span>(
+  builder<span style="color: #ffff44">:</span> (context, notesManager, child) {
+    <span style="color: #87ceeb">return</span> Text(<span style="color: #44ff44">&#39;Notes: ${notesManager.notes.length}&#39;</span>);  <span style="color: #888888">// Display the count</span>
+  },
+)
+
+<span style="color: #888888">// Use context.read() when you want to CALL A CRUD METHOD</span>
+ElevatedButton(
+  onPressed<span style="color: #ffff44">:</span> () {
+    context.read<span style="color: #ffff44"><</span>NotesManager<span style="color: #ffff44">></span>().deleteNote(title);  <span style="color: #888888">// Call method, don&#39;t rebuild button</span>
+  },
+  child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Delete&#39;</span>),
+)</code></pre>
+<p>If you use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">context.read()</code> in a builder that displays data, the displayed data won't update when state changes. If you use <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">Consumer</code> for every method call, you cause unnecessary rebuilds.</p>
+<h3>Setting Up Provider in Your App</h3>
+<p>Add to <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">pubspec.yaml</code>:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>dependencies<span style="color: #ffff44">:</span>
+  provider<span style="color: #ffff44">:</span> <span style="color: #ffff44">^</span><span style="color: #bb86fc">6.0.0</span></code></pre>
+<p>In your main app:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">void</span> main() {
+  runApp(<span style="color: #87ceeb">const</span> MyApp());
+}
+
+<span style="color: #87ceeb">class</span> MyApp <span style="color: #87ceeb">extends</span> StatelessWidget {
+  <span style="color: #87ceeb">const</span> MyApp();
+
+  @override
+  Widget build(BuildContext context) {
+    <span style="color: #87ceeb">return</span> MultiProvider(
+      providers<span style="color: #ffff44">:</span> [
+        ChangeNotifierProvider(create<span style="color: #ffff44">:</span> (_) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NotesManager()),
+        <span style="color: #888888">// Add more providers here as needed</span>
+      ],
+      child<span style="color: #ffff44">:</span> MaterialApp(
+        home<span style="color: #ffff44">:</span> <span style="color: #87ceeb">const</span> NoteListScreen(),
+      ),
+    );
+  }
+}</code></pre>
+<p><code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">MultiProvider</code> makes all providers available throughout the app. Any widget can access them without prop drilling. Now CREATE, READ, UPDATE, and DELETE operations are clean and maintainable.</p>
+<h2>Handling Async Operations</h2>
+<p>This is where state management becomes complex: managing operations that take time (API calls, file I/O, timers). In CRUD terms, READ operations often require async work (fetching data), and CREATE/UPDATE/DELETE might require persistence (async saving).</p>
+<p>When you perform an async CRUD operation, you have three states to track:</p>
+<ol><li><strong>Loading</strong> — Request in flight, show a spinner</li><li><strong>Success</strong> — Operation completed, show the result</li><li><strong>Error</strong> — Request failed, show error message</li></ol>
+<h3>The Problem: Multiple State Variables</h3>
+<p>Without careful design, you end up with fragile code:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NotesManager <span style="color: #87ceeb">extends</span> ChangeNotifier {
+  <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span> _notes <span style="color: #ffff44">=</span> [];
+  <span style="color: #ff4444">bool</span> _isLoading <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;  <span style="color: #888888">// For async READ</span>
+  <span style="color: #ff4444">String</span><span style="color: #ffff44">?</span> _error;           <span style="color: #888888">// For async operations</span>
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> fetchNotes() <span style="color: #87ceeb">async</span> {  <span style="color: #888888">// Async READ operation</span>
+    _isLoading <span style="color: #ffff44">=</span> <span style="color: #87ceeb">true</span>;
+    _error <span style="color: #ffff44">=</span> <span style="color: #87ceeb">null</span>;
+    notifyListeners();
+
+    <span style="color: #87ceeb">try</span> {
+      <span style="color: #87ceeb">await</span> <span style="color: #ff4444">Future</span>.delayed(<span style="color: #ff4444">Duration</span>(seconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>));
+      _notes <span style="color: #ffff44">=</span> [
+        Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note 1&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Content&#39;</span>),
+        Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note 2&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;More content&#39;</span>),
+      ];
+      _isLoading <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;
+    } <span style="color: #87ceeb">catch</span> (e) {
+      _error <span style="color: #ffff44">=</span> e.toString();
+      _isLoading <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span>;
+    }
+    notifyListeners();
+  }
+}</code></pre>
+<p>The problem: three separate variables for one logical concept (the async state). If you forget to set <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">_isLoading <span style="color: #ffff44">=</span> <span style="color: #87ceeb">false</span></code> in one branch, your UI gets stuck in a loading state.</p>
+<h3>Better Pattern: Encapsulate Async State</h3>
+<p>Create a class that represents the three states:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">abstract</span> <span style="color: #87ceeb">class</span> AsyncState<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">const</span> AsyncState();
+}
+
+<span style="color: #87ceeb">class</span> AsyncLoading<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> <span style="color: #87ceeb">extends</span> AsyncState<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">const</span> AsyncLoading();
+}
+
+<span style="color: #87ceeb">class</span> AsyncSuccess<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> <span style="color: #87ceeb">extends</span> AsyncState<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">final</span> T data;
+  <span style="color: #87ceeb">const</span> AsyncSuccess(<span style="color: #87ceeb">this</span>.data);
+}
+
+<span style="color: #87ceeb">class</span> AsyncError<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> <span style="color: #87ceeb">extends</span> AsyncState<span style="color: #ffff44"><</span>T<span style="color: #ffff44">></span> {
+  <span style="color: #87ceeb">final</span> <span style="color: #ff4444">String</span> message;
+  <span style="color: #87ceeb">const</span> AsyncError(<span style="color: #87ceeb">this</span>.message);
+}</code></pre>
+<p>Now you can represent an async operation with a single variable:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NotesManager <span style="color: #87ceeb">extends</span> ChangeNotifier {
+  AsyncState<span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span> _notesState <span style="color: #ffff44">=</span> AsyncLoading();
+
+  AsyncState<span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span> <span style="color: #87ceeb">get</span> notesState <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> _notesState;
+
+  <span style="color: #ff4444">Future</span><span style="color: #ffff44"><</span><span style="color: #87ceeb">void</span><span style="color: #ffff44">></span> fetchNotes() <span style="color: #87ceeb">async</span> {  <span style="color: #888888">// Async READ operation</span>
+    _notesState <span style="color: #ffff44">=</span> AsyncLoading();
+    notifyListeners();
+
+    <span style="color: #87ceeb">try</span> {
+      <span style="color: #87ceeb">await</span> <span style="color: #ff4444">Future</span>.delayed(<span style="color: #ff4444">Duration</span>(seconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>));
+      <span style="color: #87ceeb">final</span> notes <span style="color: #ffff44">=</span> [
+        Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note 1&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Content&#39;</span>),
+        Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note 2&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;More content&#39;</span>),
+      ];
+      _notesState <span style="color: #ffff44">=</span> AsyncSuccess(notes);
+    } <span style="color: #87ceeb">catch</span> (e) {
+      _notesState <span style="color: #ffff44">=</span> AsyncError(e.toString());
+    }
+    notifyListeners();
+  }
+}</code></pre>
+<p>Now the state is clear and consistent: <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">_notesState</code> always represents the complete async status. It's impossible to accidentally show the wrong UI for a given state.</p>
+<h3>Using Async State in Widgets</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>Consumer<span style="color: #ffff44"><</span>NotesManager<span style="color: #ffff44">></span>(
+  builder<span style="color: #ffff44">:</span> (context, notesManager, child) {
+    <span style="color: #87ceeb">final</span> state <span style="color: #ffff44">=</span> notesManager.notesState;
+
+    <span style="color: #888888">// Pattern match on the state</span>
+    <span style="color: #87ceeb">if</span> (state <span style="color: #87ceeb">is</span> AsyncLoading) {
+      <span style="color: #87ceeb">return</span> Center(child<span style="color: #ffff44">:</span> CircularProgressIndicator());
+    } <span style="color: #87ceeb">else</span> <span style="color: #87ceeb">if</span> (state <span style="color: #87ceeb">is</span> AsyncError) {
+      <span style="color: #87ceeb">return</span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Error: ${state.message}&#39;</span>));
+    } <span style="color: #87ceeb">else</span> <span style="color: #87ceeb">if</span> (state <span style="color: #87ceeb">is</span> AsyncSuccess) {
+      <span style="color: #87ceeb">return</span> ListView.builder(
+        itemCount<span style="color: #ffff44">:</span> state.data.length,
+        itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+          <span style="color: #87ceeb">return</span> ListTile(title<span style="color: #ffff44">:</span> Text(state.data[index].title));
+        },
+      );
+    } <span style="color: #87ceeb">else</span> {
+      <span style="color: #87ceeb">return</span> Container();
+    }
+  },
+)</code></pre>
+<p>This pattern makes it impossible to accidentally show the wrong UI for a given state.</p>
+<h2>Riverpod: The Functional Alternative</h2>
+<p>Riverpod is a newer state management solution that improves on Provider. It uses functional programming patterns and handles some edge cases Provider doesn't.</p>
+<h3>Key Differences from Provider</h3>
+<p><strong>Provider:</strong></p>
+<ul><li>Uses <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">ChangeNotifier</code> (object-oriented)</li><li>Requires context to access providers</li><li>Rebuilds widgets that access the provider</li></ul>
+<p><strong>Riverpod:</strong></p>
+<ul><li>Uses functional providers</li><li>No context needed—access providers directly</li><li>Better for complex state dependencies</li><li>More immutable by default</li></ul>
+<h3>How Riverpod Works with CRUD</h3>
+<p>Riverpod providers are defined as functions that return state:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #888888">// Simple state provider</span>
+<span style="color: #87ceeb">final</span> counterProvider <span style="color: #ffff44">=</span> StateProvider<span style="color: #ffff44"><</span><span style="color: #ff4444">int</span><span style="color: #ffff44">></span>((ref) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> <span style="color: #bb86fc">0</span>);
+
+<span style="color: #888888">// Notifier for CRUD operations</span>
+<span style="color: #87ceeb">class</span> NotesNotifier <span style="color: #87ceeb">extends</span> StateNotifier<span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span> {
+  NotesNotifier() <span style="color: #ffff44">:</span> <span style="color: #87ceeb">super</span>([]);
+
+  <span style="color: #87ceeb">void</span> addNote(Note note) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> state <span style="color: #ffff44">=</span> [...state, note];  <span style="color: #888888">// CREATE</span>
+
+  <span style="color: #87ceeb">void</span> updateNote(<span style="color: #ff4444">int</span> index, Note updated) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> state <span style="color: #ffff44">=</span> [  <span style="color: #888888">// UPDATE</span>
+    ...state.sublist(<span style="color: #bb86fc">0</span>, index),
+    updated,
+    ...state.sublist(index <span style="color: #ffff44">+</span> <span style="color: #bb86fc">1</span>),
+  ];
+
+  <span style="color: #87ceeb">void</span> deleteNote(<span style="color: #ff4444">int</span> index) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> state <span style="color: #ffff44">=</span> [  <span style="color: #888888">// DELETE</span>
+    ...state.sublist(<span style="color: #bb86fc">0</span>, index),
+    ...state.sublist(index <span style="color: #ffff44">+</span> <span style="color: #bb86fc">1</span>),
+  ];
+}
+
+<span style="color: #87ceeb">final</span> notesProvider <span style="color: #ffff44">=</span> StateNotifierProvider<span style="color: #ffff44"><</span>NotesNotifier, <span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span>(
+  (ref) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> NotesNotifier(),
+);
+
+<span style="color: #888888">// For async READ operations</span>
+<span style="color: #87ceeb">final</span> notesAsyncProvider <span style="color: #ffff44">=</span> FutureProvider<span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span>((ref) <span style="color: #87ceeb">async</span> {
+  <span style="color: #87ceeb">await</span> <span style="color: #ff4444">Future</span>.delayed(<span style="color: #ff4444">Duration</span>(seconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>));
+  <span style="color: #87ceeb">return</span> [
+    Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note 1&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Content&#39;</span>),
+    Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note 2&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;More content&#39;</span>),
+  ];
+});</code></pre>
+<h3>Using Riverpod in Widgets</h3>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">class</span> NotesList <span style="color: #87ceeb">extends</span> ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    <span style="color: #888888">// READ operation - watch the provider</span>
+    <span style="color: #87ceeb">final</span> notes <span style="color: #ffff44">=</span> ref.watch(notesProvider);
+
+    <span style="color: #87ceeb">return</span> ListView.builder(
+      itemCount<span style="color: #ffff44">:</span> notes.length,
+      itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+        <span style="color: #87ceeb">return</span> ListTile(
+          title<span style="color: #ffff44">:</span> Text(notes[index].title),
+          onTap<span style="color: #ffff44">:</span> () {
+            <span style="color: #888888">// UPDATE or DELETE operation - read without rebuild</span>
+            ref.read(notesProvider.notifier).deleteNote(index);
+          },
+        );
+      },
+    );
+  }
+}</code></pre>
+<p><strong>Key advantages:</strong></p>
+<ul><li>No <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">context</code> needed—cleaner code</li><li>Built-in async handling with <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">FutureProvider</code> and <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AsyncValue</code></li><li>Providers can depend on other providers elegantly</li><li>Better for testing</li></ul>
+<h3>Async with Riverpod: Built-In Pattern</h3>
+<p>Riverpod has a built-in pattern for async that's cleaner than manual <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">AsyncState</code>:</p>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><span style="color: #87ceeb">final</span> notesProvider <span style="color: #ffff44">=</span> FutureProvider<span style="color: #ffff44"><</span><span style="color: #ff4444">List</span><span style="color: #ffff44"><</span>Note<span style="color: #ffff44">></span><span style="color: #ffff44">></span>((ref) <span style="color: #87ceeb">async</span> {
+  <span style="color: #87ceeb">await</span> <span style="color: #ff4444">Future</span>.delayed(<span style="color: #ff4444">Duration</span>(seconds<span style="color: #ffff44">:</span> <span style="color: #bb86fc">2</span>));
+  <span style="color: #87ceeb">return</span> [
+    Note(title<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Note 1&#39;</span>, content<span style="color: #ffff44">:</span> <span style="color: #44ff44">&#39;Content&#39;</span>),
+  ];
+});
+
+<span style="color: #888888">// In a widget</span>
+<span style="color: #87ceeb">class</span> NotesList <span style="color: #87ceeb">extends</span> ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    <span style="color: #87ceeb">final</span> notesAsync <span style="color: #ffff44">=</span> ref.watch(notesProvider);
+
+    <span style="color: #888888">// Use .when() to handle loading/error/success</span>
+    <span style="color: #87ceeb">return</span> notesAsync.when(
+      loading<span style="color: #ffff44">:</span> () <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Center(child<span style="color: #ffff44">:</span> CircularProgressIndicator()),
+      error<span style="color: #ffff44">:</span> (error, stackTrace) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> Center(child<span style="color: #ffff44">:</span> Text(<span style="color: #44ff44">&#39;Error: $error&#39;</span>)),
+      data<span style="color: #ffff44">:</span> (notes) <span style="color: #ffff44">=</span><span style="color: #ffff44">></span> ListView.builder(
+        itemCount<span style="color: #ffff44">:</span> notes.length,
+        itemBuilder<span style="color: #ffff44">:</span> (context, index) {
+          <span style="color: #87ceeb">return</span> ListTile(title<span style="color: #ffff44">:</span> Text(notes[index].title));
+        },
+      ),
+    );
+  }
+}</code></pre>
+<p>This is more elegant than manually tracking loading/error/data states.</p>
+<h2>Choosing Between setState(), Provider, and Riverpod</h2>
+<p>| Scenario | Best Choice | Why |</p>
+<p>|----------|-------------|-----|</p>
+<p>| Local state (checkbox, form field) | <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> | Simple, no overhead |</p>
+<p>| App-wide state with CRUD operations | Provider | Industry standard, mature, handles CRUD cleanly |</p>
+<p>| Complex state dependencies | Riverpod | Better composability, built-in async handling |</p>
+<p>| New projects prioritizing code quality | Riverpod | Cleaner patterns, easier to test |</p>
+<p>| Team already knows Provider | Provider | No reason to switch |</p>
+<p>For learning purposes, <strong>start with Provider</strong>. It bridges the gap between <code style="background-color: #f0f4f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace;">setState()</code> and modern patterns, and its CRUD patterns are explicit and easy to understand. Once you're comfortable, Riverpod is a natural next step.</p>
+<h2>Best Practices for CRUD Operations</h2>
+<ol><li><strong>Validate before CRUD:</strong> Before creating or updating, validate inputs. Before deleting, confirm with the user.</li></ol>
+<ol><li><strong>Use immutability for updates:</strong> Create new objects instead of mutating:</li></ol>
+<pre style="background-color: #0f172a; color: #ffffff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>   <span style="color: #888888">// Bad - mutating directly</span>
+   _notes[index].content <span style="color: #ffff44">=</span> newContent;
+   
+   <span style="color: #888888">// Good - creating new object</span>
+   _notes[index] <span style="color: #ffff44">=</span> Note(
+     title<span style="color: #ffff44">:</span> _notes[index].title,
+     content<span style="color: #ffff44">:</span> newContent,
+   );</code></pre>
+<ol><li><strong>Handle async errors gracefully.</strong> Never let errors disappear silently. Always show them or log them.</li></ol>
+<ol><li><strong>Use unique identifiers for CRUD.</strong> Identifying notes by title (as in examples) works for tutorials but is fragile. Use unique IDs in production.</li></ol>
+<ol><li><strong>Keep CRUD methods focused.</strong> One method per operation. Don't combine CREATE and UPDATE into one method.</li></ol>
+<ol><li><strong>Test providers independently.</strong> Providers should be testable without building widgets.</li></ol>
+<hr>
+<h2>Hands-On Project</h2>
+<p>Ready to apply state management and CRUD operations? Work through <a href="markdown-notes-project-part-c.html" style="color: #5A7A72; text-decoration: none; border-bottom: 1px solid #5A7A72;">Markdown Notes Project Part C</a> to implement a complete note-taking app with Create, Read, Update, and Delete operations using Provider.</p>
+</body>
+<script src="common.js"></script>
+</html>
