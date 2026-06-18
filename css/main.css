@@ -1,0 +1,82 @@
+:root {
+  /* Centralise common layout elements */
+  --site-max-width: 1200px;
+  --site-padding: 2rem;
+
+  /* Brand greens */
+  --green-gum-leaf: #6A8F6B;
+  --green-forest: #0A5C38;
+  --green-emerald: #1FA463;
+  --green-mint: #A8F2D4;
+
+  /* Logo browns */
+  --brown-saddle: #4d2e15;
+  --brown-tan: #C89A6A;
+
+  /* Neutrals */
+  --white: #FFFFFF;
+  --soft-white: #F9F9F9;
+  --bleached-almond: #FAEBBD;
+  --black-almost: #1A1A1A;
+  --grey-charcoal: #555555;
+  --grey-muted: #7A7A7A;
+  --grey-border-light: #E0E0E0;
+  --grey-stone: #A8ADA8; 
+  --grey-mystic: #D9DDDB;
+
+  --bg-page: var(--soft-white);
+  --bg-card: var(--white);
+  --text-heading: var(--black-almost);
+  --text-body: var(--grey-charcoal);
+  --text-muted: var(--grey-muted);
+
+  --btn-primary-bg: var(--green-emerald);
+  --btn-primary-hover-bg: var(--green-forest);
+  --btn-primary-text: var(--white);
+
+  --btn-secondary-bg: var(--green-mint);
+  --btn-secondary-hover-bg: var(--green-emerald);
+  --btn-secondary-text: var(--green-forest);
+
+  --border-light: var(--grey-border-light);
+  --border-strong: var(--green-forest);
+}
+
+h1 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--green-gum-leaf); /* Gum‑Leaf Green */
+}
+
+p {
+    font-size: 1.1rem;
+    color: var(--grey-charcoal);
+    margin-bottom: 30px;
+}
+
+.eml::before {
+  content: attr(data-u) "\40" attr(data-d);
+  unicode-bidi: isolate;
+}
+.eml {
+  display: inline-block;
+  text-decoration: underline;
+  color: var(--green-forest);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.eml:hover { color: var(--green-gum-leaf); }
+
+a {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--green-forest);
+  cursor: pointer;
+  transition: color 0.2s ease; /* Smooth color fade on hover */
+}
+
+/* 3. Global Hover State */
+a:hover {
+  color: var(--green-gum-leaf);
+}

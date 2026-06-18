@@ -1,0 +1,36 @@
+.site-footer {
+    width: 100%;
+    background-color: var(--grey-mystic); /* A clean, neutral backdrop */
+    font-size: 0.9rem;
+    color: var(--grey-muted);            /* Soft, readable gray for secondary text */
+    border-top: 1px solid #C6CAC8;
+}
+
+/* The structural wrapper matching your header alignment */
+.footer-container {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 0.5rem 1rem;           
+    
+    width: 100%;
+    max-width: 1200px;              /* Keeps it locked to your global grid spine */
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Forces the paragraphs to behave nicely inside the flex container */
+.footer-left p,
+.footer-right p {
+    margin: 0;                     /* Clears browser default paragraph spacing */
+    white-space: nowrap;           /* Prevents weird text wrapping on desktop */
+}
+
+/* Optional: If the screen gets tiny (like a phone), switch to a stacked layout */
+@media (max-width: 600px) {
+    .footer-container {
+        flex-direction: column;
+        gap: 0.5rem;               /* Adds a tiny bit of vertical space when stacked */
+        text-align: center;
+    }
+}

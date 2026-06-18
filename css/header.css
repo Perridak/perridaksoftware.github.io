@@ -1,0 +1,63 @@
+.site-header {
+    width: 100%;
+}
+
+/* The Throttled Content Container */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    
+    width: 100%; 
+    max-width: 1200px; /* This is your absolute ceiling */
+    margin: 0 auto;
+    box-sizing: border-box; /* Crucial: ensures padding doesn't add extra width */
+}
+
+/* FIXED: Unified the media query so it respects your design constraints */
+@media (min-width: 1201px) {
+    .header-container {
+        /* Instead of 80% (which blows up on large monitors), keep it locked to max-width */
+        width: 100%; 
+    }
+}
+
+.logo {
+    display: inline-block;
+    /* FIX: Tells Flexbox that this container is allowed to shrink below 
+       the image's natural size on smaller screens */
+    min-width: 180px; 
+    flex-shrink: 1; 
+}
+
+/* Target the actual <img> tag inside the logo div */
+.logo img {
+    width: 100%;
+    max-width: 300px; /* Deskop max size */
+    height: auto;
+    display: block;
+    margin-left: -20px;
+}
+
+/* The Navigation Wrapper (Ensuring the parent container acts right) */
+.nav-container {
+    display: flex; /* Makes the links layout as a neat flex row themselves */
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;      /* Allows links to drop to a second line neatly instead of squeezing the logo */
+  justify-content: flex-end; /* Keeps the wrapped lines nicely aligned to the right */
+  gap: 0.2rem 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    transition: color 0.2s ease;
+    white-space: nowrap; /* Safer alternative to max-content for inline text links */
+}

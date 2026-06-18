@@ -1,0 +1,14 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* This violently kills any accidental horizontal scrolling */
+  box-sizing: border-box;
+}
+
+/* Ensure EVERYTHING respects box sizing globally */
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+

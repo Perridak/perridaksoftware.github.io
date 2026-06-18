@@ -1,0 +1,203 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #E0E4E2;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    color: #333333;
+    display: flex;
+    flex-direction: column;  /* Stacks children vertically: Header -> Main -> Footer */
+    min-height: 100vh;       /* Forces the body to take up at least 100% of the viewport height */    
+}
+
+/* Target the middle wrapper between your header and footer */
+main, .site-content {
+    flex: 1; /* Tells this section to expand and fill every single pixel of remaining space */
+    width: 100%; /* Keeps it spanning the full width */
+    box-sizing: border-box;
+    max-width: var(--site-max-width);
+    padding: 2rem; 
+    text-align: left;
+    margin: 0 auto;
+}
+
+.dead-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers vertically */
+  align-items: center;     /* Centers horizontally */
+  text-align: center;      /* Centers the text inside headings/paragraphs */
+  
+  /* Takes up the full available height between header and footer */
+  min-height: 60vh;        
+  
+  width: 100%;
+  max-width: 600px;        /* Keeps 404 text narrow and readable */
+  margin: 0 auto;          /* Centers the bounding box on the screen */
+}
+
+
+span.eml {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+  cursor: text;
+}
+
+
+
+/* Layout Wrapper: Sets up the modern two-column layout */
+.layout-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  max-width: var(--site-max-width);
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Switches to Sidebar View on Desktop Screens and moves Sidebar to the Left */
+@media (min-width: 768px) {
+  .layout-wrapper {
+    grid-template-columns: 1fr 3fr; /* Sidebar takes 1 part, Main Content takes 3 parts */
+  }
+  
+  .main-content {
+    grid-column: 2; /* Explicitly forces the main content into the second column */
+  }
+  
+  .sidebar {
+    grid-column: 1; /* Explicitly forces the archive sidebar into the first column */
+    grid-row: 1;    /* Ensures it sits at the top row alongside the content */
+  }
+}
+
+/* Main Content Area Styling */
+.main-content {
+  min-width: 0; /* Prevents code blocks from breaking the grid layout */
+}
+
+.blog-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+.blog-list-item {
+  margin-bottom: 2.5rem;
+}
+
+.blog-list-item h2 {
+  margin-bottom: 0.5rem;
+}
+
+.blog-list-item h2 a {
+  color: var(--brown-saddle);
+  text-decoration: none;
+}
+
+.blog-list-item h2 a:hover {
+  text-decoration: underline;
+}
+
+.post-meta {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 0 0.75rem 0;
+}
+
+.post-summary {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Sidebar & Archive Styling */
+.sidebar {
+  background-color: var(--grey-mystic);
+  padding: 1.5rem;
+  border-radius: 6px;
+  align-self: start;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0.5rem;
+}
+
+.archive-year {
+  margin: 1.5rem 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.archive-list li {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.archive-list a {
+  text-decoration: none;
+  color: #333;
+}
+
+.archive-list a:hover {
+  color: var(--green-emerald);
+}
+
+.archive-date {
+  font-size: 0.8rem;
+  color: #777;
+  white-space: nowrap;
+}
+
+/* Single Post Specific Layout (from blog-layout.njk) */
+.post-container {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.post-header {
+  margin-bottom: 2rem;
+}
+
+.post-metadata {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: #555;
+  margin: 1rem 0;
+}
+
+.post-description {
+  font-size: 1.1rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+.post-content {
+  line-height: 1.75;
+  font-size: 1.1rem;
+}
+
+/* Highlights the current article inside the sidebar archive list */
+.archive-list li.active-archive-item a {
+  font-weight: bold;
+  color: var(--green-emerald);
+  pointer-events: none; /* Disables clicking the link to the page you are already on */
+}
+
+/* TEMPORARY DEBUG OUTLINE */
+/*
+* {
+  outline: 1px solid red !important;
+}
+*/
