@@ -1,0 +1,214 @@
+<!-- _includes/layout.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Software Architecture is Broken</title>
+    <meta name="description" content="Building premium multiplatform applications and developer APIs with meticulous craftsmanship. Engineered for high performance and total privacy by design.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#6A8F6B">
+
+    <link rel="canonical" href="https://perridak.software/">
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+    <meta property="og:title" content="Software Architecture is Broken">
+    <meta property="og:description" content="A home for Perridak Software is on the way.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://perridak.software/">
+    <meta property="og:image" content="https://perridak.software/assets/og-image.png">
+    <meta property="og:image:alt" content="Perridak Software logo">
+
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/skirt.css">
+    <link rel="stylesheet" href="/css/footer.css">
+
+    <script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Perridak Software",
+    "url": "https://perridak.software",
+    "logo": "https://perridak.software/logo.png",
+    "sameAs": [
+        "https://github.com/perridak",
+        "https://pub.dev/publishers/perridak.software"
+    ]
+    }
+    </script>
+	<script type="application/ld+json">
+	{
+	  "@context": "https://schema.org",
+	  "@type": "PrivacyPolicy",
+	  "url": "https://perridak.software/privacy/",
+	  "publisher": {
+		"@type": "Organization",
+		"name": "Perridak Software"
+	  }
+	}
+	</script>
+</head>
+<body>
+    <header class="site-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="/">
+                <img src="/assets/PerridakLogoHighlightedWithNameNoBackground.png" alt"Perridak Software Logo">
+            </a>
+        </div>
+        <nav class="nav-container">
+            <ul class="nav-links">
+            
+                <li><a href="/products/">Products</a></li>
+            
+                <li><a href="/dev-tools/">Dev Tools</a></li>
+            
+                <li><a href="/about/">About</a></li>
+            
+                <li><a href="/contact-us/">Contact</a></li>
+            
+            </ul>
+        </nav>
+    </div>
+</header>
+    <main class="site-content ">
+    
+<div class="layout-wrapper">
+  
+  <main class="main-content">
+    <article class="post-container">
+      
+      <header class="post-header">
+        <h1>Software Architecture is Broken</h1>
+        
+        <div class="post-metadata">
+          <span class="post-author">By Sean</span>
+          <time>
+            On 29 June 2026
+          </time>
+        </div>
+        
+        
+          <p class="post-description"><em>A brief examination of how the software industry has drifted into dysfunction, and the key realities we all need to understand so that we can repair it.</em></p>
+        
+      </header>
+
+      <hr>
+
+      <div class="post-content">
+        <p>It’s a bold statement, and for software developers and the software industry in general, calling software architecture <em>broken</em> is both controversial and provocative. So when I say that software architecture is broken, I’m really pointing to a deeper problem: the way modern software is created and managed, and the way software development is taught, has drifted into dysfunction, and architecture is where that dysfunction becomes most visible.</p>
+<p>I am an old coder. I’ve been writing software since I was a teenager in the 80s — before the Internet was a household term, before anyone imagined the Cloud, mobile computing, client–server systems, server farms, social media, or the expectation of constant connectivity. Unlike many professions where age dulls ability or enthusiasm, software development has remained challenging, rewarding, and frustrating in equal measure. The more I’ve done, the more I’ve learned, and the more technologies I’ve worked with. Saying that technology has “exploded” over the decades barely captures the scale of change I’ve witnessed.</p>
+<p>So when I say that software architecture is broken, I’m not lamenting the past or pining for the “good old days.” I’m making an observation grounded in a long career spent working with the very technologies and concepts that have been overused, misunderstood, and misapplied. Many have become bloated, overcomplicated, and no longer fit for purpose — not because they were inherently bad ideas, but because they were implemented without context, adopted without understanding, or treated as universal solutions to problems they were never designed to solve.</p>
+<p>Developers today are encouraged to rely on patterns and frameworks rather than evaluate problems for themselves. They’re told “this is how things must be done,” often without any valid reasoning, and frequently outside the domain they’re actually working in. Every week brings a new API, tool, or technology promising to do more while requiring the developer to think less. Modern development is increasingly reduced to stitching frameworks together — usually at the insistence of non‑technical decision‑makers — because it’s supposedly faster and easier. Meanwhile, systems that should be lean and simple have grown absurdly heavy. Operating systems require gigabytes just to idle. The simplest apps demand more storage and processing power than all the computers used in the moon missions combined. Software has become bloated, brittle, and difficult to maintain, rather than robust through thoughtful design and careful problem‑solving.</p>
+<p>Fifteen to twenty years ago, Design Patterns were all the rage. If you weren’t using them, you weren’t “really” programming. Agile practices rose, and soon if you weren’t doing Agile, you were behind the times. Then came the architectural acronyms — MVC, MVP, MVVM, MVVP — and if you weren’t using one of them, you weren’t taken seriously. After that came the languages and platforms. If you weren’t “full stack,” you weren’t a serious developer. Writing bespoke, stand‑alone software instead of something Cloud‑oriented became a mark against you. JavaScript… no, TypeScript… no, Node… Angular… React… whatever was trending that week. And now, if you aren’t using a code generator to handle your boilerplate, you’re accused of wasting time. The very existence of increasing volumes of boilerplate code is itself evidence of systemic architectural dysfunction. And all of this driven by hype, popularity, and marketing — not by common sense or by choosing the right tool for the actual domain problem you’re trying to solve.</p>
+<p>And now, at the peak of this insanity, we have large language models — mistakenly marketed as AI. Artificial, yes. Intelligent? Absolutely not. They’re increasingly used to generate code and tests, and they predominantly fail at both, or take more time to wrangle than simply solving the problem yourself. They’re driven by hype, trained on outdated data, and designed to appear helpful while pandering to the user’s ego. They make confident but incorrect assumptions about what the user wants, rather than providing what the user actually needs. They’re a tempting crutch for junior developers who haven’t learned better yet, and a source of endless frustration for those who have.</p>
+<p>All of this points to a decay at the heart of the software development industry. A crisis quietly building for years, with signs and portents obvious in hindsight yet playing out subtly in real time. Companies that refuse to consider your résumé unless you have five years of experience in a technology that’s barely a year old. Showstopper bugs present at product launch, accepted as normal business practice. The rise of “acceptable failure,” where crashes and outages are treated as routine rather than as indicators of slipping quality. Documentation disappearing, replaced by tribal knowledge and gatekeeper communities. Tools and systems endlessly dumbed down so people no longer bother learning anything in depth — because it can be handed to them, or made easy for them. All signs of complacency, abdication of responsibility, and the outsourcing of thought.</p>
+<p>The outcome is a disturbing trend: lax quality standards and brittle systems that can cause anything from the loss of essential services to the loss of human life. I personally would never trust an autonomous vehicle, and I am less confident in air travel than I have ever been, knowing that shoddy software has already cost lives. Disclaimers and legal protections don’t change the fact that decision‑makers routinely push dangerously unfit systems to market to chase revenue or gain a marketing edge. These are the same people perpetuating a crisis that will only worsen as serious software developers remain silent.</p>
+<p>And the cost is not just in failures — it’s in stagnation. True advancement in our field is declining. The talent pool is shrinking. Job opportunities are driven by buzzwords and SEO rather than earned knowledge and real experience. Software in general is broken, not because the ideas were flawed, but because the industry abandoned discipline, responsibility, and craftsmanship in favour of hype, speed, and convenience.</p>
+<p>What concerns me most is that this cultural decline is now reinforced at the point where new developers first enter the field. Universities are under pressure to chase whatever the industry is shouting about each semester, and the result is graduates who are inexperienced and who lack the earned wisdom to recognise the shortcomings of their own education. They step into the workforce only to be retrained by people who were released into the workforce with many of the same shortcomings. This cycle doesn’t produce craftsmanship; it produces compliance, and results in complacency.</p>
+<p>But the future of software won’t be fixed by institutions or trends. It will be shaped by individual developers who choose to think before they follow, who care about the quality of their work even when nobody is watching, and who refuse to treat “best practice” as gospel without first asking whether it is true, relevant, or even honest. Whether you’re starting a new project or working on an existing codebase, take the time to understand the problem before reaching for the tool. Treat your craft with respect. Demand quality from yourself, even in tests and throwaway code. Push back when decision‑makers insist on speed over quality and safety.</p>
+<p>And above all, remember what Agile was intended to be when the manifesto was first written — not the Agile that is practiced today, but the Agile that valued simplicity, clarity, collaboration, and genuine continuous improvement. That spirit still matters. The software development industry may be broken, but the craft need not be. The craft is still yours, and it becomes stronger every time you choose to practice it with thought, discipline, and care.</p>
+
+      </div>
+
+    </article>
+  </main>
+
+  <aside class="sidebar">
+    <h3>Post Archive</h3><h4 class="archive-year">2026</h4>
+        <ul class="archive-list"><li class="active-archive-item">
+        <a href="/blog/2026/06/29/software-architecture-is-broken.html">Software Architecture is Broken</a>
+        <span class="archive-date">
+          (29 June)
+        </span>
+      </li><li>
+        <a href="/blog/2026/06/19/first-post.html">Live at last</a>
+        <span class="archive-date">
+          (19 June)
+        </span>
+      </li></ul></aside>
+
+</div>
+    </main>
+    <div class="skirt-wrapper">
+    <ul class="skirt">
+    
+        <li>
+            <a href="/ts-and-cs/"
+                >
+                Terms &amp; Conditions
+            </a>
+        </li>
+    
+        <li>
+            <a href="/privacy/"
+                >
+                Privacy Policy
+            </a>
+        </li>
+    
+        <li>
+            <a href="/faq/"
+                >
+                FAQ
+            </a>
+        </li>
+    
+        <li>
+            <a href="/documentation/"
+                >
+                Documentation
+            </a>
+        </li>
+    
+        <li>
+            <a href="/blog/"
+                >
+                Blog
+            </a>
+        </li>
+    
+        <li>
+            <a href="/open-source/"
+                >
+                Open Source
+            </a>
+        </li>
+    
+        <li>
+            <a href="https://github.com/Perridak"
+                target="_blank" rel="noopener noreferrer">
+                GitHub
+            </a>
+        </li>
+    
+        <li>
+            <a href="https://pub.dev/publishers/perridak.software/packages"
+                target="_blank" rel="noopener noreferrer">
+                Pub Dev
+            </a>
+        </li>
+    
+        <li>
+            <a href="/support/"
+                >
+                Get Help
+            </a>
+        </li>
+    
+    </ul>
+</div>
+    <footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-left">&copy; Perridak Software. All rights reserved.</div>
+        <div class="footer-left">ABN: 55 476 070 644</div>
+    </div>
+</footer>
+
+</body>
+</html> 
